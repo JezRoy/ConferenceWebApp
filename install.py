@@ -18,9 +18,9 @@ requiredModules = [
 # Given pip is installed on the machine.
     
 # Start installing any modules that are missing.
-for module in requiredModules:
+for mod in requiredModules:
     try:
-        import module
+        exec(f'import {mod}')
     except ImportError:
-        print(f"{module} module not found. Installing {module}.")
-        os.system(f"pip3.10 install {module}")
+        print(f"{mod} module not found. Installing {mod}.")
+        os.system(f"pip3.10 install {mod}")
