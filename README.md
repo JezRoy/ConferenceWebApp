@@ -6,15 +6,11 @@ The objective of this project is to develop a software system that assists in cr
 
 ## How to Install
 
-This project includes the following Python modules:
+This project makes use of a number of Python modules, as listed in the `install.py` file.
 
-* Flask,
-* Jinja
-* Werkzeug
-* MarkupSafe
-* ItsDangerous
-* Click
-* Blinker
+1) Ensure Python 3.10 & `pip` is installed. To install Python, please visit: https://www.python.org/. To install `pip`, please visit: https://pip.pypa.io/en/stable/installation/
+2) Once both of the above are installed on the server machine (or relevant computer for development), please run `install.py` to install all necessary dependencies.
+3) The project is now ready to be used, ensure all program files, hosted in the repository, reside in an active server in order for the web app to operate.
 
 ## How to Use
 
