@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> LOOK INTO CSS HOVER
 
 <html lang="en">
     <head><script src="../static/color-modes.js"></script>
@@ -9,29 +9,49 @@
 		<link href="/static/style.css" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
 		<link href="../static/bootstrap.min.css" rel="stylesheet">
-		<title>Event4You! {% block title %}{% endblock %}</title>
+		<title>EventOptimiser: {% block title %}{% endblock %}</title>
 	</head>
-	<body>
+	<body class="px-5">
 		<header>
 			<div class="container navbar navbar-dark bg-dark shadow-sm d-flex justify-content-between">
+				{% if session.username %}
 				<a href="/profile" class="navbar-brand d-flex align-items-center">
 					<button class="btn btn-primary my-2">
 						<strong>My Profile</strong>
 					</button>
 				</a>
-				<a href="/schedule" class="navbar-brand d-flex align-items-center">
+					{% if eventSigned %}
+					<a href="/schedule" class="navbar-brand d-flex align-items-center">
+						<button class="btn btn-primary my-2">
+							<strong>My Schedule</strong>
+						</button>
+					</a>
+					<a href="/eventDetails" class="navbar-brand d-flex align-items-center">
+						<button class="btn btn-primary my-2">
+							<strong>The Event</strong>
+						</button>
+					</a>
+					{% else %}
+					<a href="/eventDetails" class="navbar-brand d-flex align-items-center">
+						<button class="btn btn-primary my-2">
+							<strong>The Event</strong>
+						</button>
+					</a>
+				{% else %}
+				<a href="/login" class="navbar-brand d-flex align-items-center">
 					<button class="btn btn-primary my-2">
-						<strong>My Schedule</strong>
+						<strong>Login</strong>
 					</button>
 				</a>
-				<a href="/eventDetails" class="navbar-brand d-flex align-items-center">
+				<a href="/signup" class="navbar-brand d-flex align-items-center">
 					<button class="btn btn-primary my-2">
-						<strong>The Event</strong>
+						<strong>Login</strong>
 					</button>
 				</a>
+				{% endif %}
 			</div>
 		</header>
-		<h1>Wow look, a webpage</h1>
+		<h1 class="text-center">Event Optimiser</h1>
 		<div>
 			And some more text
 		</div>
