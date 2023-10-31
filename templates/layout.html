@@ -20,23 +20,24 @@
 						<strong>My Profile</strong>
 					</button>
 				</a>
-					{% if eventSigned %}
+					{% if conferenceSigned %}
 					<a href="/schedule" class="navbar-brand d-flex align-items-center">
 						<button class="btn btn-primary my-2">
 							<strong>My Schedule</strong>
 						</button>
 					</a>
-					<a href="/eventDetails" class="navbar-brand d-flex align-items-center">
+					<a href="/myConferences" class="navbar-brand d-flex align-items-center">
 						<button class="btn btn-primary my-2">
-							<strong>The Event</strong>
+							<strong>My Conferences</strong>
 						</button>
 					</a>
 					{% else %}
-					<a href="/eventDetails" class="navbar-brand d-flex align-items-center">
+					<a href="/findConference" class="navbar-brand d-flex align-items-center">
 						<button class="btn btn-primary my-2">
-							<strong>The Event</strong>
+							<strong>Find a Conference</strong>
 						</button>
 					</a>
+					{% endif %}
 				{% else %}
 				<a href="/login" class="navbar-brand d-flex align-items-center">
 					<button class="btn btn-primary my-2">

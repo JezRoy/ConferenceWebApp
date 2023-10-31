@@ -23,7 +23,7 @@ def UpdateLog(action):
     """
     now = datetime.now()
     myFile = open("server.log", "a")
-    contents = f"{str(now)[:19]}: {action}"
+    contents = f"{str(now)[:19]}: {action}\n"
     myFile.write(contents)
     myFile.close()
     return True

@@ -31,8 +31,8 @@ app.secret_key = b'P\x87\xfc\xa9\xe6qQ~)8\x90D\x11\n\xb9\xa1'
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Ensure responses aren't cached
-@app.afterRequest
-def afterRequest(response):
+@app.after_request
+def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
@@ -44,7 +44,50 @@ def index():
     if request.method == 'POST':
         pass
     else:
-        return render_template("index.html")
+        try:
+            return render_template("layout.html")
+        except:
+            return StatusCode("Missing information", 404)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """ Logs in a user """
+    if request.method == "POST":
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            return StatusCode("must provide username", 403)
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return StatusCode("must provide password", 403)
+        # Check the user exists
+        locate = None
+        
+        ###### TODO
+        
+        if locate == None:
+            return StatusCode("User does not exist", 403)
+        if not check_password_hash(PASSWORD_ENTRY, request.form.get("password")):
+            return StatusCode("Invalid password", 403)
+
+        # Creates a session for the users and remembers them.
+        session["username"] = "TODO"
+        flash("Logged in!")
+        return redirect("/")
+    else:
+        return render_template("login.html")
+    
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    pass
+@app.route("/changePassword", methods=["GET", "POST"])
+@RequireUser
+def changePassword():
+    pass
+@app.route("/logout")
+def logout():
+    flash("Logged out.")
+    session.clear()
+    return redirect("/")
 
 """
 if error:
