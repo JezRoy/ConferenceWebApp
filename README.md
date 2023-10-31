@@ -16,6 +16,8 @@ This project makes use of a number of Python modules, as listed in the `install.
 
 Dev notes (REMOVE LATER):
 
-Setup virtual environment: 
+HTML Error codes: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#2xx_success
+
+Setup virtual environment:
 
 `. .venv/bin/activate`
