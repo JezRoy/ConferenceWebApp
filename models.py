@@ -326,6 +326,7 @@ def addTalk(cursor, talkName, speakerID, confID, topicID):
 
 def findTalk(cursor, conference_name):
     try:
+        # Search for talks based on a conference name
         cursor.execute("""
             SELECT talks.talkName, speakers.name AS speaker, tastes.topic
             FROM talks
@@ -339,7 +340,7 @@ def findTalk(cursor, conference_name):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
-def interestedInTalk(cursor, talk_id):
+def noInterestedInTalk(cursor, talk_id):
     try:
         cursor.execute("""
             SELECT COUNT(delegID) AS delegateCount
@@ -351,7 +352,7 @@ def interestedInTalk(cursor, talk_id):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
-def interestedInTopic(cursor, topic_name):
+def noInterestedInTopic(cursor, topic_name):
     try:
         cursor.execute("""
             SELECT COUNT(delegID) AS delegateCount
@@ -365,6 +366,7 @@ def interestedInTopic(cursor, topic_name):
 
 def topicsRelatedToConference(cursor, conference_name):
     try:
+        # Retrieve topics related to a specific conference
         cursor.execute("""
             SELECT tastes.topic
             FROM tastes
