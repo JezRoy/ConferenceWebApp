@@ -29,7 +29,7 @@ def initialise(cursor):
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS conferences (
                 id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
+                confName TEXT NOT NULL,
                 hostID INTEGER,
                 paperSubDeadline DATE,
                 delegateSignUpDeadline DATE,
@@ -44,17 +44,6 @@ def initialise(cursor):
                 name TEXT NOT NULL,
                 delegateID INTEGER,
                 FOREIGN KEY (delegateID) REFERENCES delegates(id)
-                )
-                       ''')
-        # Talks being given at conferences
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS talks (
-                talkID INTEGER PRIMARY KEY,
-                talkName TEXT NOT NULL,
-                speakerID INTEGER,
-                confID INTEGER,
-                FOREIGN KEY (speakerID) REFERENCES speakers(id),
-                FOREIGN KEY (confID) REFERENCES conferences(id)
                 )
                        ''')
         # Table for tastes and prefernces
@@ -84,6 +73,19 @@ def initialise(cursor):
                 FOREIGN KEY (hostID) REFERENCES hosts(id)
                 )
                        ''') 
+        # Talks being given at conferences
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS talks (
+                talkID INTEGER PRIMARY KEY,
+                talkName TEXT NOT NULL,
+                speakerID INTEGER,
+                confID INTEGER,
+                topicID, INTEGER
+                FOREIGN KEY (speakerID) REFERENCES speakers(id),
+                FOREIGN KEY (confID) REFERENCES conferences(id)
+                FOREIGN KEY (topicID) REFERENCES tastes(id)
+                )
+                       ''')
         return True
     except sqlite3.Error as e:
         return False, f"Error adding user: {e}"
@@ -245,11 +247,11 @@ def editConference(cursor, conference_id, name, hostID, paperSubDeadline, delega
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
     
-def findConference(cursor, conference_id, fullSearch=False):
+def findConference(cursor, conference_name, fullSearch=True):
     try:
         if not fullSearch:
             # Less detailed search
-            cursor.execute("SELECT * FROM conferences WHERE id = ?", (conference_id,))
+            cursor.execute("SELECT * FROM conferences WHERE confName = ?", (conference_name,))
             conference = cursor.fetchone()
             return True, conference if conference else False, "Conference not found"
         else:
@@ -263,9 +265,9 @@ def findConference(cursor, conference_id, fullSearch=False):
                 LEFT JOIN speakers ON talks.speakerID = speakers.id
                 LEFT JOIN delLikes ON conferences.id = delLikes.confID
                 LEFT JOIN delegates ON delLikes.delegID = delegates.id
-                WHERE conferences.id = ?
+                WHERE conferences.name = ?
                 GROUP BY conferences.id
-            """, (conference_id,))
+            """, (conference_name,))
             conference = cursor.fetchone()
 
             if conference:
@@ -277,7 +279,7 @@ def findConference(cursor, conference_id, fullSearch=False):
                     LEFT JOIN tastes ON tastes.confID = talks.confID
                     WHERE talks.confID = ?
                     GROUP BY talks.talkName
-                """, (conference_id,))
+                """, (conference[0],))
                 talks = cursor.fetchall()
 
                 # Assemble detailed conference information
@@ -297,6 +299,7 @@ def findConference(cursor, conference_id, fullSearch=False):
                 return False, "Conference not found"
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
+
     
 def delConference(cursor, conference_id):
     try:
@@ -306,4 +309,55 @@ def delConference(cursor, conference_id):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
     
-  
+def addSpeaker(cursor, name, delegateID):
+    try:
+        # Add a new speaker to the speakers table and associate with a delegate
+        cursor.execute("INSERT INTO speakers (name, delegateID) VALUES (?, ?)", (name, delegateID))
+        return True
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+
+def addTalk(cursor, talkName, speakerID, confID, topicID):
+    try:
+        # Add a new talk to the talks table, associating it with a speaker, conference, and topic
+        cursor.execute("INSERT INTO talks (talkName, speakerID, confID, topicID) VALUES (?, ?, ?, ?)", (talkName, speakerID, confID, topicID))
+        return True
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+
+def findTalk(cursor, conference_name):
+    try:
+        cursor.execute("""
+            SELECT talks.talkName, speakers.name AS speaker, tastes.topic
+            FROM talks
+            LEFT JOIN speakers ON talks.speakerID = speakers.id
+            LEFT JOIN tastes ON talks.topicID = tastes.id
+            INNER JOIN conferences ON talks.confID = conferences.id
+            WHERE conferences.name = ?
+        """, (conference_name,))
+        found_talks = cursor.fetchall()
+        return found_talks
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+
+def interestedInTalk(cursor, talk_id):
+    try:
+        cursor.execute("""
+            SELECT COUNT(delegID) AS delegateCount
+            FROM delLikes
+            WHERE topicID = (SELECT topicID FROM talks WHERE talkID = ?)
+        """, (talk_id,))
+        delegate_count = cursor.fetchone()
+        return True, delegate_count[0] if delegate_count else True, 0
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+
+def interestedInTopic(cursor, topic_id):
+    try:
+        cursor.execute("SELECT COUNT(delegID) AS delegateCount FROM delLikes WHERE topicID = ?", (topic_id,))
+        delegate_count = cursor.fetchone()
+        return True,delegate_count[0] if delegate_count else True, 0
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+
+
