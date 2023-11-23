@@ -300,7 +300,6 @@ def findConference(cursor, conference_name, fullSearch=True):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
-    
 def delConference(cursor, conference_id):
     try:
         # Delete the conference from the conferences table based on the conference ID
