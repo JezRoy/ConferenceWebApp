@@ -335,7 +335,7 @@ def findTalk(cursor, conference_name):
             WHERE conferences.name = ?
         """, (conference_name,))
         found_talks = cursor.fetchall()
-        return found_talks
+        return True, found_talks
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
@@ -351,12 +351,48 @@ def interestedInTalk(cursor, talk_id):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
-def interestedInTopic(cursor, topic_id):
+def interestedInTopic(cursor, topic_name):
     try:
-        cursor.execute("SELECT COUNT(delegID) AS delegateCount FROM delLikes WHERE topicID = ?", (topic_id,))
+        cursor.execute("""
+            SELECT COUNT(delegID) AS delegateCount
+            FROM delLikes
+            WHERE topicID = (SELECT id FROM tastes WHERE topic = ?)
+        """, (topic_name,))
         delegate_count = cursor.fetchone()
-        return True,delegate_count[0] if delegate_count else True, 0
+        return True, delegate_count[0] if delegate_count else True, 0
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
+def topicsRelatedToConference(cursor, conference_name):
+    try:
+        cursor.execute("""
+            SELECT tastes.topic
+            FROM tastes
+            INNER JOIN talks ON tastes.id = talks.topicID
+            INNER JOIN conferences ON talks.confID = conferences.id
+            WHERE conferences.name = ?
+        """, (conference_name,))
+        related_topics = cursor.fetchall()
+        return True, [topic[0] for topic in related_topics] if related_topics else True, []
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+
+def addTopicToConference(cursor, topic_name, conference_name):
+    try:
+        cursor.execute("""
+            INSERT INTO tastes (topic, confID)
+            SELECT ?, conferences.id
+            FROM conferences
+            WHERE conferences.name = ?
+        """, (topic_name, conference_name))
+        return True
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+
+def removeTopicFromTastes(cursor, topic_name):
+    try:
+        cursor.execute("DELETE FROM tastes WHERE topic = ?", (topic_name,))
+        return True
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
 
