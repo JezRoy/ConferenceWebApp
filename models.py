@@ -21,6 +21,7 @@ def initialise(cursor):
             CREATE TABLE IF NOT EXISTS hosts (
                 id INTEGER PRIMARY KEY,
                 username TEXT NOT NULL,
+                email TEXT NOT NULL,
                 passwordHash TEXT NOT NULL
                 )
                        ''')
@@ -87,10 +88,10 @@ def initialise(cursor):
     except sqlite3.Error as e:
         return False, f"Error adding user: {e}"
 
-def addUser(cursor, username, passwdHash):
+def addDelegate(cursor, username, email, passwdHash):
     # Adding a user to the database
     try:
-        cursor.execute("INSERT INTO delegates (username, passwordHash) VALUES (?, ?)", (username, passwdHash))
+        cursor.execute("INSERT INTO delegates (username, email, passwordHash) VALUES (?, ?, ?)", (username, email, passwdHash))
         return True
     except sqlite3.Error as e:
         return False, f"Error adding user: {e}"
@@ -187,3 +188,122 @@ def closeDatabase(cursor, conn):
     except sqlite3.Error as e:
         print(f"Error occurred: {e}")
         return False
+
+def addHost(cursor, username, email, passwdHash):
+    try:
+        # Add a new host to the hosts table
+        cursor.execute("INSERT INTO hosts (username, email, passwordHash) VALUES (?, ?, ?)", (username, email, passwdHash))
+        return True
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+    
+def editHost(cursor, username, passwdHash, email):
+    try:
+        # Update password and email for the host in the hosts table
+        cursor.execute("UPDATE hosts SET passwordHash = ?, email = ? WHERE username = ?", (passwdHash, email, username))
+        return True
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+
+def findHost(cursor, username):
+    try:
+        # Find host's ID and username in the hosts table based on the username
+        cursor.execute("SELECT id, username FROM hosts WHERE username = ?", (username,))
+        host = cursor.fetchone()
+        return True, host if host else False, "Host not found"
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+    
+def delHost(cursor, username):
+    try:
+        # Delete the host from the hosts table based on the username
+        cursor.execute("DELETE FROM hosts WHERE username = ?", (username,))
+        return True
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+
+def addConference(cursor, name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd):
+    try:
+        # Add a new conference to the conferences table
+        cursor.execute("""
+            INSERT INTO conferences (name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd))
+        return True
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+
+def editConference(cursor, conference_id, name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd):
+    try:
+        # Update conference details in the conferences table based on the conference ID
+        cursor.execute("""
+            UPDATE conferences 
+            SET name = ?, hostID = ?, paperSubDeadline = ?, delegateSignUpDeadline = ?, confStart = ?, confEnd = ?
+            WHERE id = ?
+        """, (name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd, conference_id))
+        return True
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+    
+def findConference(cursor, conference_id, fullSearch=False):
+    try:
+        if not fullSearch:
+            # Less detailed search
+            cursor.execute("SELECT * FROM conferences WHERE id = ?", (conference_id,))
+            conference = cursor.fetchone()
+            return True, conference if conference else False, "Conference not found"
+        else:
+            # More detailed search including talks, speakers, topics, and delegate count
+            cursor.execute("""
+                SELECT conferences.id, conferences.name, conferences.hostID, conferences.paperSubDeadline, 
+                       conferences.delegateSignUpDeadline, conferences.confStart, conferences.confEnd,
+                       COUNT(DISTINCT delegates.id) as delegateCount
+                FROM conferences
+                LEFT JOIN talks ON conferences.id = talks.confID
+                LEFT JOIN speakers ON talks.speakerID = speakers.id
+                LEFT JOIN delLikes ON conferences.id = delLikes.confID
+                LEFT JOIN delegates ON delLikes.delegID = delegates.id
+                WHERE conferences.id = ?
+                GROUP BY conferences.id
+            """, (conference_id,))
+            conference = cursor.fetchone()
+
+            if conference:
+                # Fetching detailed information about talks, speakers, and topics associated with the conference
+                cursor.execute("""
+                    SELECT talks.talkName, speakers.name AS speaker, GROUP_CONCAT(tastes.topic) AS topics
+                    FROM talks
+                    LEFT JOIN speakers ON talks.speakerID = speakers.id
+                    LEFT JOIN tastes ON tastes.confID = talks.confID
+                    WHERE talks.confID = ?
+                    GROUP BY talks.talkName
+                """, (conference_id,))
+                talks = cursor.fetchall()
+
+                # Assemble detailed conference information
+                detailed_info = {
+                    "Conference_ID": conference[0],
+                    "Conference_Name": conference[1],
+                    "Host_ID": conference[2],
+                    "Paper_Sub_Deadline": conference[3],
+                    "Delegate_SignUp_Deadline": conference[4],
+                    "Conf_Start": conference[5],
+                    "Conf_End": conference[6],
+                    "Delegate_Count": conference[7],
+                    "Talks_Info": talks  # Include talks information in the detailed search
+                }
+                return True, detailed_info
+            else:
+                return False, "Conference not found"
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+    
+def delConference(cursor, conference_id):
+    try:
+        # Delete the conference from the conferences table based on the conference ID
+        cursor.execute("DELETE FROM conferences WHERE id = ?", (conference_id,))
+        return True
+    except sqlite3.Error as e:
+        return False, f"Error occurred: {e}"
+    
+  
