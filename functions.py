@@ -1,11 +1,11 @@
-from flask import redirect, render_template, request, session
+from flask import flash, redirect, render_template, request, session
 from functools import wraps
 import os
 import sys
 import sqlite3
 from datetime import datetime
 
-def RequireUser(f):
+def RequireUser(f, message=""):
     """
     Decorate routes to require login. Prevents unauthorised and non-contextual access.
     """
@@ -13,6 +13,8 @@ def RequireUser(f):
     def decorate(*args, **kwargs):
         if session.get("username") is None:
             # Stops a non-logged-in user from accessing parts of the website and redirects them.
+            if message != "":
+                flash(message, "warning")
             return redirect("/login")
         return f(*args, **kwargs)
     return decorate

@@ -52,7 +52,7 @@ def after_request(response):
     return response
 
 @app.route("/", methods=["GET","POST"])
-@RequireUser
+@RequireUser(message="Please log-in to a registered account...")
 def index():
     if request.method == 'POST':
         pass
@@ -80,12 +80,12 @@ def login():
         
         if locate == None:
             return StatusCode("User does not exist", 403)
-        if not check_password_hash(PASSWORD_ENTRY, request.form.get("password")):
+        if not check_password_hash(passwdEntry, request.form.get("password")):
             return StatusCode("Invalid password", 403)
 
         # Creates a session for the users and remembers them.
         session["username"] = "TODO"
-        flash("Logged in!")
+        flash("Logged in!", "success")
         return redirect("/")
     else:
         return render_template("login.html")
@@ -116,7 +116,7 @@ def signUp():
     else:
         return render_template("signup.html")
 @app.route("/changePassword", methods=["GET", "POST"])
-@RequireUser
+@RequireUser(message="Please log-in to a registered account...")
 def changePassword():
     """ Changes a registered user's password """
     pass

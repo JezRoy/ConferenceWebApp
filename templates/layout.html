@@ -58,11 +58,22 @@
 			</div>
 		</header>
 		<main>
+			<!-- Flashed messages -->
+			{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+						<div class="alert alert-{{ category }}">
+							{{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+			{% endwith %}
+			<!-- Everything else-->
 			{% block main %}{% endblock %}
 		</main>
 		<footer style="font-size:small; color:#777; text-align: center">
 			<p>Created by Jeremy Roy.</p>
-			<p>Created using Python 3.8.3, HTML, CSS and Flask.</p>
+			<p>Created using Python 3.8.8, HTML, CSS and Flask.</p>
 		</footer>
 	</body>
 </html>
