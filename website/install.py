@@ -12,6 +12,8 @@ requiredModules = [
     "traceback",
     "os",
     "numpy",
+    "flask",
+    "sqlite3",
     "Flask"
 ]
 
