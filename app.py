@@ -52,7 +52,7 @@ def after_request(response):
     return response
 
 @app.route("/", methods=["GET","POST"])
-@RequireUser(message="Please log-in to a registered account...")
+@RequireUser
 def index():
     if request.method == 'POST':
         pass
@@ -116,7 +116,7 @@ def signUp():
     else:
         return render_template("signup.html")
 @app.route("/changePassword", methods=["GET", "POST"])
-@RequireUser(message="Please log-in to a registered account...")
+@RequireUser
 def changePassword():
     """ Changes a registered user's password """
     pass

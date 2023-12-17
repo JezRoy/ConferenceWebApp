@@ -1,4 +1,48 @@
 h1 {
     text-align: center;
-    font-weight: bolder;
+    color: white;
+    font-weight: bold;
+    font-weight:900;
+    background-color: #346edb;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+* {
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.textFormContainer {
+    display: grid;
+    font-family: 'Courier New', Courier, monospace;
+    align-items: center;
+    margin: 125px;
+}
+
+#circle {
+    width: 100px;
+    height: 100px;
+    background-color: #e74c3c;
+    border-radius: 50%; /* Makes the element a circle */
+  }
+
+  #square {
+    width: 100px;
+    height: 100px;
+    background-color: #005eff;
+  }
+
+  #triangle {
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 100px solid #3498db; /* Triangle color */
+  }
+
+#submit {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  margin: 0;
 }

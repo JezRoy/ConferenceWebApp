@@ -6,14 +6,20 @@
 
 {% block main %}
 <h1>Log In</h1>
+<p></p>
+<div class="textFormContainer">
     <form action="/login" method="post">
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Enter Username:" type="text">
-        </div>
-        <div class="form-group">
-            <input class="form-control" name="password" placeholder="Enter Password:" type="password">
+        <div class="form-group" >
+            <label for="username">Enter Username: </label>
+            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username:" type="text">
         </div>
         <p></p>
-        <button class="btn btn-primary" type="submit">Log In</button>
+        <div class="form-group">
+            <label for="password">Enter Password: </label>
+            <input class="form-control" name="password" placeholder="Password:" type="password">
+        </div>
+        <p></p>
+        <button class="btn btn-primary" type="submit" id="submit">Log In</button>
     </form>
+</div>
 {% endblock %}
