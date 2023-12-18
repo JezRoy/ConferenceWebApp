@@ -26,7 +26,24 @@
 	<body class="px-5">
 		<header>
 			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			// TODO
+				<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbar">
+					<div class="navbar-nav">
+					{% if session.username %}
+						<a class="nav-item nav-link" id="signUp" href="/">Home</a>
+						{% if conferenceSigned %}
+						{% else %}
+						{% endif %}
+						<a class="nav-item nav-link" id="signUp" href="/logout">Log Out</a>
+					{% else %}
+						<a class="nav-item nav-link" id="login" href="/login">Login</a>
+						<a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
+					{% endif %}
+					</div>
+				</div>
+			</nav>
 		</header>
 		<main>
 			<!-- Flashed messages -->
