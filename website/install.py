@@ -13,8 +13,9 @@ requiredModules = [
     "os",
     "numpy",
     "flask",
-    "sqlite3",
-    "Flask"
+    "Flask",
+    "flask-login",
+    "sqlite3"
 ]
 
 # Given pip is installed on the machine.

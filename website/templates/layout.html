@@ -7,55 +7,26 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="author" content="Jeremy Roy">
 		<link href="/static/style.css" rel="stylesheet">
-		<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+		<!-- Perhaps re-enable these later-->>
+		<!-- link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet"-->
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+			integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+			crossorigin="anonymous"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+			crossorigin="anonymous"
+		/>
 		<link href="../static/bootstrap.min.css" rel="stylesheet">
-		<title>ConfWebApp! {% block title %}{% endblock %}</title>
+		<title>ConfWebApp!: {% block title %}Home{% endblock %}</title>
 	</head>
 	<body class="px-5">
 		<header>
-			<div class="container navbar navbar-dark bg-dark shadow-sm d-flex justify-content-between">
-				{% if session.username %}
-				<a href="/profile" class="navbar-brand d-flex align-items-center">
-					<button class="btn btn-primary my-2">
-						<strong>My Profile</strong>
-					</button>
-				</a>
-					{% if conferenceSigned %}
-					<a href="/schedule" class="navbar-brand d-flex align-items-center">
-						<button class="btn btn-primary my-2">
-							<strong>My Schedule</strong>
-						</button>
-					</a>
-					<a href="/myConferences" class="navbar-brand d-flex align-items-center">
-						<button class="btn btn-primary my-2">
-							<strong>My Conferences</strong>
-						</button>
-					</a>
-					{% else %}
-					<a href="/findConference" class="navbar-brand d-flex align-items-center">
-						<button class="btn btn-primary my-2">
-							<strong>Find a Conference</strong>
-						</button>
-					</a>
-					{% endif %}
-				{% else %}
-				<a href="/signup" class="navbar-brand d-flex align-items-center">
-					<button class="btn btn-primary my-2">
-						<strong>Sign Up</strong>
-					</button>
-				</a>
-				<a href="/login" class="navbar-brand d-flex align-items-center">
-					<button class="btn btn-primary my-2">
-						<strong>Login</strong>
-					</button>
-				</a>
-				{% endif %}
-				<a href="/help" class="navbar-brand d-flex align-items-center">
-					<button class="btn btn-primary my-2">
-						<strong>Help</strong>
-					</button>
-				</a>
-			</div>
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			// TODO
 		</header>
 		<main>
 			<!-- Flashed messages -->
@@ -72,6 +43,21 @@
 			<h2>Conference Scheduler</h2>
 			{% block main %}{% endblock %}
 		</main>
+		<script
+			src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+			integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+			crossorigin="anonymous">
+		</script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+			integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+			crossorigin="anonymous">
+		</script>
+		<script
+			src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+			crossorigin="anonymous">
+		</script>
 		<footer style="font-size:small; color:#777; text-align: center">
 			<p>Created by Jeremy Roy.</p>
 			<p>Created using Python 3.8.8, HTML, CSS and Flask.</p>

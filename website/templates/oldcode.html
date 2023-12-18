@@ -1,0 +1,44 @@
+<!-- Old navbar code -->
+<div class="container navbar navbar-dark bg-dark shadow-sm d-flex justify-content-between">
+    {% if session.username %}
+    <a href="/profile" class="navbar-brand d-flex align-items-center">
+        <button class="btn btn-primary my-2">
+            <strong>My Profile</strong>
+        </button>
+    </a>
+        {% if conferenceSigned %}
+        <a href="/schedule" class="navbar-brand d-flex align-items-center">
+            <button class="btn btn-primary my-2">
+                <strong>My Schedule</strong>
+            </button>
+        </a>
+        <a href="/myConferences" class="navbar-brand d-flex align-items-center">
+            <button class="btn btn-primary my-2">
+                <strong>My Conferences</strong>
+            </button>
+        </a>
+        {% else %}
+        <a href="/findConference" class="navbar-brand d-flex align-items-center">
+            <button class="btn btn-primary my-2">
+                <strong>Find a Conference</strong>
+            </button>
+        </a>
+        {% endif %}
+    {% else %}
+    <a href="/signup" class="navbar-brand d-flex align-items-center">
+        <button class="btn btn-primary my-2">
+            <strong>Sign Up</strong>
+        </button>
+    </a>
+    <a href="/login" class="navbar-brand d-flex align-items-center">
+        <button class="btn btn-primary my-2">
+            <strong>Login</strong>
+        </button>
+    </a>
+    {% endif %}
+    <a href="/help" class="navbar-brand d-flex align-items-center">
+        <button class="btn btn-primary my-2">
+            <strong>Help</strong>
+        </button>
+    </a>
+</div>
