@@ -92,18 +92,18 @@ def initialise(cursor):
     except sqlite3.Error as e:
         return False, f"Error adding user: {e}"
 
-def addDelegate(cursor, username, email, passwdHash):
+def addDelegate(cursor, username, passwdHash, dob, email="None"):
     # Adding a user to the database
     try:
-        cursor.execute("INSERT INTO delegates (username, email, passwordHash) VALUES (?, ?, ?)", (username, email, passwdHash))
+        cursor.execute("INSERT INTO delegates (username, email, passwordHash, dob) VALUES (?, ?, ?, ?)", (username, email, passwdHash, dob))
         return True
     except sqlite3.Error as e:
         return False, f"Error adding user: {e}"
 
-def editUser(cursor, username, email, passwdHash, topicPreferences):
+def editUser(cursor, username, passwdHash, dob, topicPreferences, email="None"):
     try:
         # Update password for the user
-        cursor.execute("UPDATE delegates SET passwordHash = ?, email = ? WHERE username = ?", (passwdHash, email, username))
+        cursor.execute("UPDATE delegates SET dob = ?, passwordHash = ?, email = ? WHERE username = ?", (dob, passwdHash, email, username))
 
         # Get the existing delegate's ID
         delegate_id = cursor.execute("SELECT id FROM delegates WHERE username = ?", (username,)).fetchone()[0]
@@ -193,18 +193,18 @@ def closeDatabase(cursor, conn):
         print(f"Error occurred: {e}")
         return False
 
-def addHost(cursor, username, email, passwdHash):
+def addHost(cursor, username, passwdHash, dob, email="None"):
     try:
         # Add a new host to the hosts table
-        cursor.execute("INSERT INTO hosts (username, email, passwordHash) VALUES (?, ?, ?)", (username, email, passwdHash))
+        cursor.execute("INSERT INTO hosts (username, email, passwordHash, dob) VALUES (?, ?, ?, ?)", (username, email, passwdHash, dob))
         return True
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
     
-def editHost(cursor, username, passwdHash, email):
+def editHost(cursor, username, passwdHash, dob, email="None"):
     try:
         # Update password and email for the host in the hosts table
-        cursor.execute("UPDATE hosts SET passwordHash = ?, email = ? WHERE username = ?", (passwdHash, email, username))
+        cursor.execute("UPDATE hosts SET dob = ?, passwordHash = ?, email = ? WHERE username = ?", (dob, passwdHash, email, username))
         return True
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
