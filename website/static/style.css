@@ -3,9 +3,13 @@ h1 {
     color: white;
     font-weight: bold;
     font-weight:900;
-    background-color: #346edb;
+    background-color: #349bdb;
     padding: 15px;
     border-radius: 8px;
+}
+#field {
+  text-align: center;
+  font-weight: bold;
 }
 
 * {

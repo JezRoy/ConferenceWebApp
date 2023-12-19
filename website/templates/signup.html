@@ -12,22 +12,34 @@
     <form action="/signup" method="post">
         <div class="form-group">
             <div class="form-column">
-                <label for="username">Enter Username: </label>
+                <label id="field" for="username">Enter Username: </label>
                 <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
             <p></p>
-                <label for="password">Enter Password: </label>
+                <label id="field" for="password">Enter Password: </label>
                 <input class="form-control" name="password" placeholder="Password" type="password">
             <p></p>
-                <label for="confirmation">Confirm Password: </label>
+                <label id="field" for="confirmation">Confirm Password: </label>
                 <input class="form-control" name="confirmation" placeholder="Password (Again)" type="password">
             </div>
         
             <div class="form-column">
-            
+                <label id="field" for="email">Enter Email: </label>
+                <input autocomplete="off" class="form-control" name="email" placeholder="youremail@example.com" type="text">
+            <p></p>
+                <label id="field" for="dob">Enter Date of Birth: </label>
+                <input autocomplete="off" class="form-control" name="dob" type="date">
+            <p></p>
+                <div style="font-weight: bold;">
+                    Type of User<br>
+                </div>
+                <input type="radio" id="delegate" name="usertype" value="delegate">
+                <label for="delegate">Delegate</label><br>
+                <input type="radio" id="host" name="usertype" value="host">
+                <label for="host">Host</label><br>
             </div>
         </div>
         <p></p>
-        <button class="btn btn-primary" type="submit">Register</button>
+        <button style="text-align: center;" class="btn btn-primary" type="submit">Register</button>
     </form>
     </div>
 </div>
