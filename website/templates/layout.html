@@ -34,7 +34,7 @@
 					{% if session.username %}
 						<a class="nav-item nav-link" id="Home" href="/">Home</a>
 						{% if conferenceSigned %}
-							<a class="nav-item nav-link" id="GoToConference" href="{{ conferenceURL }}">Find a Conference</a>
+							<a class="nav-item nav-link" id="GoToNextConference" href="{{ conferenceURL }}">{{ conferenceName }}</a>
 						{% else %}
 							<a class="nav-item nav-link" id="FindConf" href="/find-conference">Find a Conference</a>
 						{% endif %}
