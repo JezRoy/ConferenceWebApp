@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 
 # Arguments to consider when rendering a template
 """
@@ -7,6 +7,7 @@ DEFAULTS:
     - error
     - info
     - warning
+    - success
 - {{ session.username }} defines whether a user is signed in.
 - {{ conferenceSigned }} determines if a user is signed up to a conference.
     if so, then present the option to see that conference.

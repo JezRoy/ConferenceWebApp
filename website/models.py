@@ -1,7 +1,7 @@
 import sqlite3
 
 # Create a SQLite database file
-conn = sqlite3.connect('ConferenceWebApp.db')
+conn = sqlite3.connect('website/ConferenceWebApp.db')
 cursor = conn.cursor()
 
 def initialise(cursor):
@@ -14,6 +14,7 @@ def initialise(cursor):
                 username TEXT NOT NULL,
                 email TEXT NOT NULL,
                 passwordHash TEXT NOT NULL
+                dob TEXT NOT NULL
                 )
                        ''')
         # Host users for conferences
@@ -23,6 +24,7 @@ def initialise(cursor):
                 username TEXT NOT NULL,
                 email TEXT NOT NULL,
                 passwordHash TEXT NOT NULL
+                dob TEXT NOT NULL
                 )
                        ''')
         # Conferences created
@@ -162,7 +164,7 @@ def findDelegate(cursor, username, fullSearch=False):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
-def delUser(cursor, username):
+def delDelegate(cursor, username):
     try:
         # Get the delegate ID
         delegate_id = cursor.execute("SELECT id FROM delegates WHERE username = ?", (username,)).fetchone()
