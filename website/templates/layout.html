@@ -32,11 +32,11 @@
 				<div class="collapse navbar-collapse" id="navbar">
 					<div class="navbar-nav">
 					{% if session.username %}
-						<a class="nav-item nav-link" id="signUp" href="/">Home</a>
+						<a class="nav-item nav-link" id="Home" href="/">Home</a>
 						{% if conferenceSigned %}
 						{% else %}
 						{% endif %}
-						<a class="nav-item nav-link" id="signUp" href="/logout">Log Out</a>
+						<a class="nav-item nav-link" id="logout" href="/logout">Log Out</a>
 					{% else %}
 						<a class="nav-item nav-link" id="login" href="/login">Login</a>
 						<a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
@@ -58,7 +58,8 @@
 			{% endwith %}
 			<!-- Everything else-->
 			<div class="container">
-				<h2>Conference Scheduler</h2>
+				<a class="nav-item nav-link" id="Home" href="/"><h2>Conference Scheduler</h2></a>
+				<br>
 				{% block main %}{% endblock %}
 			</div>
 		</main>
@@ -79,7 +80,7 @@
 		</script>
 		<footer style="font-size:small; color:#777; text-align: center">
 			<p>Created by Jeremy Roy.</p>
-			<p>Created using Python 3.8.8, HTML, CSS and Flask.</p>
+			<p>Created using Python 3.8.8, HTML, CSS, SQLite3 and Flask.</p>
 		</footer>
 	</body>
 </html>
