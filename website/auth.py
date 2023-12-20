@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-from functions import UpdateLog
+from .functions import UpdateLog
 from .models import *
+from . import cursor
 
 # Setting up a navigation blueprint for the flask application
 auth = Blueprint('auth', __name__)
@@ -18,7 +19,7 @@ def logout():
 def signUp():
     if request.method == 'POST':
         # Get information
-        validAdd = True
+        print("\n-post recieved-\n")
         username = request.form.get('username')
         password = request.form.get('password')
         confirm = request.form.get('confirmation')
@@ -55,8 +56,6 @@ def signUp():
                 else:
                     emailAddr = email
                 # Add user to database.
-                conn = sqlite3.connect('website/ConferenceWebApp.db')
-                cursor = conn.cursor()
                 if usertype == 'delegate': 
                     addDelegate(cursor, username, passwdHash, dob, emailAddr)
                 else:
