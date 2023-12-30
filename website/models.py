@@ -129,17 +129,18 @@ def editUser(cursor, username, passwdHash, dob, topicPreferences, email="None"):
 def findDelegate(cursor, username, fullSearch=False):
     try:
         # Find delegate's basic information (ID, Username)
-        cursor.execute("SELECT id, username, email FROM delegates WHERE username = ?", (username,))
+        cursor.execute("SELECT id, username, passwordHash, email FROM delegates WHERE username = ?", (username,))
         delegate = cursor.fetchone()
 
         if delegate:
             delegate_id = delegate[0]
             delegate_username = delegate[1]
-            delegate_email = delegate[2]
+            delegate_passwdHash = delegate[2]
+            delegate_email = delegate[3]
 
             if not fullSearch:
                 # Return basic information (Username) if fullSearch is False
-                return delegate_username, delegate_email
+                return True, [delegate_username, delegate_passwdHash, delegate_email]
             else:
                 # Fetch delegate's tastes of preferences along with associated conferences
                 cursor.execute("""
@@ -154,11 +155,12 @@ def findDelegate(cursor, username, fullSearch=False):
                 # Prepare and return all information if fullSearch is True
                 delegate_info = {
                     "Username": delegate_username,
+                    "passwordHash": delegate_passwdHash,
                     "email": delegate_email,
                     "Tastes_Conferences": tastes_conferences
                     # Add more information if needed
                 }
-                return delegate_info
+                return True, delegate_info
         else:
             return False, "Delegate not found"
     except sqlite3.Error as e:
@@ -212,8 +214,8 @@ def editHost(cursor, username, passwdHash, dob, email="None"):
 def findHost(cursor, username):
     try:
         # Find host's ID and username in the hosts table based on the username
-        cursor.execute("SELECT id, username FROM hosts WHERE username = ?", (username,))
-        host = cursor.fetchone()
+        cursor.execute("SELECT id, username, passwordHash FROM hosts WHERE username = ?", (username,))
+        host = cursor.fetchone()[1:]
         return True, host if host else False, "Host not found"
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
