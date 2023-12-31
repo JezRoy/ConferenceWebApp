@@ -402,4 +402,5 @@ def removeTopicFromTastes(cursor, topic_name):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
-print(findDelegate(cursor, "test"))
+#print(initialise(cursor))
+#print(findDelegate(cursor, "test"))

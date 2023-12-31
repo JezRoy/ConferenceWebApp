@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request
+from . import cursor, conn
 
 # Arguments to consider when rendering a template
 """
