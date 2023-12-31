@@ -13,7 +13,7 @@ def initialise(cursor):
                 id INTEGER PRIMARY KEY,
                 username TEXT NOT NULL,
                 email TEXT NOT NULL,
-                passwordHash TEXT NOT NULL
+                passwordHash TEXT NOT NULL,
                 dob TEXT NOT NULL
                 )
                        ''')
@@ -23,7 +23,7 @@ def initialise(cursor):
                 id INTEGER PRIMARY KEY,
                 username TEXT NOT NULL,
                 email TEXT NOT NULL,
-                passwordHash TEXT NOT NULL
+                passwordHash TEXT NOT NULL,
                 dob TEXT NOT NULL
                 )
                        ''')
@@ -82,15 +82,15 @@ def initialise(cursor):
                 talkName TEXT NOT NULL,
                 speakerID INTEGER,
                 confID INTEGER,
-                topicID, INTEGER
+                topicID INTEGER,
                 FOREIGN KEY (speakerID) REFERENCES speakers(id),
-                FOREIGN KEY (confID) REFERENCES conferences(id)
+                FOREIGN KEY (confID) REFERENCES conferences(id),
                 FOREIGN KEY (topicID) REFERENCES tastes(id)
                 )
                        ''')
         return True
     except sqlite3.Error as e:
-        return False, f"Error adding user: {e}"
+        return False, f"Error initialising table: {e}"
 
 def addDelegate(cursor, username, passwdHash, dob, email="None"):
     # Adding a user to the database
@@ -402,3 +402,4 @@ def removeTopicFromTastes(cursor, topic_name):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
+print(findDelegate(cursor, "test"))
