@@ -215,10 +215,13 @@ def findHost(cursor, username=None, id=None):
         if id == None and username != None:
             # Find host's ID and username in the hosts table based on the username
             cursor.execute("SELECT id, username, passwordHash, email FROM hosts WHERE username = ?", (username,))
-            finder = cursor.fetchone()[1:]
+            finder = cursor.fetchone()
         else:
             cursor.execute("SELECT id, username, passwordHash, email FROM hosts WHERE id = ?", (id,))
             finder = cursor.fetchone()
+        if finder == None:
+            print(False, "Host not found")
+            return False, "Host not found"
         host = [finder[1], finder[2], finder[3], finder[0]]
         return True, host if host else False, "Host not found"
     except sqlite3.Error as e:

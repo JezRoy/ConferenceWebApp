@@ -119,6 +119,8 @@ def signUp():
                         flash("Please re-enter your password.", category='error')
                     elif len(dob) == 0:
                         flash("Please enter a date of birth.", category='error')
+                    elif len(email) == 0 or "@" not in email:
+                        flash("Please enter a valid email.", category='error')
                     else:
                         passwdHash = generate_password_hash(password, method="sha256")
                         if check_password_hash(passwdHash, confirm) == False:
