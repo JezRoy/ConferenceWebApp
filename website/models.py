@@ -32,7 +32,6 @@ def initialise(cursor):
             CREATE TABLE IF NOT EXISTS conferences (
                 id INTEGER PRIMARY KEY,
                 confName TEXT NOT NULL,
-                hostID INTEGER,
                 paperSubDeadline DATE,
                 delegateSignUpDeadline DATE,
                 confStart DATE,
@@ -126,11 +125,15 @@ def editUser(cursor, username, passwdHash, dob, topicPreferences, email="None"):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
-def findDelegate(cursor, username, fullSearch=False):
-    try:
-        # Find delegate's basic information (ID, Username)
-        cursor.execute("SELECT id, username, passwordHash, email FROM delegates WHERE username = ?", (username,))
-        delegate = cursor.fetchone()
+def findDelegate(cursor, username=None, id=None, fullSearch=False):
+    try: # One of 'username' or 'id' should be used
+        if id == None and username != None:
+            # Find delegate's basic information (ID, Username)
+            cursor.execute("SELECT id, username, passwordHash, email FROM delegates WHERE username = ?", (username,))
+            delegate = cursor.fetchone()
+        else:
+            cursor.execute("SELECT id, username, passwordHash, email FROM delegates WHERE id = ?", (id,))
+            delegate = cursor.fetchone()
 
         if delegate:
             delegate_id = delegate[0]
@@ -140,7 +143,7 @@ def findDelegate(cursor, username, fullSearch=False):
 
             if not fullSearch:
                 # Return basic information (Username) if fullSearch is False
-                return True, [delegate_username, delegate_passwdHash, delegate_email]
+                return True, [delegate_username, delegate_passwdHash, delegate_email, delegate_id]
             else:
                 # Fetch delegate's tastes of preferences along with associated conferences
                 cursor.execute("""
@@ -154,6 +157,7 @@ def findDelegate(cursor, username, fullSearch=False):
 
                 # Prepare and return all information if fullSearch is True
                 delegate_info = {
+                    "id": delegate_id,
                     "Username": delegate_username,
                     "passwordHash": delegate_passwdHash,
                     "email": delegate_email,
@@ -166,22 +170,16 @@ def findDelegate(cursor, username, fullSearch=False):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
-def delDelegate(cursor, username):
+def delDelegate(cursor, id):
     try:
-        # Get the delegate ID
-        delegate_id = cursor.execute("SELECT id FROM delegates WHERE username = ?", (username,)).fetchone()
+        delegate_id = delegate_id[0]
 
-        if delegate_id:
-            delegate_id = delegate_id[0]
+        # Delete user's topic preferences
+        cursor.execute("DELETE FROM delLikes WHERE delegID = ?", (id,))
 
-            # Delete user's topic preferences
-            cursor.execute("DELETE FROM delLikes WHERE delegID = ?", (delegate_id,))
-
-            # Delete the user from delegates table
-            cursor.execute("DELETE FROM delegates WHERE username = ?", (username,))
-            return True
-        else:
-            return False
+        # Delete the user from delegates table
+        cursor.execute("DELETE FROM delegates WHERE id = ?", (id,))
+        return True
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
@@ -211,19 +209,25 @@ def editHost(cursor, username, passwdHash, dob, email="None"):
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
 
-def findHost(cursor, username):
+def findHost(cursor, username=None, id=None):
     try:
-        # Find host's ID and username in the hosts table based on the username
-        cursor.execute("SELECT id, username, passwordHash FROM hosts WHERE username = ?", (username,))
-        host = cursor.fetchone()[1:]
+        host = None
+        if id == None and username != None:
+            # Find host's ID and username in the hosts table based on the username
+            cursor.execute("SELECT id, username, passwordHash, email FROM hosts WHERE username = ?", (username,))
+            finder = cursor.fetchone()[1:]
+        else:
+            cursor.execute("SELECT id, username, passwordHash, email FROM hosts WHERE id = ?", (id,))
+            finder = cursor.fetchone()
+        host = [finder[1], finder[2], finder[3], finder[0]]
         return True, host if host else False, "Host not found"
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
     
-def delHost(cursor, username):
+def delHost(cursor, id):
     try:
         # Delete the host from the hosts table based on the username
-        cursor.execute("DELETE FROM hosts WHERE username = ?", (username,))
+        cursor.execute("DELETE FROM hosts WHERE id = ?", (id,))
         return True
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
@@ -232,9 +236,13 @@ def addConference(cursor, name, hostID, paperSubDeadline, delegateSignUpDeadline
     try:
         # Add a new conference to the conferences table
         cursor.execute("""
-            INSERT INTO conferences (name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd)
+            INSERT INTO conferences (name, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd)
             VALUES (?, ?, ?, ?, ?, ?)
-        """, (name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd))
+        """, (name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd,))
+        # Ensures the new conference is assigned to the correct host
+        cursor.execute("""
+            INSERT INTO hostConf (confID, hostID) VALUES (?, ?)
+        """, (cursor.lastrowid, hostID,))
         return True
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
@@ -251,11 +259,11 @@ def editConference(cursor, conference_id, name, hostID, paperSubDeadline, delega
     except sqlite3.Error as e:
         return False, f"Error occurred: {e}"
     
-def findConference(cursor, conference_name, fullSearch=True):
+def findConference(cursor, conference_id, fullSearch=True):
     try:
         if not fullSearch:
             # Less detailed search
-            cursor.execute("SELECT * FROM conferences WHERE confName = ?", (conference_name,))
+            cursor.execute("SELECT * FROM conferences WHERE id = ?", (conference_id,))
             conference = cursor.fetchone()
             return True, conference if conference else False, "Conference not found"
         else:
@@ -269,9 +277,9 @@ def findConference(cursor, conference_name, fullSearch=True):
                 LEFT JOIN speakers ON talks.speakerID = speakers.id
                 LEFT JOIN delLikes ON conferences.id = delLikes.confID
                 LEFT JOIN delegates ON delLikes.delegID = delegates.id
-                WHERE conferences.name = ?
+                WHERE conferences.id = ?
                 GROUP BY conferences.id
-            """, (conference_name,))
+            """, (conference_id,))
             conference = cursor.fetchone()
 
             if conference:
