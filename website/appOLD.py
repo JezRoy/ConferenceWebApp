@@ -9,7 +9,6 @@
 
 import os
 from flask import Flask, flash, redirect, render_template, request, session, url_for
-from flask_session import Session
 ## from flask_sqlalchemy import SQLAlchemy
 ## from sqlalchemy.orm import DeclarativeBase
 from tempfile import mkdtemp
@@ -128,3 +127,23 @@ def logout():
     return redirect("/")
 
 conn.close()
+
+def load_user(id):
+        # Now established that any username will ever exist in both host and delegate database tables
+        # Try looking in delegate table
+        type = ""
+        userdata = None
+        finder = findDelegate(cursor, id=id)
+        if finder[0] == True:
+            userdata = finder[1]
+            type = "delegate"
+        else:
+            # Try looking in host table if not in delegate
+            finder = findHost(cursor, id=id)
+            if finder[0] == True:
+                userdata = finder[1]
+                type = "host"
+        print(f"-------------\n{userdata}\n-------------\n")
+        if userdata != None:
+            user = User(userdata, userdata[3], type)
+            return user

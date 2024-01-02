@@ -31,13 +31,12 @@
 				</button>
 				<div class="collapse navbar-collapse" id="navbar">
 					<div class="navbar-nav">
-					{% if session.username %}
+					{% if user.is_authenticated %}
 						<a class="nav-item nav-link" id="Home" href="/">Home</a>
 						{% if conferenceSigned %}
 							<a class="nav-item nav-link" id="GoToNextConference" href="{{ conferenceURL }}">{{ conferenceName }}</a>
-						{% else %}
-							<a class="nav-item nav-link" id="FindConf" href="/find-conference">Find a Conference</a>
 						{% endif %}
+						<a class="nav-item nav-link" id="FindConf" href="/find-conference">Find a Conference</a>
 						<a class="nav-item nav-link" id="logout" href="/logout">Log Out</a>
 					{% else %}
 						<a class="nav-item nav-link" id="login" href="/login">Login</a>
@@ -92,6 +91,7 @@
 			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
 			crossorigin="anonymous">
 		</script>
+		<br><br><br>
 		<footer style="font-size:small; color:#777; text-align: center">
 			<p>Created by Jeremy Roy.</p>
 			<p>Created using Python 3.8.8, HTML, CSS, SQLite3 and Flask.</p>

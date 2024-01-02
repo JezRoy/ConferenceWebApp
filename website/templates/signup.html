@@ -12,19 +12,36 @@
     <form FIX THIS method="POST">
         <div class="form-group">
             <div class="form-column">
-                <label id="field" for="username">*Enter Username: </label>
-                <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
-            <p></p>
-                <label id="field" for="password">*Enter Password: </label>
-                <input class="form-control" name="password" placeholder="Password" type="password">
-            <p></p>
-                <label id="field" for="confirmation">*Confirm Password: </label>
-                <input class="form-control" name="confirmation" placeholder="Password (Again)" type="password">
+                <table>
+                    <tr>
+                        <td>
+                            <label id="field" for="username">*Enter Username: </label>
+                            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+                        </td>
+                        <td>
+                            <label id="field" for="email">*Enter Email: </label>
+                            <input autocomplete="off" class="form-control" name="email" placeholder="youremail@example.com" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label id="field" for="password">*Enter Password: </label>
+                            <input class="form-control" name="password" placeholder="Password" type="password">
+                        </td>
+                        <td>
+                            <label id="field" for="confirmation">*Confirm Password: </label>
+                            <input class="form-control" name="confirmation" placeholder="Password (Again)" type="password">
+                        </td>
+                    </tr>
+                </table>
             </div>
-        
             <div class="form-column">
-                <label id="field" for="email">*Enter Email: </label>
-                <input autocomplete="off" class="form-control" name="email" placeholder="youremail@example.com" type="text">
+            <p></p>
+                <label id="field" for="first_name">*First Name: </label>
+                <input class="form-control" name="first_name" placeholder="John" type="text">
+            <p></p>
+                <label id="field" for="last_name">*Last Name: </label>
+                <input class="form-control" name="last_name" placeholder="Smith" type="text">
             <p></p>
                 <label id="field" for="dob">*Enter Date of Birth: </label>
                 <input autocomplete="off" class="form-control" name="dob" type="date">

@@ -1,417 +1,164 @@
-import sqlite3
+from . import db
+from flask_login import UserMixin
 
-# Create a SQLite database file
-conn = sqlite3.connect('website/ConferenceWebApp.db')
-cursor = conn.cursor()
+limit = 150 # Max character storage
+"""NOTE!!
+db.Date stored as '2023-12-31'
+db.Time stored as '09:00:00'
+"""
 
-def initialise(cursor):
-    """ Initialise the entire database. """
-    try:
-        # Delegates
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS delegates (
-                id INTEGER PRIMARY KEY,
-                username TEXT NOT NULL,
-                email TEXT NOT NULL,
-                passwordHash TEXT NOT NULL,
-                dob TEXT NOT NULL
-                )
-                       ''')
-        # Host users for conferences
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS hosts (
-                id INTEGER PRIMARY KEY,
-                username TEXT NOT NULL,
-                email TEXT NOT NULL,
-                passwordHash TEXT NOT NULL,
-                dob TEXT NOT NULL
-                )
-                       ''')
-        # Conferences created
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS conferences (
-                id INTEGER PRIMARY KEY,
-                confName TEXT NOT NULL,
-                paperSubDeadline DATE,
-                delegateSignUpDeadline DATE,
-                confStart DATE,
-                confEnd DATE
-                )
-                       ''')
-        # Speakers for the conferences
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS speakers (
-                id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
-                delegateID INTEGER,
-                FOREIGN KEY (delegateID) REFERENCES delegates(id)
-                )
-                       ''')
-        # Table for tastes and prefernces
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS tastes (
-                id INTEGER PRIMARY KEY,
-                topic TEXT NOT NULL,
-                confID INTEGER,
-                FOREIGN KEY (confID) REFERENCES conferences(id)
-                )
-                       ''')
-        # Delegates like certain topics
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS delLikes (
-                delegID INTEGER,
-                topicID INTEGER,
-                FOREIGN KEY (delegID) REFERENCES delegates(id),
-                FOREIGN KEY (topicID) REFERENCES tastes(id)
-                )
-                       ''')
-        # Hosts direct a conference
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS hostConf (
-                confID INTEGER,
-                hostID INTEGER,
-                FOREIGN KEY (confID) REFERENCES conferences(id),
-                FOREIGN KEY (hostID) REFERENCES hosts(id)
-                )
-                       ''') 
-        # Talks being given at conferences
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS talks (
-                talkID INTEGER PRIMARY KEY,
-                talkName TEXT NOT NULL,
-                speakerID INTEGER,
-                confID INTEGER,
-                topicID INTEGER,
-                FOREIGN KEY (speakerID) REFERENCES speakers(id),
-                FOREIGN KEY (confID) REFERENCES conferences(id),
-                FOREIGN KEY (topicID) REFERENCES tastes(id)
-                )
-                       ''')
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error initialising table: {e}"
+class User(db.Model, UserMixin): # Flash SQLAlchemy database
+    # Holds all the user information for the system
+    id = db.Column("id", db.Integer, primary_key=True)
+    username = db.Column(db.String(limit), unique=True)
+    passwordHash = db.Column(db.String(limit))
+    email = db.Column(db.String(limit), unique=True)
+    firstName = db.Column(db.String(limit))
+    lastName = db.Column(db.String(limit), nullable=True)
+    dob = db.Column(db.Date, nullable=True)
+    type = db.Column(db.String(8)) # Either a host XOR a delegate
+    # Will be blank for HOSTS
+    def __init__(self, username, passwordHash, email, firstName, lastName, dob, type):
+        self.username = username
+        self.passwordHash = passwordHash
+        self.email = email
+        self.firstName = firstName
+        self.lastName = lastName
+        self.dob = dob
+        self.type = type
 
-def addDelegate(cursor, username, passwdHash, dob, email="None"):
-    # Adding a user to the database
-    try:
-        cursor.execute("INSERT INTO delegates (username, email, passwordHash, dob) VALUES (?, ?, ?, ?)", (username, email, passwdHash, dob))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error adding user: {e}"
-
-def editUser(cursor, username, passwdHash, dob, topicPreferences, email="None"):
-    try:
-        # Update password for the user
-        cursor.execute("UPDATE delegates SET dob = ?, passwordHash = ?, email = ? WHERE username = ?", (dob, passwdHash, email, username))
-
-        # Get the existing delegate's ID
-        delegate_id = cursor.execute("SELECT id FROM delegates WHERE username = ?", (username,)).fetchone()[0]
-
-        # Clear existing topic preferences for the user in delLikes table
-        cursor.execute("DELETE FROM delLikes WHERE delegID = ?", (delegate_id,))
-
-        # Insert new topic preferences for the user in delLikes table
-        taste_ids = []
-        for topic in topicPreferences:
-            # Get the ID of the topic from tastes table
-            taste_id = cursor.execute("SELECT id FROM tastes WHERE topic = ?", (topic,)).fetchone()
-            if taste_id:
-                taste_ids.append(taste_id[0])
-
-        for taste_id in taste_ids:
-            cursor.execute("INSERT INTO delLikes (delegID, topicID) VALUES (?, ?)", (delegate_id, taste_id))
-
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-
-def findDelegate(cursor, username=None, id=None, fullSearch=False):
-    try: # One of 'username' or 'id' should be used
-        if id == None and username != None:
-            # Find delegate's basic information (ID, Username)
-            cursor.execute("SELECT id, username, passwordHash, email FROM delegates WHERE username = ?", (username,))
-            delegate = cursor.fetchone()
-        else:
-            cursor.execute("SELECT id, username, passwordHash, email FROM delegates WHERE id = ?", (id,))
-            delegate = cursor.fetchone()
-
-        if delegate:
-            delegate_id = delegate[0]
-            delegate_username = delegate[1]
-            delegate_passwdHash = delegate[2]
-            delegate_email = delegate[3]
-
-            if not fullSearch:
-                # Return basic information (Username) if fullSearch is False
-                return True, [delegate_username, delegate_passwdHash, delegate_email, delegate_id]
-            else:
-                # Fetch delegate's tastes of preferences along with associated conferences
-                cursor.execute("""
-                    SELECT tastes.topic, conferences.name
-                    FROM delLikes
-                    INNER JOIN tastes ON delLikes.topicID = tastes.id
-                    INNER JOIN conferences ON delLikes.confID = conferences.id
-                    WHERE delLikes.delegID = ?
-                """, (delegate_id,))
-                tastes_conferences = cursor.fetchall()
-
-                # Prepare and return all information if fullSearch is True
-                delegate_info = {
-                    "id": delegate_id,
-                    "Username": delegate_username,
-                    "passwordHash": delegate_passwdHash,
-                    "email": delegate_email,
-                    "Tastes_Conferences": tastes_conferences
-                    # Add more information if needed
-                }
-                return True, delegate_info
-        else:
-            return False, "Delegate not found"
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-
-def delDelegate(cursor, id):
-    try:
-        delegate_id = delegate_id[0]
-
-        # Delete user's topic preferences
-        cursor.execute("DELETE FROM delLikes WHERE delegID = ?", (id,))
-
-        # Delete the user from delegates table
-        cursor.execute("DELETE FROM delegates WHERE id = ?", (id,))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-
-def closeDatabase(cursor, conn):
-    # Close the cursor and connection
-    try:
-        cursor.close()
-        conn.close()
-        return True
-    except sqlite3.Error as e:
-        print(f"Error occurred: {e}")
-        return False
-
-def addHost(cursor, username, passwdHash, dob, email="None"):
-    try:
-        # Add a new host to the hosts table
-        cursor.execute("INSERT INTO hosts (username, email, passwordHash, dob) VALUES (?, ?, ?, ?)", (username, email, passwdHash, dob))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
+class ConfDeleg(db.Model): # When users sign up to a conference
+    confId = db.Column(db.Integer, db.ForeignKey('conferences.id'), primary_key=True)
+    delegId= db.Column(db.Integer, db.ForeignKey('user.id')) # Foreign key to user table - given they are a DELEGATE
+    def __init__(self, confID, delegID):
+        self.confID = confID
+        self.delegID = delegID
+        
     
-def editHost(cursor, username, passwdHash, dob, email="None"):
-    try:
-        # Update password and email for the host in the hosts table
-        cursor.execute("UPDATE hosts SET dob = ?, passwordHash = ?, email = ? WHERE username = ?", (dob, passwdHash, email, username))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-
-def findHost(cursor, username=None, id=None):
-    try:
-        host = None
-        if id == None and username != None:
-            # Find host's ID and username in the hosts table based on the username
-            cursor.execute("SELECT id, username, passwordHash, email FROM hosts WHERE username = ?", (username,))
-            finder = cursor.fetchone()
-        else:
-            cursor.execute("SELECT id, username, passwordHash, email FROM hosts WHERE id = ?", (id,))
-            finder = cursor.fetchone()
-        if finder == None:
-            print(False, "Host not found")
-            return False, "Host not found"
-        host = [finder[1], finder[2], finder[3], finder[0]]
-        return True, host if host else False, "Host not found"
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
+class Conferences(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    confName = db.Column(db.String(limit))
+    confURL = db.Column(db.String(limit * 2), unique=True)
+    paperSubDeadline = db.Column(db.Date) # The following are measured as per date times and days
+    delegSignUpDeadline = db.Column(db.Date)
+    confStart = db.Column(db.Date)
+    confEnd = db.Column(db.Date)
+    confLength = db.Column(db.Integer) # To be calculated by the software
+    dayStart = db.Column(db.Time) # What time each day starts
+    dayEnd = db.Column(db.Time)
+    dayDuration = db.Column(db.Integer) # Number of hours - To be calculated by the software
+    numSessions = db.Column(db.Integer) # Number of parallel sessions during each day - though the system can override this if it finds a better solution
+    def __init__(self, confName, confURL, paperSubDeadline, delegSignUpDeadline, confStart, confEnd, confLength, dayStart, dayEnd, dayDuration, numSessions):
+        self.confName = confName
+        self.confURL = confURL
+        self.paperSubDeadline = paperSubDeadline
+        self.delegSignUpDeadline = delegSignUpDeadline
+        self.confStart = confStart
+        self.confEnd = confEnd
+        self.confLength = confLength
+        self.dayStart = dayStart
+        self.dayEnd = dayEnd
+        self.dayDuration = dayDuration
+        self.numSessions = numSessions
     
-def delHost(cursor, id):
-    try:
-        # Delete the host from the hosts table based on the username
-        cursor.execute("DELETE FROM hosts WHERE id = ?", (id,))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
+class ConfDaySessions(db.Model):
+    """Note:
+    - Stores talks, breaks AND lunches for all conferences
+    - dayNum is relative to dayDuration
+    """
+    # Accomodate for this in the 'Create Conference' page
+    timingId = db.Column(db.Integer, primary_key=True)
+    talkId = db.Column(db.Integer, db.ForeignKey('talks.id')) # Foreign key from talk table
+    slotStart = db.Column(db.Time) # In hundred-hours like '0900' or '1734'
+    slotEnd = db.Column(db.Time)
+    dayNum = db.Column(db.Integer) # Relative to the dayDuration column in Conferences table
+    description = db.Column(db.String(limit * 2))
+    confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
+    def __init__(self, timingId, talkId, slotStart, slotEnd, dayNum, description, confId):
+        self.timingId = timingId
+        self.talkId = talkId
+        self.slotStart = slotStart
+        self.slotEnd = slotEnd
+        self.dayNum = dayNum
+        self.description = description
+        self.confId = confId
 
-def addConference(cursor, name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd):
-    try:
-        # Add a new conference to the conferences table
-        cursor.execute("""
-            INSERT INTO conferences (name, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd,))
-        # Ensures the new conference is assigned to the correct host
-        cursor.execute("""
-            INSERT INTO hostConf (confID, hostID) VALUES (?, ?)
-        """, (cursor.lastrowid, hostID,))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
+class ConfHosts(db.Model):
+    """NOTE:
+    - Hosts create conferences first before this table is accessed.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
+    hostId = db.Column(db.Integer, db.ForeignKey('user.id')) # Foreign key from user table - given they are a HOST
+    def __init__(self, confId, hostId):
+        self.confId = confId
+        self.hostId = hostId
 
-def editConference(cursor, conference_id, name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd):
-    try:
-        # Update conference details in the conferences table based on the conference ID
-        cursor.execute("""
-            UPDATE conferences 
-            SET name = ?, hostID = ?, paperSubDeadline = ?, delegateSignUpDeadline = ?, confStart = ?, confEnd = ?
-            WHERE id = ?
-        """, (name, hostID, paperSubDeadline, delegateSignUpDeadline, confStart, confEnd, conference_id))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-    
-def findConference(cursor, conference_id, fullSearch=True):
-    try:
-        if not fullSearch:
-            # Less detailed search
-            cursor.execute("SELECT * FROM conferences WHERE id = ?", (conference_id,))
-            conference = cursor.fetchone()
-            return True, conference if conference else False, "Conference not found"
-        else:
-            # More detailed search including talks, speakers, topics, and delegate count
-            cursor.execute("""
-                SELECT conferences.id, conferences.name, conferences.hostID, conferences.paperSubDeadline, 
-                       conferences.delegateSignUpDeadline, conferences.confStart, conferences.confEnd,
-                       COUNT(DISTINCT delegates.id) as delegateCount
-                FROM conferences
-                LEFT JOIN talks ON conferences.id = talks.confID
-                LEFT JOIN speakers ON talks.speakerID = speakers.id
-                LEFT JOIN delLikes ON conferences.id = delLikes.confID
-                LEFT JOIN delegates ON delLikes.delegID = delegates.id
-                WHERE conferences.id = ?
-                GROUP BY conferences.id
-            """, (conference_id,))
-            conference = cursor.fetchone()
+class Talks(db.Model):
+    """Note:
+    This does not account for breaks, and lunches
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    talkName = db.Column(db.String(limit))
+    speakerId = db.Column(db.Integer, db.ForeignKey('speakers.id')) # Foreign key from Speakers table
+    confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
+    topicId = db.Column(db.Integer, db.ForeignKey('topics.id')) # Foreign key from Topic table
+    def __init__(self, talkName, speakerId, confId, topicId):
+        self.talkName = talkName
+        self.speakerId = speakerId
+        self.confId = confId
+        self.topicId = topicId
 
-            if conference:
-                # Fetching detailed information about talks, speakers, and topics associated with the conference
-                cursor.execute("""
-                    SELECT talks.talkName, speakers.name AS speaker, GROUP_CONCAT(tastes.topic) AS topics
-                    FROM talks
-                    LEFT JOIN speakers ON talks.speakerID = speakers.id
-                    LEFT JOIN tastes ON tastes.confID = talks.confID
-                    WHERE talks.confID = ?
-                    GROUP BY talks.talkName
-                """, (conference[0],))
-                talks = cursor.fetchall()
+class DelegTalks(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    delegId = db.Column(db.Integer, db.ForeignKey('user.id')) # Given they are a DELEGATE
+    talkId = db.Column(db.Integer, db.ForeignKey('talks.id'))
+    prefLvl = db.Column(db.Integer) # Preference level of going to a talk
+    def __init__(self, delegId, talkId, prefLvl):
+        self.delegId = delegId
+        self.talkId = talkId
+        self.prefLvl = prefLvl
 
-                # Assemble detailed conference information
-                detailed_info = {
-                    "Conference_ID": conference[0],
-                    "Conference_Name": conference[1],
-                    "Host_ID": conference[2],
-                    "Paper_Sub_Deadline": conference[3],
-                    "Delegate_SignUp_Deadline": conference[4],
-                    "Conf_Start": conference[5],
-                    "Conf_End": conference[6],
-                    "Delegate_Count": conference[7],
-                    "Talks_Info": talks  # Include talks information in the detailed search
-                }
-                return True, detailed_info
-            else:
-                return False, "Conference not found"
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
+class Speakers(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    delegId = db.Column(db.Integer, db.ForeignKey('user.id')) # Foreign key from the user table - given they are a DELEGATE
+    # Hosts are not speakers, since they do not participate in the conference.
+    # Delegates will want to participate in the conference but still be speakers.
+    def __init__(self, delegId):
+        self.delegId = delegId
 
-def delConference(cursor, conference_id):
-    try:
-        # Delete the conference from the conferences table based on the conference ID
-        cursor.execute("DELETE FROM conferences WHERE id = ?", (conference_id,))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-    
-def addSpeaker(cursor, name, delegateID):
-    try:
-        # Add a new speaker to the speakers table and associate with a delegate
-        cursor.execute("INSERT INTO speakers (name, delegateID) VALUES (?, ?)", (name, delegateID))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
+class Topics(db.Model):
+    """Note:
+    A single topic can be associated with multiple talks 
+    from multiple conferences"""
+    id = db.Column(db.Integer, primary_key=True)
+    topic = db.Column(db.String(limit))
 
-def addTalk(cursor, talkName, speakerID, confID, topicID):
-    try:
-        # Add a new talk to the talks table, associating it with a speaker, conference, and topic
-        cursor.execute("INSERT INTO talks (talkName, speakerID, confID, topicID) VALUES (?, ?, ?, ?)", (talkName, speakerID, confID, topicID))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
+class Topicsconf(db.Model):
+    id = db.Column(db.Integer, primary_key=True) # Uniquely identify each conference topic (even if some share the same name)
+    topicId = db.Column(db.Integer, db.ForeignKey('topics.id')) # Foreign key from topic table
+    confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
+    def __init__(self, topic):
+        self.topic = topic
 
-def findTalk(cursor, conference_name):
-    try:
-        # Search for talks based on a conference name
-        cursor.execute("""
-            SELECT talks.talkName, speakers.name AS speaker, tastes.topic
-            FROM talks
-            LEFT JOIN speakers ON talks.speakerID = speakers.id
-            LEFT JOIN tastes ON talks.topicID = tastes.id
-            INNER JOIN conferences ON talks.confID = conferences.id
-            WHERE conferences.name = ?
-        """, (conference_name,))
-        found_talks = cursor.fetchall()
-        return True, found_talks
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
+class DelTopics(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    delegId = db.Column(db.Integer, db.ForeignKey('user.id')) # Foreign key from user table - given they are a 'delegate'
+    topicId = db.Column(db.Integer, db.ForeignKey('topicsconf.id')) # Foreign key from Topic table
+    def __init__(self, delegId, topicId):
+        self.delegId = delegId
+        self.topicId = topicId
 
-def noInterestedInTalk(cursor, talk_id):
-    try:
-        cursor.execute("""
-            SELECT COUNT(delegID) AS delegateCount
-            FROM delLikes
-            WHERE topicID = (SELECT topicID FROM talks WHERE talkID = ?)
-        """, (talk_id,))
-        delegate_count = cursor.fetchone()
-        return True, delegate_count[0] if delegate_count else True, 0
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-
-def noInterestedInTopic(cursor, topic_name):
-    try:
-        cursor.execute("""
-            SELECT COUNT(delegID) AS delegateCount
-            FROM delLikes
-            WHERE topicID = (SELECT id FROM tastes WHERE topic = ?)
-        """, (topic_name,))
-        delegate_count = cursor.fetchone()
-        return True, delegate_count[0] if delegate_count else True, 0
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-
-def topicsRelatedToConference(cursor, conference_name):
-    try:
-        # Retrieve topics related to a specific conference
-        cursor.execute("""
-            SELECT tastes.topic
-            FROM tastes
-            INNER JOIN talks ON tastes.id = talks.topicID
-            INNER JOIN conferences ON talks.confID = conferences.id
-            WHERE conferences.name = ?
-        """, (conference_name,))
-        related_topics = cursor.fetchall()
-        return True, [topic[0] for topic in related_topics] if related_topics else True, []
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-
-def addTopicToConference(cursor, topic_name, conference_name):
-    try:
-        cursor.execute("""
-            INSERT INTO tastes (topic, confID)
-            SELECT ?, conferences.id
-            FROM conferences
-            WHERE conferences.name = ?
-        """, (topic_name, conference_name))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-
-def removeTopicFromTastes(cursor, topic_name):
-    try:
-        cursor.execute("DELETE FROM tastes WHERE topic = ?", (topic_name,))
-        return True
-    except sqlite3.Error as e:
-        return False, f"Error occurred: {e}"
-
-#print(initialise(cursor))
-#print(findDelegate(cursor, "test"))
+class Schedules(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
+    file = db.Column(db.String(limit), unique=True)
+    dayOfConf = db.Column(db.Integer) # Should a conference have multiple days, there will be multiple schedules for each day of the conference
+    score = db.Column(db.Integer) # Delegate satisfaction 
+    paraSesh = db.Column(db.Integer) # Number of parallel sessions during each day in the conference
+    def __init__(self, confId, file, dayOfConf, score, paraSesh):
+        self.confId = confId
+        self.file = file
+        self.dayOfConf = dayOfConf
+        self.score = score
+        self.paraSesh = paraSesh

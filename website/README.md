@@ -16,6 +16,23 @@ This project makes use of a number of Python modules, as listed in the `install.
 
 Dev notes (REMOVE LATER):
 
+Hosts:
+
+* Create a conference,
+* Fill in details,
+* Add talks / papers to offer,
+* Assign topics to talks,
+* Assign speakers to talks
+* Publish and manage Conference,
+
+Delegates:
+
+* Create an account,
+* Find conference,
+* Select talks (based on topics)
+* Select preference level (if feesible to implement)
+* Check Schedule
+
 HTML Error codes: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#2xx_success
 
 Setup virtual environment:

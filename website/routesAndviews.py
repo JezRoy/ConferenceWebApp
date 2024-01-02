@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request, flash
-from . import cursor, conn
 from flask_login import login_required, current_user
 
 # Arguments to consider when rendering a template
@@ -25,7 +24,7 @@ views = Blueprint('views', __name__)
 @views.route('/') # The main page of the website
 @login_required
 def home():
-    return render_template("index.html")
+    return render_template("index.html", user=current_user)
 
 """ TODO 
     create: 
