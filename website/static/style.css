@@ -22,26 +22,11 @@ h1 {
     margin: 125px;
 }
 
-#circle {
-    width: 100px;
-    height: 100px;
-    background-color: #e74c3c;
-    border-radius: 50%; /* Makes the element a circle */
-  }
-
-  #square {
-    width: 100px;
-    height: 100px;
-    background-color: #005eff;
-  }
-
-  #triangle {
-    width: 0;
-    height: 0;
-    border-left: 50px solid transparent;
-    border-right: 50px solid transparent;
-    border-bottom: 100px solid #3498db; /* Triangle color */
-  }
+#labelled {
+  text-align: center;
+  font-size: 12px;
+  color: #bcbcbc;
+}
 
 #submit {
   display: flex;

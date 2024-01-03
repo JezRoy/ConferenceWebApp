@@ -4,15 +4,22 @@
     Register
 {% endblock %}
 
+{% block aboveNav %}
+<div class="container" style="text-align: center; font-weight: bolder;">
+	<h1 class="text-center">
+		Sign Up
+	</h1>
+</div>
+{% endblock %}
+
 {% block main %}
-<h1>Sign Up</h1>
 <p></p>
 <div class="textFormContainer">
     <div class="form-container">
-    <form FIX THIS method="POST">
+    <form method="POST">
         <div class="form-group">
             <div class="form-column">
-                <table>
+                <table style="width: 100%;">
                     <tr>
                         <td>
                             <label id="field" for="username">*Enter Username: </label>

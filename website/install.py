@@ -15,7 +15,8 @@ requiredModules = [
     "flask",
     "Flask",
     "flask-login",
-    "sqlite3"
+    "flask_sqlalchemy",
+    "werkzeug.security"
 ]
 
 # Given pip is installed on the machine.

@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+<!--
+    Workflow:
+    - Enter data for conference as in the confernce
+    - Add talks / papers
+    - Add topic 'tags' to those papers
+    - Save to database
+-->
+{% block title %}
+	{% if user.is_authenticated %}
+		Create Conference
+	{% endif %}
+{% endblock %}
+
+{% block aboveNav %}
+<div class="container" style="text-align: center; font-weight: bolder;">
+	<h1 class="text-center">
+		{% if user.is_authenticated %}
+		    Create a Conference
+		{% endif %}
+	</h1>
+</div>
+{% endblock %}
+
+{% block main %}
+<br>
+<p>Please fill out all conference details:</p>
+<div class="textFormContainer">
+    <div class="form-container">
+        <forn method="POST">
+            <div class="form-group">
+                <div class="form-column">
+                    <label id="field" for="confname">Conference Name </label>
+                    <input autocomplete="off" autofocus class="form-control" name="confname" placeholder="Conference Name" type="text">
+                    <label id="field" for="confurl">Conference Name </label>
+                    <input autocomplete="off" autofocus class="form-control" name="confurl" placeholder="Conference Website URL" type="text">
+                    <p id="labelled">A direct link to your conference's main website page.</p>
+                    <br>
+                    <label id="field" for="papersub">Paper / Talk Submission Deadline: </label>
+                    <input autocomplete="off" class="form-control" name="papersub" type="date">
+                    <p id="labelled">A deadline for talks and papers to be submitted, so that delegates know when a complete list of talks will be shown.
+                        Allowing them to better make choices with which talks they wish to attend.
+                    </p>
+                </div>
+                <br>
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <label id="field" for="confstart">Conference Start Date: </label>
+                            <input autocomplete="off" class="form-control" name="confstart" type="date">
+                        </td>
+                        <td>
+                            <label id="field" for="confend">Conference End Date: </label>
+                            <input autocomplete="off" class="form-control" name="confend" type="date">
+                        </td>
+                    </tr>
+                    <tr>&nbsp;</tr>
+                    <br>
+                    <tr>
+                        <td>
+                            <label id="field" for="daystart">Starting Time for each day: </label>
+                            <input autocomplete="off" class="form-control" name="daystart" type="time">
+                        </td>
+                        <td>
+                            <label id="field" for="dayend">Ending Time for each day </label>
+                            <input autocomplete="off" class="form-control" name="dayend" type="time">
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <div class="form-column">
+                    <label for="talksPerSession">Talks per sessions:</label>
+                    <input class="form-control" type="number" name="talksPerSession" step="1">
+                    <p id="labelled">Refers to the number of talks to take place in any one session.
+                        The system will calculate the ideal number of sessions per day.
+                    </p>
+                    <br>
+                    <label for="numSessions">Number of Parallel sessions:</label>
+                    <input class="form-control" type="number" name="numSessions" step="1">
+                    <p id="labelled">The number of parallel sessions refer to the number of talks that take place 
+                        at any time during a day of a conference. For example, 2 sessions to run at the same time, 
+                        in the morning, afternoon and evening.<br> Might be dependant on the number of rooms available
+                        for your conference.
+                    </p>
+                </div>
+            </div>
+            <br>
+            <button style="width: 20%; text-align: center;" class="btn btn-primary" type="submit">Save details, Next</button>
+        </forn>
+    </div>
+</div>
+{% endblock %}

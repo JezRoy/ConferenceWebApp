@@ -4,8 +4,15 @@
     Log In
 {% endblock %}
 
+{% block aboveNav %}
+<div class="container" style="text-align: center; font-weight: bolder;">
+	<h1 class="text-center">
+		Login
+	</h1>
+</div>
+{% endblock %}
+
 {% block main %}
-<h1>Login</h1>
 <p></p>
 <div class="textFormContainer">
     <form action="/login" method="POST">
