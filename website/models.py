@@ -48,6 +48,7 @@ class Conferences(db.Model):
     dayEnd = db.Column(db.Time)
     dayDuration = db.Column(db.Integer) # Number of hours - To be calculated by the software
     talkPerSession = db.Column(db.Integer)
+    talkLength = db.Column(db.Integer) # Average talk length
     numSessions = db.Column(db.Integer) # Number of parallel sessions during each day - though the system can override this if it finds a better solution
     def __init__(self, confName, confURL, paperSubDeadline, delegSignUpDeadline, confStart, confEnd, confLength, dayStart, dayEnd, dayDuration, numSessions):
         self.confName = confName

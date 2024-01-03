@@ -19,14 +19,19 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        user = User.query.filter_by(username=username).first()
-        if user:
-            if check_password_hash(user.passwordHash, password):
-                flash("Logged in successfully!", category="success")
-                login_user(user, remember=True)
-                return redirect(url_for("views.home"))   
+        if len(username) == 0:
+            flash("Please enter a username.", category="error")
+        else:
+            user = User.query.filter_by(username=username).first()
+            if user:
+                if check_password_hash(user.passwordHash, password):
+                    flash("Logged in successfully!", category="success")
+                    login_user(user, remember=True)
+                    return redirect(url_for("views.home"))   
+                else:
+                    flash("Incorrect password, please try again.", category="error")
             else:
-                flash("Incorrect password, please try again.", category="error")
+                flash("Un-registered Username. Please use a different username, or sign up.", category="error")
     return render_template("login.html", user=current_user)
 
 @auth.route('/logout')
