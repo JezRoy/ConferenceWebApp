@@ -1,7 +1,7 @@
-from flask import Flask, flash
+from flask import Flask, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin
-from os import path
+from datetime import timedelta
 
 """CREDITS:
 This web app functionality was created with help from a tutorial on YouTube
@@ -18,7 +18,8 @@ def CreateApp():
     app.config['SECRET_KEY'] = b'irgjghrebhuirbhgjenvbeirghiubwegsdvibug ewbuiwerjkgrhweibhg ewhi ewb hjewb ihj b4hjweb gin243wb ihjeb j1'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # Example: 1 hour
-
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)  # Set session lifetime to 1 day
+    
     db.init_app(app)
     db.app = app
     from .routesAndviews import views

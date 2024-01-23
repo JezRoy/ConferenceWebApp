@@ -25,9 +25,11 @@
 {% block main %}
 <br>
 <p>Please fill out all conference details:</p>
+<!-- First page of conference creation - Conference Details -->
+
 <div class="textFormContainer">
     <div class="form-container">
-        <forn method="POST">
+        <forn action="/create-conference" method="POST">
             <div class="form-group">
                 <div class="form-column">
                     <label id="field" for="confname">Conference Name </label>
@@ -37,9 +39,9 @@
                     <input autocomplete="off" autofocus class="form-control" name="confurl" placeholder="Conference Website URL" type="text">
                     <p id="labelled">A direct link to your conference's main website page.</p>
                     <br>
-                    <label id="field" for="papersub">Paper / Talk Submission Deadline: </label>
-                    <input autocomplete="off" class="form-control" name="papersub" type="date">
-                    <p id="labelled">A deadline for talks and papers to be submitted, so that delegates know when a complete list of talks will be shown.
+                    <label id="field" for="paperfinal">Paper / Talk Finalisation Date: </label>
+                    <input autocomplete="off" class="form-control" name="paperfinal" type="date">
+                    <p id="labelled">A date for talks and papers to be submitted, so that delegates know when a complete list of talks will be shown.
                         Allowing them to better make choices with which talks they wish to attend.
                     </p>
                     <label id="field" for="delegRegisterDeadline">Delegate Registration Deadline: </label>

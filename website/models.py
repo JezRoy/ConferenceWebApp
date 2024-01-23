@@ -39,7 +39,7 @@ class Conferences(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     confName = db.Column(db.String(limit))
     confURL = db.Column(db.String(limit * 2), unique=True)
-    paperSubDeadline = db.Column(db.Date) # The following are measured as per date times and days
+    paperFinalisationDate = db.Column(db.Date) # The following are measured as per date times and days
     delegSignUpDeadline = db.Column(db.Date)
     confStart = db.Column(db.Date)
     confEnd = db.Column(db.Date)
@@ -50,10 +50,10 @@ class Conferences(db.Model):
     talkPerSession = db.Column(db.Integer)
     talkLength = db.Column(db.Integer) # Average talk length
     numSessions = db.Column(db.Integer) # Number of parallel sessions during each day - though the system can override this if it finds a better solution
-    def __init__(self, confName, confURL, paperSubDeadline, delegSignUpDeadline, confStart, confEnd, confLength, dayStart, dayEnd, dayDuration, numSessions):
+    def __init__(self, confName, confURL, paperFinalisationDate, delegSignUpDeadline, confStart, confEnd, confLength, dayStart, dayEnd, dayDuration, numSessions):
         self.confName = confName
         self.confURL = confURL
-        self.paperSubDeadline = paperSubDeadline
+        self.paperFinalisationDate = paperFinalisationDate
         self.delegSignUpDeadline = delegSignUpDeadline
         self.confStart = confStart
         self.confEnd = confEnd

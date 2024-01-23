@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_required, current_user
 from datetime import datetime, date, time
 from .models import User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
@@ -27,12 +27,12 @@ views = Blueprint('views', __name__)
 @views.route('/') # The main page of the website
 @login_required
 def home():
-    
     # Find logged in user data
+    
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
-    print("-------------\n", userData, type(userData), "\n-------------\n")
-    
+    session['type'] = userData.type
+    print("-------------\n", session, "\n-------------\n")
     # Find next upcoming conference from list of registered conferences
         # Query the ConfDeleg table to find the conferences a user is registered to
     userConferences = ConfDeleg.query.filter_by(delegId=userData.id).all()
@@ -83,15 +83,17 @@ def createConference(): # For a host to a create a conference
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
     if request.method == 'POST':
+        session['conference_created_id'] = 0
         pass
     else:
-        if userData.type == "delegate":
+        if session['type'] != "host":
             flash("Incorrect access rights: User is not a host.", category="error")
             return redirect(url_for("views.home"))
         else:
             return render_template("createconf.html",
                                    user=current_user,
-                                   userData=userData)
+                                   userData=userData,
+                                   stage=1)
 
 """ TODO 
     create: 
