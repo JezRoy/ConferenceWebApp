@@ -25,17 +25,17 @@
 {% block main %}
 <br>
 <p>Please fill out all conference details:</p>
+{% if stage == 1 %}
 <!-- First page of conference creation - Conference Details -->
-
 <div class="textFormContainer">
     <div class="form-container">
-        <forn action="/create-conference" method="POST">
+        <form action="/create-conference-1" method="POST">
             <div class="form-group">
                 <div class="form-column">
                     <label id="field" for="confname">Conference Name </label>
                     <input autocomplete="off" autofocus class="form-control" name="confname" placeholder="Conference Name" type="text">
                     <br>
-                    <label id="field" for="confurl">Conference Name </label>
+                    <label id="field" for="confurl">Conference URL </label>
                     <input autocomplete="off" autofocus class="form-control" name="confurl" placeholder="Conference Website URL" type="text">
                     <p id="labelled">A direct link to your conference's main website page.</p>
                     <br>
@@ -84,8 +84,8 @@
                                 </p>
                             </td>
                             <td>
-                                <label id="field" for="talkLength">Average Talk Length (mins): </label>
-                                <input class="form-control" type="number" value="30" name="talkLength" step="10">
+                                <label id="field" for="talkLength">Talk Length (mins): </label>
+                                <input class="form-control" type="number" value="30" name="talkLength" step="5">
                                 <p id="labelled">Refers to the average length of all talks in the conference.
                                     To help guide the Schedule Optimiser.
                                 </p>
@@ -110,7 +110,80 @@
             </p>
             <br>
             <button style="width: 20%; text-align: center;" class="btn btn-primary" type="submit">Save details, Add Talks</button>
-        </forn>
+        </form>
     </div>
 </div>
+{% elif stage == 2 %}
+<!-- Second page of conference creation - Conference Details -->
+<div class="textFormContainer">
+    <div class="form-container">
+        <form action="/create-conference-2" method="POST">
+            <div class="form-group">
+                <div class="form-column">
+                    <div id="objects-container">
+                        <div class="object-row">
+                            <label id="field" for="talkname">+ Talk Name</label>
+                            <input autocomplete="off" class="form-control" name="talkname[]">
+                            <br>
+                            <label id="field" for="talkspeaker">Talk Presenter / Speaker</label>
+                            <input class="form-control" name="talkspeaker[]">
+                            <br>
+                            <label id="field" for="talktags">Topics / Tags associated</label>
+                            <input class="form-control" name="talktags[]">
+                            <p id="labelled">
+                                Enter all the topics / tag words associated with a talk, separated by commas.
+                            </p>
+                            <br>
+                            <p>
+                        </div>
+                    </div>
+                    <button style="width: 20%; text-align: center;" class="btn btn-primary" type="button" id="add-object">+</button>
+                </div>
+                <!-- Script for dynamically adding talks to the conference -->
+                <script>
+                    // JavaScript for dynamically adding new rows
+                    document.getElementById('add-object').addEventListener('click', function () {
+                    const container = document.getElementById('objects-container');
+                    const newRow = document.createElement('div');
+                    newRow.className = 'object-row';
+                
+                    newRow.innerHTML = `
+                        <label id="field" for="talkname">+ Talk Name</label>
+                        <input autocomplete="off" class="form-control" name="talkname[]">
+                        <br>
+                        <label id="field" for="talkspeaker">Talk Presenter / Speaker</label>
+                        <input class="form-control" name="talkspeaker[]">
+                        <br>
+                        <label id="field" for="talktags">Topics / Tags associated</label>
+                        <input class="form-control" name="talktags[]">
+                        <p id="labelled">
+                            Enter all the topics / tag words associated with a talk, separated by commas.
+                        </p>
+                        <br>
+                    `;
+                
+                    container.appendChild(newRow);
+                    });
+                </script>
+            </div>
+            <br>
+            <p id="labelled">
+                Please ensure the above details are correct before proceeding. If you wish to change your mind and remove a talk, simply clear the input fields containing all of its information, for that specific talk.
+            </p>
+            <br>
+            <button style="width: 20%; text-align: center;" class="btn btn-success" type="submit">Save Conference</button>
+        </form>
+    </div>
+</div>
+{% else %}
+<!-- The user probably shouldn't be here.-->
+<div>
+    <br>
+    <br>
+    <h3>
+        You probably shouldn't be here.
+    </h3>
+</div>
+{% endif %}
 {% endblock %}
+

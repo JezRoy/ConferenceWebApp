@@ -35,3 +35,9 @@ h1 {
   padding: 10px;
   margin: 0;
 }
+
+.object-entry {
+  margin-bottom: 10px; /* Adjust as needed for spacing */
+  border: 1px solid #ccc;
+  padding: 10px;
+}

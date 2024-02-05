@@ -33,8 +33,7 @@ class ConfDeleg(db.Model): # When users sign up to a conference
     def __init__(self, confID, delegID):
         self.confID = confID
         self.delegID = delegID
-        
-    
+           
 class Conferences(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     confName = db.Column(db.String(limit))

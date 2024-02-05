@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_required, current_user
 from datetime import datetime, date, time
-from .models import User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
+from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
 
 # Arguments to consider when rendering a template
@@ -76,24 +76,95 @@ def home():
                            #schedule=schedule,
                            ConferenceData=ConferenceData)
 
-@views.route('/create-conference', methods=['GET', 'POST'])
+@views.route('/create-conference-1', methods=['GET', 'POST'])
 @login_required
-def createConference(): # For a host to a create a conference
+def createConferenceStage1(): # For a host to a create a conference - part 1
+    """ Setup conference initial details """
     # Find logged in user data
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
     if request.method == 'POST':
-        session['conference_created_id'] = 0
-        pass
+        # Data validation
+        confStartDate = request.form.get("confstart")
+        confEndDate = request.form.get("confend")
+        startDay = datetime.strptime(confStartDate, '%Y-%m-%d').date()
+        endDay = datetime.strptime(confEndDate, '%Y-%m-%d').date()
+        confLength = (endDay - startDay).days()
+        dayStartDate = request.form.get("daystart")
+        dayEndDate = request.form.get("dayend")
+        startTime = datetime.strptime(dayStartDate, '%H:%M:%S').time()
+        endTime = datetime.strptime(dayEndDate, '%H:%M:%S').time()
+        dayLength = (endTime - startTime).days()
+        numOfSessions = request.form.get("numSessions")
+        if confLength > 0:
+            if dayLength > 0:
+                if numOfSessions > 0:
+                    # Setup object for database
+                    conference = Conferences(
+                        confName = request.form.get("confName"),
+                        confURL = request.form.get("confurl"),
+                        paperFinalisationDate = request.form.get("paperfinal"),
+                        delegSignUpDeadline = request.form.get("delegRegisterDeadline"),
+                        confStart = startDay,
+                        confEnd = endDay,
+                        confLength = confLength,
+                        dayStart = startTime,
+                        dayEnd = endTime,
+                        dayDuration = dayLength,
+                        numSessions = numOfSessions
+                    )
+                    '''
+                    # Add and commit to all relevant database tables
+                    db.session.add(conference)
+                    db.session.commit()
+                    confNewId = conference.id
+                    hosting = ConfHosts(
+                        confId = confNewId,
+                        hostId = userId
+                    )
+                    db.session.add(hosting)
+                    db.session.commit()
+                    '''
+                    flash("Successfully created conference! You can edit / delete your main conference details later.", category="success")
+                    return redirect(url_for("views.createConferenceStage2"))
+                else:
+                    flash("There must be at least one session active in a day.", category="error")
+            else:
+                flash("The end time must be after the start time.", category="error")
+        else:
+            flash("The end date must be after the start date.", category="error")
     else:
         if session['type'] != "host":
             flash("Incorrect access rights: User is not a host.", category="error")
             return redirect(url_for("views.home"))
-        else:
-            return render_template("createconf.html",
-                                   user=current_user,
-                                   userData=userData,
-                                   stage=1)
+    return render_template("createconf.html",
+                            user=current_user,
+                            userData=userData,
+                            stage=1)
+
+@views.route('/create-conference-2', methods=['GET', 'POST'])
+@login_required
+def createConferenceStage2(): # For a host to a create a conference - part 1
+    """ Setup conference talks """
+    # Find logged in user data
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    if request.method == 'POST':
+        talkNames = request.form.getlist("talkname")
+        talkSpeakers = request.form.getlist("talkspeaker")
+        talkTopics = request.form.getlist("talktags")
+        print(talkNames, talkSpeakers)
+        
+        flash("Talks added to conference successfully!", category="success")
+        return redirect(url_for("views.home"))
+    else:
+        if session['type'] != "host":
+            flash("Incorrect access rights: User is not a host.", category="error")
+            return redirect(url_for("views.home"))
+    return render_template("createconf.html",
+                            user=current_user,
+                            userData=userData,
+                            stage=2)
 
 """ TODO 
     create: 
@@ -106,5 +177,4 @@ def createConference(): # For a host to a create a conference
         - /leave-conference, 
         - /delete-conference,
         - /change-passwd
-    finish index.html as a profile page 
 """
