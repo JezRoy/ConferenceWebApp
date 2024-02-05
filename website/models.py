@@ -38,18 +38,18 @@ class Conferences(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     confName = db.Column(db.String(limit))
     confURL = db.Column(db.String(limit * 2), unique=True)
-    paperFinalisationDate = db.Column(db.Date) # The following are measured as per date times and days
-    delegSignUpDeadline = db.Column(db.Date)
-    confStart = db.Column(db.Date)
-    confEnd = db.Column(db.Date)
+    paperFinalisationDate = db.Column(db.DateTime) # The following are measured as per date times and days
+    delegSignUpDeadline = db.Column(db.DateTime)
+    confStart = db.Column(db.DateTime)
+    confEnd = db.Column(db.DateTime)
     confLength = db.Column(db.Integer) # To be calculated by the software
     dayStart = db.Column(db.Time) # What time each day starts
     dayEnd = db.Column(db.Time)
     dayDuration = db.Column(db.Integer) # Number of hours - To be calculated by the software
     talkPerSession = db.Column(db.Integer)
-    talkLength = db.Column(db.Integer) # Average talk length
+    talkLength = db.Column(db.Integer) # Average talk length - in minutes
     numSessions = db.Column(db.Integer) # Number of parallel sessions during each day - though the system can override this if it finds a better solution
-    def __init__(self, confName, confURL, paperFinalisationDate, delegSignUpDeadline, confStart, confEnd, confLength, dayStart, dayEnd, dayDuration, numSessions):
+    def __init__(self, confName, confURL, paperFinalisationDate, delegSignUpDeadline, confStart, confEnd, confLength, dayStart, dayEnd, dayDuration, talkPerSession, talkLength, numSessions):
         self.confName = confName
         self.confURL = confURL
         self.paperFinalisationDate = paperFinalisationDate
@@ -60,6 +60,8 @@ class Conferences(db.Model):
         self.dayStart = dayStart
         self.dayEnd = dayEnd
         self.dayDuration = dayDuration
+        self.talkPerSession = talkPerSession
+        self.talkLength = talkLength
         self.numSessions = numSessions
     
 class ConfDaySessions(db.Model):

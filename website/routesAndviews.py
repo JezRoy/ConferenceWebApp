@@ -89,13 +89,16 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
         confEndDate = request.form.get("confend")
         startDay = datetime.strptime(confStartDate, '%Y-%m-%d').date()
         endDay = datetime.strptime(confEndDate, '%Y-%m-%d').date()
-        confLength = (endDay - startDay).days()
+        confLength = int((endDay - startDay).days)
         dayStartDate = request.form.get("daystart")
         dayEndDate = request.form.get("dayend")
-        startTime = datetime.strptime(dayStartDate, '%H:%M:%S').time()
-        endTime = datetime.strptime(dayEndDate, '%H:%M:%S').time()
-        dayLength = (endTime - startTime).days()
-        numOfSessions = request.form.get("numSessions")
+        startTime = datetime.strptime(dayStartDate, '%H:%M').time()
+        endTime = datetime.strptime(dayEndDate, '%H:%M').time()
+        dayLengthMins = (endTime.hour * 60 + endTime.minute) - (startTime.hour * 60 + startTime.minute)
+        dayLength = round(dayLengthMins / 60, 2)
+        talkPerSession = int(request.form.get("talksPerSession"))
+        talkLength = int(request.form.get("talkLength"))
+        numOfSessions = int(request.form.get("numSessions"))
         if confLength > 0:
             if dayLength > 0:
                 if numOfSessions > 0:
@@ -103,17 +106,18 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
                     conference = Conferences(
                         confName = request.form.get("confName"),
                         confURL = request.form.get("confurl"),
-                        paperFinalisationDate = request.form.get("paperfinal"),
-                        delegSignUpDeadline = request.form.get("delegRegisterDeadline"),
+                        paperFinalisationDate = datetime.strptime(request.form.get("paperfinal"), '%Y-%m-%d').date(),
+                        delegSignUpDeadline = datetime.strptime(request.form.get("delegRegisterDeadline"), '%Y-%m-%d').date(),
                         confStart = startDay,
                         confEnd = endDay,
                         confLength = confLength,
                         dayStart = startTime,
                         dayEnd = endTime,
                         dayDuration = dayLength,
+                        talkPerSession = talkPerSession,
+                        talkLength = talkLength,
                         numSessions = numOfSessions
                     )
-                    '''
                     # Add and commit to all relevant database tables
                     db.session.add(conference)
                     db.session.commit()
@@ -123,10 +127,9 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
                         hostId = userId
                     )
                     db.session.add(hosting)
-                    db.session.commit()
-                    '''
+                    db.session.commit()                
                     flash("Successfully created conference! You can edit / delete your main conference details later.", category="success")
-                    return redirect(url_for("views.createConferenceStage2"))
+                    return redirect(url_for("views.createConferenceStage2", conferenceId=confNewId))
                 else:
                     flash("There must be at least one session active in a day.", category="error")
             else:
@@ -142,9 +145,9 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
                             userData=userData,
                             stage=1)
 
-@views.route('/create-conference-2', methods=['GET', 'POST'])
+@views.route('/create-conference-2/<int:conferenceId>', methods=['GET', 'POST'])
 @login_required
-def createConferenceStage2(): # For a host to a create a conference - part 1
+def createConferenceStage2(conferenceId): # For a host to a create a conference - part 1
     """ Setup conference talks """
     # Find logged in user data
     userId = current_user._get_current_object().id
