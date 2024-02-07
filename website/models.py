@@ -124,25 +124,28 @@ class DelegTalks(db.Model):
 
 class Speakers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    delegId = db.Column(db.Integer, db.ForeignKey('user.id')) # Foreign key from the user table - given they are a DELEGATE
+    deleg = db.Column(db.String(limit)) # Foreign key from the user table - given they are a DELEGATE
     # Hosts are not speakers, since they do not participate in the conference.
     # Delegates will want to participate in the conference but still be speakers.
-    def __init__(self, delegId):
-        self.delegId = delegId
+    def __init__(self, deleg):
+        self.deleg = deleg
 
 class Topics(db.Model):
     """Note:
     A single topic can be associated with multiple talks 
     from multiple conferences"""
     id = db.Column(db.Integer, primary_key=True)
-    topic = db.Column(db.String(limit))
+    topic = db.Column(db.String(limit)) # Topic name for each id
+    def __init__(self, topic):
+        self.topic = topic
 
 class Topicsconf(db.Model):
     id = db.Column(db.Integer, primary_key=True) # Uniquely identify each conference topic (even if some share the same name)
     topicId = db.Column(db.Integer, db.ForeignKey('topics.id')) # Foreign key from topic table
     confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
-    def __init__(self, topic):
-        self.topic = topic
+    def __init__(self, topicId, confId):
+        self.topicId = topicId
+        self.confId = confId
 
 class DelTopics(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -117,7 +117,7 @@
 <!-- Second page of conference creation - Conference Details -->
 <div class="textFormContainer">
     <div class="form-container">
-        <form action="/create-conference-2" method="POST">
+        <form action="/create-conference-2/{{ conferenceId if conferenceId != None }}" method="POST">
             <div class="form-group">
                 <div class="form-column">
                     <div id="objects-container">
@@ -141,28 +141,53 @@
                 </div>
                 <!-- Script for dynamically adding talks to the conference -->
                 <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        // Add event listener to the form submission
+                        document.querySelector('form').addEventListener('submit', function (event) {
+                            // Check if either speaker or tags is filled
+                            var speakers = document.querySelectorAll('[name="talkspeaker[]"]');
+                            var tags = document.querySelectorAll('[name="talktags[]"]');
+                            var names = document.querySelectorAll('[name="talkname[]"]');
+                
+                            for (var i = 0; i < names.length; i++) {
+                                var name = names[i].value;
+                                var speaker = speakers[i].value;
+                                var tag = tags[i].value;
+                
+                                if ((speaker || tag) && !name) {
+                                    // Prevent form submission
+                                    event.preventDefault();
+                                    // Display an alert or update the UI to inform the user
+                                    alert('If you fill in Speaker or Tags for a talk, you must also provide a Name.');
+                                    break;  // Stop checking further rows if one is invalid
+                                }
+                            }
+                        });
+                    });
+                </script>
+                <script>
                     // JavaScript for dynamically adding new rows
                     document.getElementById('add-object').addEventListener('click', function () {
-                    const container = document.getElementById('objects-container');
-                    const newRow = document.createElement('div');
-                    newRow.className = 'object-row';
+                        const container = document.getElementById('objects-container');
+                        const newRow = document.createElement('div');
+                        newRow.className = 'object-row';
                 
-                    newRow.innerHTML = `
-                        <label id="field" for="talkname">+ Talk Name</label>
-                        <input autocomplete="off" class="form-control" name="talkname[]">
-                        <br>
-                        <label id="field" for="talkspeaker">Talk Presenter / Speaker</label>
-                        <input class="form-control" name="talkspeaker[]">
-                        <br>
-                        <label id="field" for="talktags">Topics / Tags associated</label>
-                        <input class="form-control" name="talktags[]">
-                        <p id="labelled">
-                            Enter all the topics / tag words associated with a talk, separated by commas.
-                        </p>
-                        <br>
-                    `;
+                        newRow.innerHTML = `
+                            <label id="field" for="talkname">+ Talk Name</label>
+                            <input autocomplete="off" class="form-control" name="talkname[]">
+                            <br>
+                            <label id="field" for="talkspeaker">Talk Presenter / Speaker</label>
+                            <input class="form-control" name="talkspeaker[]">
+                            <br>
+                            <label id="field" for="talktags">Topics / Tags associated</label>
+                            <input class="form-control" name="talktags[]">
+                            <p id="labelled">
+                                Enter all the topics / tag words associated with a talk, separated by commas.
+                            </p>
+                            <br>
+                        `;
                 
-                    container.appendChild(newRow);
+                        container.appendChild(newRow);
                     });
                 </script>
             </div>

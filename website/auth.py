@@ -87,7 +87,6 @@ def signUp():
                             emailAddr = email
                         if dob != '' and dob != 'yyy-mm-dd':
                             dateObj = datetime.strptime(dob, '%Y-%m-%d').date()
-                            print(dateObj.year, dateObj.month, dateObj.day)
                             #dateItem = datetime.date(dateObj.year, dateObj.month, dateObj.day)
                         else:
                             dateObj = None
@@ -95,6 +94,6 @@ def signUp():
                         db.session.add(newUser)
                         db.session.commit()
                         flash("Successfully signed up!", category='success')
-                        UpdateLog(f"New User: {username} added to the system.")
+                        UpdateLog(f"New {usertype}: {username} added to the system.")
                         return redirect(url_for("views.home"))
     return render_template("signup.html", user=current_user)

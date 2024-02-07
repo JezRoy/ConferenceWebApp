@@ -1,0 +1,25 @@
+<script>
+    // JavaScript for dynamically adding new rows
+    document.getElementById('add-object').addEventListener('click', function () {
+    const container = document.getElementById('objects-container');
+    const newRow = document.createElement('div');
+    newRow.className = 'object-row';
+
+    newRow.innerHTML = `
+        <label id="field" for="talkname">+ Talk Name</label>
+        <input autocomplete="off" class="form-control" name="talkname[]">
+        <br>
+        <label id="field" for="talkspeaker">Talk Presenter / Speaker</label>
+        <input class="form-control" name="talkspeaker[]">
+        <br>
+        <label id="field" for="talktags">Topics / Tags associated</label>
+        <input class="form-control" name="talktags[]">
+        <p id="labelled">
+            Enter all the topics / tag words associated with a talk, separated by commas.
+        </p>
+        <br>
+    `;
+
+    container.appendChild(newRow);
+    });
+</script>

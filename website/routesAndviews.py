@@ -1,8 +1,25 @@
+# Initialisations
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_required, current_user
 from datetime import datetime, date, time
 from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
+
+dbOrderingConf = [
+    'confName',
+    'confURL',
+    'paperFinalisationDate',
+    'delegSignUpDeadline',
+    'confStart',
+    'confEnd',
+    'confLength',
+    'dayStart',
+    'dayEnd',
+    'dayDuration',
+    'talkPerSession',
+    'talkLength',
+    'numSessions'
+] 
 
 # Arguments to consider when rendering a template
 """
@@ -32,7 +49,7 @@ def home():
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
     session['type'] = userData.type
-    print("-------------\n", session, "\n-------------\n")
+    #print("-------------\n", session, "\n-------------\n")
     # Find next upcoming conference from list of registered conferences
         # Query the ConfDeleg table to find the conferences a user is registered to
     userConferences = ConfDeleg.query.filter_by(delegId=userData.id).all()
@@ -90,6 +107,7 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
         startDay = datetime.strptime(confStartDate, '%Y-%m-%d').date()
         endDay = datetime.strptime(confEndDate, '%Y-%m-%d').date()
         confLength = int((endDay - startDay).days)
+        # TODO try and except neeeded here
         dayStartDate = request.form.get("daystart")
         dayEndDate = request.form.get("dayend")
         startTime = datetime.strptime(dayStartDate, '%H:%M').time()
@@ -104,7 +122,7 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
                 if numOfSessions > 0:
                     # Setup object for database
                     conference = Conferences(
-                        confName = request.form.get("confName"),
+                        confName = request.form.get("confname"),
                         confURL = request.form.get("confurl"),
                         paperFinalisationDate = datetime.strptime(request.form.get("paperfinal"), '%Y-%m-%d').date(),
                         delegSignUpDeadline = datetime.strptime(request.form.get("delegRegisterDeadline"), '%Y-%m-%d').date(),
@@ -122,6 +140,10 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
                     db.session.add(conference)
                     db.session.commit()
                     confNewId = conference.id
+                    referalCheck = Conferences.query.get(confNewId).__dict__ # A handy way of checking the flow of data into the database after creating a conference.
+                    referalCheck.pop('_sa_instance_state')
+                    referalCheck = {key: referalCheck[key] for key in dbOrderingConf if key in referalCheck}
+                    UpdateLog(f"Host '{userData.username}' created conference:\n{referalCheck} ")
                     hosting = ConfHosts(
                         confId = confNewId,
                         hostId = userId
@@ -143,7 +165,8 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
     return render_template("createconf.html",
                             user=current_user,
                             userData=userData,
-                            stage=1)
+                            stage=1,
+                            confId=None)
 
 @views.route('/create-conference-2/<int:conferenceId>', methods=['GET', 'POST'])
 @login_required
@@ -153,26 +176,62 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
     if request.method == 'POST':
-        talkNames = request.form.getlist("talkname")
-        talkSpeakers = request.form.getlist("talkspeaker")
-        talkTopics = request.form.getlist("talktags")
-        print(talkNames, talkSpeakers)
-        
+        talkNames = request.form.getlist("talkname[]")
+        talkSpeakers = request.form.getlist("talkspeaker[]")
+        talkTopics = request.form.getlist("talktags[]")
+        print(talkNames, talkSpeakers, talkTopics)
+        # Creating a structure for created talks
+        """A user is not obliged to create a talk at this stage...
+        But should they choose to, a talk needs a name.
+        """
+        talksGenerated = []
+        for i in range(len(talkNames)):
+            talksGenerated.append([talkNames[i], talkSpeakers[i], talkTopics[i]])
+            # Entities involved include:
+            # Talks, Topics, Topicsconf
+            
+            speaker = Speakers(
+                deleg=talkSpeakers[i]
+            )
+            db.session.add(speaker)
+            db.session.commit()
+            speakerId = speaker.id
+            topics = talkTopics[i].split(', ')
+            for word in topics:
+                # Example: [topic1, topic2, topic3, topic4]
+                topicWord = Topics(
+                    topic=word
+                )
+                db.session.add(topicWord)
+                db.session.commit()
+                wordId = topicWord.id
+                talks = Talks(
+                    talkName=talkNames[i],
+                    speakerId=speakerId,
+                    confId=conferenceId,
+                    topicId=wordId
+                )
+                db.session.add(talks)
+                db.session.commit()
+            
         flash("Talks added to conference successfully!", category="success")
         return redirect(url_for("views.home"))
     else:
         if session['type'] != "host":
             flash("Incorrect access rights: User is not a host.", category="error")
             return redirect(url_for("views.home"))
+        elif conferenceId == None:
+            flash("Incorrect access rights: Conference not provided as context.", category="error")
+            return redirect(url_for("views.home"))
     return render_template("createconf.html",
                             user=current_user,
                             userData=userData,
-                            stage=2)
+                            stage=2,
+                            conferenceId=conferenceId)
 
 """ TODO 
     create: 
         - /find-conference, 
-        - /create-conference, 
         - /edit-conference, 
         - /delete-conference, 
         - /register-conference, 
