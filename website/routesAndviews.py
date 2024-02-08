@@ -51,8 +51,13 @@ def home():
     session['type'] = userData.type
     #print("-------------\n", session, "\n-------------\n")
     # Find next upcoming conference from list of registered conferences
-        # Query the ConfDeleg table to find the conferences a user is registered to
-    userConferences = ConfDeleg.query.filter_by(delegId=userData.id).all()
+        # Query the ConfDeleg or ConfHosts table to find the conferences a user is registered to
+        
+    if session['type'] == "Host":
+        userConferences = ConfDeleg.query.filter_by(delegId=userData.id).all()
+    else:
+        userConferences = ConfHosts.query.filter_by(delegId=userData.id).all()
+    print(userConferences)
         # Get the conference IDs the user is registered to
     conferenceIds = [conference.confId for conference in userConferences]
         # Query the Conferences table to get the details of the conferences
@@ -72,7 +77,7 @@ def home():
         ConferenceData = Conferences.query.filter_by(id=NextConf.id).first()
     else:
         ConferenceData = None
-    
+    #print(ConferenceData)
     # A DUMMY conference for testing - this should be database queried in future
     ConferenceData = {
         "id": 0,

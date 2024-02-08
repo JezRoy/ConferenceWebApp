@@ -991,3 +991,20 @@
 2024-02-07 22:28:43: Created Database.
 2024-02-07 22:28:45: Server Log initialisation/update
 2024-02-07 22:28:45: Created Database.
+2024-02-07 22:47:03: Server Log initialisation/update
+2024-02-07 22:47:04: Created Database.
+2024-02-07 22:47:04: Server Log initialisation/update
+2024-02-07 22:47:04: Created Database.
+2024-02-07 22:48:58: New host: TestHost added to the system.
+2024-02-07 22:49:19: Server Log initialisation/update
+2024-02-07 22:49:19: Created Database.
+2024-02-07 22:49:24: Server Log initialisation/update
+2024-02-07 22:49:24: Created Database.
+2024-02-07 22:50:25: Host 'TestHost' created conference:
+{'confName': 'ESA 2024', 'confURL': 'https://algo-conference.org/2023/esa/', 'paperFinalisationDate': datetime.datetime(2024, 4, 28, 0, 0), 'delegSignUpDeadline': datetime.datetime(2024, 9, 1, 0, 0), 'confStart': datetime.datetime(2024, 9, 4, 0, 0), 'confEnd': datetime.datetime(2024, 9, 6, 0, 0), 'confLength': 2, 'dayStart': datetime.time(9, 0), 'dayEnd': datetime.time(17, 25), 'dayDuration': 8.42, 'talkPerSession': 3, 'talkLength': 15, 'numSessions': 2} 
+2024-02-07 22:52:33: Server Log initialisation/update
+2024-02-07 22:52:33: Created Database.
+2024-02-07 22:52:35: Server Log initialisation/update
+2024-02-07 22:52:35: Created Database.
+2024-02-07 22:52:37: Server Log initialisation/update
+2024-02-07 22:52:37: Created Database.
