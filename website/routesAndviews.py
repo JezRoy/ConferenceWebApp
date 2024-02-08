@@ -56,7 +56,7 @@ def home():
     if session['type'] == "Host":
         userConferences = ConfDeleg.query.filter_by(delegId=userData.id).all()
     else:
-        userConferences = ConfHosts.query.filter_by(delegId=userData.id).all()
+        userConferences = ConfHosts.query.filter_by(hostId=userData.id).all()
     print(userConferences)
         # Get the conference IDs the user is registered to
     conferenceIds = [conference.confId for conference in userConferences]
@@ -67,7 +67,7 @@ def home():
         # Filter out conferences that have already started and store them in a list
     upcomingConferences = [
         conference for conference in conferencesUserRegister
-        if conference.confStart >= rightNow.date()
+        if conference.confStart >= rightNow
     ]
         # Sort the upcoming_conferences based on their start date
     sortedConferences = sorted(upcomingConferences, key=lambda x: x.confStart)
