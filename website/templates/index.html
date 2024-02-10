@@ -40,7 +40,7 @@
 				<tr style="text-align: center; font-weight: bold;">
 					<td>
 						My Upcoming Conference:
-						<br><h2>{{ ConferenceData["name"] }}</h2>
+						<br><h2>{{ ConferenceData["confName"] }}</h2>
 					</td>
 					<td>
 						<button style="text-align: center;" class="btn btn-primary" href="/user-conferences">See My Conferences</button>
@@ -61,19 +61,19 @@
 						<table style="width:50%; align-self: center; align-items: center;">
 							<tr>
 								<td>
-									Sign Up Deadline: {{ ConferenceData["signUpDeadline"] }}
+									Sign Up Deadline: {{ ConferenceData["delegSignUpDeadline"] }}
 								</td>
 							</tr>
 							<br>
 							<tr style="font-weight: bold;">
 								<td>
-									Start Date: {{ ConferenceData["startDate"] }}
+									Start Date: {{ ConferenceData["confStart"] }}
 								</td>
 							</tr>
 							<br>
 							<tr style="font-weight: bold;">	
 								<td>
-									End Date: {{ ConferenceData["endDate"] }}
+									End Date: {{ ConferenceData["confEnd"] }}
 								</td>
 							</tr>
 							<tr>
@@ -91,7 +91,11 @@
 			</table>
 		</div>
 		{% else %}
-		<p style="text-align: center;">Find a Conference <a style="font-weight: bold;" href="/login">Here</a> to get started.</p>
+			{% if userData.type.capitalize() == "Delegate" %}
+				<p style="text-align: center;">Find a Conference <a style="font-weight: bold;" href="/find-conference">Here</a> to get started.</p>
+			{% else %}
+				<p style="text-align: center;">Maybe you want to create a conference? Click <a style="font-weight: bold;" href="/create-conference-1">Here</a> to get started.</p>
+			{% endif %}
 		{% endif %}
 	{% else %}
 		<p style="text-align: center;">Please login to our system <a style="font-weight: bold;" href="/login">Here</a> to get started.</p>

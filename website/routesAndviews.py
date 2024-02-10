@@ -57,7 +57,6 @@ def home():
         userConferences = ConfDeleg.query.filter_by(delegId=userData.id).all()
     else:
         userConferences = ConfHosts.query.filter_by(hostId=userData.id).all()
-    print(userConferences)
         # Get the conference IDs the user is registered to
     conferenceIds = [conference.confId for conference in userConferences]
         # Query the Conferences table to get the details of the conferences
@@ -67,7 +66,7 @@ def home():
         # Filter out conferences that have already started and store them in a list
     upcomingConferences = [
         conference for conference in conferencesUserRegister
-        if conference.confStart >= rightNow
+        if conference.confStart >= rightNow.date()
     ]
         # Sort the upcoming_conferences based on their start date
     sortedConferences = sorted(upcomingConferences, key=lambda x: x.confStart)
@@ -75,18 +74,22 @@ def home():
         NextConf = sortedConferences[0]
         # Fetch additional information about the next upcoming conference from the database
         ConferenceData = Conferences.query.filter_by(id=NextConf.id).first()
+        ConferenceData = ConferenceData.__dict__
+        ConferenceData.pop('_sa_instance_state', None)
+        ConferenceData = {key: ConferenceData[key] for key in dbOrderingConf if key in ConferenceData}
     else:
         ConferenceData = None
+    
     #print(ConferenceData)
-    # A DUMMY conference for testing - this should be database queried in future
+    ''' A DUMMY conference for testing - this should be database queried in future
     ConferenceData = {
         "id": 0,
         "name":"Blank2024",
-        "url":"conf.blank.2024",
-        "signUpDeadline":date.today().strftime('%d-%m-%Y'),
-        "startDate": datetime(2023, 1, 9).strftime('%d-%m-%Y'),
-        "endDate": datetime(2023, 1, 12).strftime('%d-%m-%Y')
-    }
+        "confURL":"conf.blank.2024",
+        "delegSignUpDeadline":date.today().strftime('%d-%m-%Y'),
+        "confStart": datetime(2023, 1, 9, 0, 0).strftime('%d-%m-%Y'),
+        "confEnd": datetime(2023, 1, 12, 0, 0).strftime('%d-%m-%Y')
+    } '''
     
     # Find most optimised schedule from the schedules created for the upcoming conference
     
@@ -111,6 +114,7 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
         confEndDate = request.form.get("confend")
         startDay = datetime.strptime(confStartDate, '%Y-%m-%d').date()
         endDay = datetime.strptime(confEndDate, '%Y-%m-%d').date()
+        print(startDay, endDay)
         confLength = int((endDay - startDay).days)
         # TODO try and except neeeded here
         dayStartDate = request.form.get("daystart")
@@ -184,7 +188,7 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
         talkNames = request.form.getlist("talkname[]")
         talkSpeakers = request.form.getlist("talkspeaker[]")
         talkTopics = request.form.getlist("talktags[]")
-        print(talkNames, talkSpeakers, talkTopics)
+        #print(talkNames, talkSpeakers, talkTopics)
         # Creating a structure for created talks
         """A user is not obliged to create a talk at this stage...
         But should they choose to, a talk needs a name.
@@ -233,6 +237,66 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
                             userData=userData,
                             stage=2,
                             conferenceId=conferenceId)
+
+@views.route('/find-conference', methods=['GET', 'POST'])
+@login_required
+def findConferences():
+    """Search for conferences"""
+    # Find logged in user data
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    if request.method == 'POST':
+        query = request.form.get("conferenceSearch", "").strip()
+        results = Conferences.query.filter(Conferences.confName.ilike(f"%{query}%")).all()
+        setOfResults = []
+        for conf in results:
+            retrieve = conf.__dict__
+            retrieve.pop('_sa_instance_state', None)
+            retrieve = {key: retrieve[key] for key in dbOrderingConf if key in retrieve}
+            retrieve["confId"] = conf.id
+            #print(retrieve)
+            # TODO
+            setOfResults.append(retrieve)
+        confFound = setOfResults
+        return redirect(url_for("views.registerConference"))
+    else:
+        confFound = None
+    return render_template("find.html",
+                            user=current_user,
+                            userData=userData,
+                            confFound=confFound
+                        )
+
+@views.route('/register-conference/<int:conferenceId>', methods=['POST'])
+@login_required
+def registerConference(conferenceId):
+    """To register a user to a conference"""
+    # Find logged in user data
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    if request.method == 'POST':
+        try:
+            registration = ConfDeleg(
+                confID=conferenceId,
+                delegID=userId
+            )
+            # Check the user is not already registered
+            preregistered = db.session.query(db.exists().where(ConfDeleg.delegId == userId and ConfDeleg.confId == conferenceId)).scalar()
+            if not preregistered:
+                conf = Conferences.query.get(conferenceId).__dict__
+                confName = conf['confName']
+                db.session.add(registration)
+                db.session.commit()
+                flash(f"You have been successfully registered to the '{confName}' conference!", category="success")
+                # Get a user to register their talks
+                UpdateLog(f"User {userData.username} has signed up for conference {confName} ")
+            else:
+                flash("You have already pre-registered for this conference.", category="warning")
+        except Exception as e:
+            flash("Sorry, there has been an error registering you to the selected conference.", category="error")
+            UpdateLog(f"There has been an error registering user ID: {userId} to the selected conference to conference ID: {conferenceId}. \nError produced: {e}")
+    # In case of an error or cancellation return a user home.        
+    return redirect(url_for("views.home"))
 
 """ TODO 
     create: 

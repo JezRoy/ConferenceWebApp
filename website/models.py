@@ -38,10 +38,10 @@ class Conferences(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     confName = db.Column(db.String(limit))
     confURL = db.Column(db.String(limit * 2), unique=True)
-    paperFinalisationDate = db.Column(db.DateTime) # The following are measured as per date times and days
-    delegSignUpDeadline = db.Column(db.DateTime)
-    confStart = db.Column(db.DateTime)
-    confEnd = db.Column(db.DateTime)
+    paperFinalisationDate = db.Column(db.Date) # The following are measured as per date times and days
+    delegSignUpDeadline = db.Column(db.Date)
+    confStart = db.Column(db.Date)
+    confEnd = db.Column(db.Date)
     confLength = db.Column(db.Integer) # To be calculated by the software
     dayStart = db.Column(db.Time) # What time each day starts
     dayEnd = db.Column(db.Time)
@@ -116,10 +116,12 @@ class DelegTalks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     delegId = db.Column(db.Integer, db.ForeignKey('user.id')) # Given they are a DELEGATE
     talkId = db.Column(db.Integer, db.ForeignKey('talks.id'))
+    confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
     prefLvl = db.Column(db.Integer) # Preference level of going to a talk
-    def __init__(self, delegId, talkId, prefLvl):
+    def __init__(self, delegId, talkId, confId, prefLvl):
         self.delegId = delegId
         self.talkId = talkId
+        self.confId = confId
         self.prefLvl = prefLvl
 
 class Speakers(db.Model):
