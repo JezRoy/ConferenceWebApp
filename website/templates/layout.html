@@ -45,13 +45,11 @@
 						<a class="nav-item nav-link" id="Home" href="/">Home</a>
 						{% if userData.type == 'delegate' %}
 							{% if ConferenceData %}
-								<a style="font-weight: bold;" class="nav-item nav-link" id="GoToNextConference" href="{{ ConferenceData['confURL'] }}">{{ ConferenceData['name'] }}</a>
+								<a class="nav-item nav-link" id="GoToNextConference" href="{{ ConferenceData['confURL'] }}">{{ ConferenceData['name'] }}</a>
 							{% endif %}
 							<a class="nav-item nav-link" id="FindConf" href="/find-conference">Find a Conference</a>
 						{% else %}
-							{% if ConferenceData %}
-								<a style="font-weight: bold;" class="nav-item nav-link" id="GoToNextConference" href="{{ ConferenceData['confURL'] }}">{{ ConferenceData['name'] }}</a>
-							{% endif %}
+							<a class="nav-item nav-link" id="ViewConferences" href="/user-conferences">See My Conferences</a>
 						<!-- The user is not a delegate but a host instead -->
 							<a class="nav-item nav-link" id="CreateConf" href="/create-conference-1">Create Conference</a>
 						{% endif %}

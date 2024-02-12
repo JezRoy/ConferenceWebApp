@@ -50,14 +50,18 @@ def home():
     userData = User.query.get(userId)
     session['type'] = userData.type
     #print("-------------\n", session, "\n-------------\n")
+    
     # Find next upcoming conference from list of registered conferences
         # Query the ConfDeleg or ConfHosts table to find the conferences a user is registered to
-        
-    if session['type'] == "Host":
-        userConferences = ConfDeleg.query.filter_by(delegId=userData.id).all()
-    else:
+    
+    # Get the conference IDs the user is registered to
+    if session['type'].lower == "host":
         userConferences = ConfHosts.query.filter_by(hostId=userData.id).all()
-        # Get the conference IDs the user is registered to
+    else:
+        userConferences = ConfDeleg.query.filter_by(delegId=userData.id).all()
+    
+    print(userConferences)
+    
     conferenceIds = [conference.confId for conference in userConferences]
         # Query the Conferences table to get the details of the conferences
     conferencesUserRegister = Conferences.query.filter(Conferences.id.in_(conferenceIds)).all()
@@ -80,7 +84,7 @@ def home():
     else:
         ConferenceData = None
     
-    #print(ConferenceData)
+    print(ConferenceData)
     ''' A DUMMY conference for testing - this should be database queried in future
     ConferenceData = {
         "id": 0,
@@ -114,7 +118,6 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
         confEndDate = request.form.get("confend")
         startDay = datetime.strptime(confStartDate, '%Y-%m-%d').date()
         endDay = datetime.strptime(confEndDate, '%Y-%m-%d').date()
-        print(startDay, endDay)
         confLength = int((endDay - startDay).days)
         # TODO try and except neeeded here
         dayStartDate = request.form.get("daystart")
@@ -255,10 +258,8 @@ def findConferences():
             retrieve = {key: retrieve[key] for key in dbOrderingConf if key in retrieve}
             retrieve["confId"] = conf.id
             #print(retrieve)
-            # TODO
             setOfResults.append(retrieve)
         confFound = setOfResults
-        return redirect(url_for("views.registerConference"))
     else:
         confFound = None
     return render_template("find.html",
@@ -267,43 +268,61 @@ def findConferences():
                             confFound=confFound
                         )
 
-@views.route('/register-conference/<int:conferenceId>', methods=['POST'])
+@views.route('/register-conference', methods=['POST'])
 @login_required
-def registerConference(conferenceId):
+def registerConference():
     """To register a user to a conference"""
     # Find logged in user data
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
-    if request.method == 'POST':
-        try:
-            registration = ConfDeleg(
-                confID=conferenceId,
-                delegID=userId
-            )
-            # Check the user is not already registered
-            preregistered = db.session.query(db.exists().where(ConfDeleg.delegId == userId and ConfDeleg.confId == conferenceId)).scalar()
-            if not preregistered:
-                conf = Conferences.query.get(conferenceId).__dict__
-                confName = conf['confName']
-                db.session.add(registration)
-                db.session.commit()
-                flash(f"You have been successfully registered to the '{confName}' conference!", category="success")
-                # Get a user to register their talks
-                UpdateLog(f"User {userData.username} has signed up for conference {confName} ")
-            else:
-                flash("You have already pre-registered for this conference.", category="warning")
-        except Exception as e:
-            flash("Sorry, there has been an error registering you to the selected conference.", category="error")
-            UpdateLog(f"There has been an error registering user ID: {userId} to the selected conference to conference ID: {conferenceId}. \nError produced: {e}")
-    # In case of an error or cancellation return a user home.        
+    conferenceChoice = request.form.get("conferenceId")
+    registration = ConfDeleg(
+        confId=conferenceChoice,
+        delegId=userId
+    )
+    # Check the user is not already registered
+    preregistered = db.session.query(db.exists().where(ConfDeleg.delegId == userId and ConfDeleg.confId == conferenceChoice)).scalar()
+    if not preregistered:
+        conf = Conferences.query.get(conferenceChoice).__dict__
+        confName = conf['confName']
+        db.session.add(registration)
+        db.session.commit()
+        flash(f"You have been successfully registered to the '{confName}' conference!", category="success")
+        # Get a user to register their talks
+        UpdateLog(f"User {userData.username} has signed up for conference {confName} ")
+    else:
+        flash("You have already pre-registered for this conference.", category="warning")
     return redirect(url_for("views.home"))
 
+@views.route('/preview-talks/<int:conferenceId>', methods=['GET', 'POST'])
+@login_required
+def previewTalks(conferenceId):
+    """Register a user to certain talks and how much they are liked"""
+    # Find logged in user data
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    if request.method == "POST":
+        talkIds = request.form.getlist('talk')
+    else:
+        # Find the conference and the talks involved
+        # Ensure user is registered
+        registered = db.session.query(db.exists().where(
+            ConfDeleg.confId == conferenceId,
+            ConfDeleg.delegId == userId
+        )).scalar()
+        if not registered:
+            flash("You might register yourself to this conference first.")
+            return redirect(url_for("views.home"))
+        else:
+            talks = Talks.query.filter_by(confId=conferenceId).all()
+            collection = []
+            for thing in talks:
+                speaker = Speakers.query.get(thing.speakerId)
+                talk = [thing.talkName, speaker, ]
 """ TODO 
-    create: 
-        - /find-conference, 
+    create:  
         - /edit-conference, 
         - /delete-conference, 
-        - /register-conference, 
         - /preview-talks, 
         - /leave-conference, 
         - /delete-conference,

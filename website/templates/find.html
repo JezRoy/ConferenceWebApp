@@ -66,9 +66,9 @@
                 </td>
                 <td>
                     <!-- Register Button -->
-                    <form method="/register-conference/{{ conference['confId'] }}", method="POST">
-                        <input type="hidden" name="selectedConfId" value="{{ conference['confId'] }}">
-                        <button style="text-align: center;" class="btn btn-success" type="submit">Register</button>
+                    <form id="registration-form" method="POST" action="{{ url_for('views.registerConference') }}">
+                        <input type="hidden" name="conferenceId" value="{{ conference['confId'] }}">
+                        <button class="btn btn-success" type="submit">Register</button>
                     </form>
                 </td>
             </tr>

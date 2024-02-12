@@ -12,7 +12,7 @@ class User(db.Model, UserMixin): # Flash SQLAlchemy database
     id = db.Column("id", db.Integer, primary_key=True)
     username = db.Column(db.String(limit), unique=True)
     passwordHash = db.Column(db.String(limit))
-    email = db.Column(db.String(limit), unique=True)
+    email = db.Column(db.String(limit))
     firstName = db.Column(db.String(limit))
     lastName = db.Column(db.String(limit), nullable=True)
     dob = db.Column(db.Date, nullable=True)
@@ -28,16 +28,17 @@ class User(db.Model, UserMixin): # Flash SQLAlchemy database
         self.type = type
 
 class ConfDeleg(db.Model): # When users sign up to a conference
-    confId = db.Column(db.Integer, db.ForeignKey('conferences.id'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    confId = db.Column(db.Integer, db.ForeignKey('conferences.id'))
     delegId= db.Column(db.Integer, db.ForeignKey('user.id')) # Foreign key to user table - given they are a DELEGATE
-    def __init__(self, confID, delegID):
-        self.confID = confID
-        self.delegID = delegID
+    def __init__(self, confId, delegId):
+        self.confId = confId
+        self.delegId = delegId
            
 class Conferences(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     confName = db.Column(db.String(limit))
-    confURL = db.Column(db.String(limit * 2), unique=True)
+    confURL = db.Column(db.String(limit * 2))
     paperFinalisationDate = db.Column(db.Date) # The following are measured as per date times and days
     delegSignUpDeadline = db.Column(db.Date)
     confStart = db.Column(db.Date)
@@ -105,12 +106,10 @@ class Talks(db.Model):
     talkName = db.Column(db.String(limit))
     speakerId = db.Column(db.Integer, db.ForeignKey('speakers.id')) # Foreign key from Speakers table
     confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
-    topicId = db.Column(db.Integer, db.ForeignKey('topics.id')) # Foreign key from Topic table
     def __init__(self, talkName, speakerId, confId, topicId):
         self.talkName = talkName
         self.speakerId = speakerId
         self.confId = confId
-        self.topicId = topicId
 
 class DelegTalks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -141,6 +140,14 @@ class Topics(db.Model):
     def __init__(self, topic):
         self.topic = topic
 
+class TopicTalks(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    talkId = db.Column(db.Integer, db.ForeignKey('talks.id'))
+    topicId = db.Column(db.Integer, db.ForeignKey('topics.id')) # Foreign key from Topic table
+    def __init__(self, talkId, topicId):
+        self.talkId = talkId
+        self.topicId = topicId
+    
 class Topicsconf(db.Model):
     id = db.Column(db.Integer, primary_key=True) # Uniquely identify each conference topic (even if some share the same name)
     topicId = db.Column(db.Integer, db.ForeignKey('topics.id')) # Foreign key from topic table
