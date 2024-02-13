@@ -5,7 +5,7 @@
 Update install.py with necessary modules to install.
 """
 from . import db
-from functions import UpdateLog
+from .functions import UpdateLog
 
 def saveSchedulerAsFile(fileName, schedule, conferenceId):
     file = open(f"schedules/{conferenceId}|{fileName}.txt","w")
