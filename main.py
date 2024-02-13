@@ -1,4 +1,6 @@
-from website import CreateApp, Scheduler
+from website import CreateApp
+from website.Scheduler import *
+from website.Scheduler import SCHEDULEConference as schedule
 from multiprocessing import Process
 
 ### To be dragged from out of the website folder
@@ -17,5 +19,9 @@ Set the right python interpreter using:
 app = CreateApp()
 
 if __name__ == '__main__':
-    parallelScheduler = Process(target=Scheduler)
+    # Run app
     app.run(debug=True)
+    
+    # Run parallel scheduler
+    parallelScheduler = Process(target=schedule)
+    parallelScheduler.start()

@@ -9,3 +9,6 @@ def saveSchedulerAsFile(fileName, schedule, conferenceId):
     file.write(schedule)
     file.close()
     return True
+
+def SCHEDULEConference():
+    pass
