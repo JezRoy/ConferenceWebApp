@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_required, current_user
 from datetime import datetime, date, time
-from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
+from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, TopicTalks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
 
 dbOrderingConf = [
@@ -50,41 +50,49 @@ def home():
     userData = User.query.get(userId)
     session['type'] = userData.type
     #print("-------------\n", session, "\n-------------\n")
-    
     # Find next upcoming conference from list of registered conferences
         # Query the ConfDeleg or ConfHosts table to find the conferences a user is registered to
     
     # Get the conference IDs the user is registered to
-    if session['type'].lower == "host":
+    if session['type'] == "host":
         userConferences = ConfHosts.query.filter_by(hostId=userData.id).all()
     else:
         userConferences = ConfDeleg.query.filter_by(delegId=userData.id).all()
     
-    print(userConferences)
+    #print(userConferences[0].__dict__)
     
     conferenceIds = [conference.confId for conference in userConferences]
         # Query the Conferences table to get the details of the conferences
+    #print(conferenceIds)
+    
     conferencesUserRegister = Conferences.query.filter(Conferences.id.in_(conferenceIds)).all()
         # Get the current date and time
+    #print(conferencesUserRegister)    
+        
     rightNow = datetime.now()
-        # Filter out conferences that have already started and store them in a list
-    upcomingConferences = [
-        conference for conference in conferencesUserRegister
-        if conference.confStart >= rightNow.date()
-    ]
-        # Sort the upcoming_conferences based on their start date
+        # Filter out conferences that have yet to be engaged and store them in a list
+    upcomingConferences = []
+    for conference in conferencesUserRegister:
+        if conference.confEnd >= rightNow.date():
+            # Sort the upcoming_conferences based on their start date
+            upcomingConferences.append(conference)  
+    
+    confId = None
     sortedConferences = sorted(upcomingConferences, key=lambda x: x.confStart)
     if sortedConferences:
         NextConf = sortedConferences[0]
+        confId = NextConf.id
         # Fetch additional information about the next upcoming conference from the database
         ConferenceData = Conferences.query.filter_by(id=NextConf.id).first()
         ConferenceData = ConferenceData.__dict__
         ConferenceData.pop('_sa_instance_state', None)
         ConferenceData = {key: ConferenceData[key] for key in dbOrderingConf if key in ConferenceData}
+        ConferenceData["confId"] = confId
     else:
         ConferenceData = None
     
-    print(ConferenceData)
+    #print(ConferenceData)
+    
     ''' A DUMMY conference for testing - this should be database queried in future
     ConferenceData = {
         "id": 0,
@@ -96,13 +104,22 @@ def home():
     } '''
     
     # Find most optimised schedule from the schedules created for the upcoming conference
+    # TODO - CHANGE THIS TO WORK WITH SCHEDULER
+    schedule = []
+    # RETRIEVE SCHEDULE WITH HIGHEST SCORE FROM DATABASE
+    if session['type'] == "host":
+        TalksAssociated = Talks.query.filter_by(confId=confId).all()
+        for talk in TalksAssociated:
+            speaker = Speakers.query.filter_by(id=talk.speakerId).first()
+            schEntry = [talk.talkName, speaker.deleg]
+            schedule.append(["Not scheduled yet", schEntry])
     
     # Load HTML page
     return render_template("index.html", 
                            user=current_user,
                            userData=userData,
                            currentDate=date.today().strftime("%d-%m-%Y"),
-                           #schedule=schedule,
+                           schedule=schedule,
                            ConferenceData=ConferenceData)
 
 @views.route('/create-conference-1', methods=['GET', 'POST'])
@@ -155,7 +172,7 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
                     referalCheck = Conferences.query.get(confNewId).__dict__ # A handy way of checking the flow of data into the database after creating a conference.
                     referalCheck.pop('_sa_instance_state')
                     referalCheck = {key: referalCheck[key] for key in dbOrderingConf if key in referalCheck}
-                    UpdateLog(f"Host '{userData.username}' created conference:\n{referalCheck} ")
+                    UpdateLog(f"Host '{userData.id}, {userData.username}' created conference:\n{referalCheck} ")
                     hosting = ConfHosts(
                         confId = confNewId,
                         hostId = userId
@@ -191,7 +208,7 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
         talkNames = request.form.getlist("talkname[]")
         talkSpeakers = request.form.getlist("talkspeaker[]")
         talkTopics = request.form.getlist("talktags[]")
-        #print(talkNames, talkSpeakers, talkTopics)
+
         # Creating a structure for created talks
         """A user is not obliged to create a talk at this stage...
         But should they choose to, a talk needs a name.
@@ -200,7 +217,7 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
         for i in range(len(talkNames)):
             talksGenerated.append([talkNames[i], talkSpeakers[i], talkTopics[i]])
             # Entities involved include:
-            # Talks, Topics, Topicsconf
+            # TODO include Topicsconf in the code below:
             
             speaker = Speakers(
                 deleg=talkSpeakers[i]
@@ -208,6 +225,14 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
             db.session.add(speaker)
             db.session.commit()
             speakerId = speaker.id
+            talks = Talks(
+                    talkName=talkNames[i],
+                    speakerId=speakerId,
+                    confId=conferenceId,
+                )
+            db.session.add(talks)
+            db.session.commit()
+            talkID = talks.id
             topics = talkTopics[i].split(', ')
             for word in topics:
                 # Example: [topic1, topic2, topic3, topic4]
@@ -217,15 +242,13 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
                 db.session.add(topicWord)
                 db.session.commit()
                 wordId = topicWord.id
-                talks = Talks(
-                    talkName=talkNames[i],
-                    speakerId=speakerId,
-                    confId=conferenceId,
+                talktopic = TopicTalks(
+                    talkId=talkID,
                     topicId=wordId
                 )
-                db.session.add(talks)
+                db.session.add(talktopic)
                 db.session.commit()
-            
+        UpdateLog(f"Host ID: {userId} successefully added the following Talks to the conference ID {conferenceId}:\n{talksGenerated}")    
         flash("Talks added to conference successfully!", category="success")
         return redirect(url_for("views.home"))
     else:
@@ -302,7 +325,38 @@ def previewTalks(conferenceId):
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
     if request.method == "POST":
-        talkIds = request.form.getlist('talk')
+        talkIds = request.form.getlist('talkIds[]')
+        prefLvls = request.form.getlist('talkPref[]')
+        for i in range(len(talkIds)):
+            # Record / Update the preference of each talk for each delegate
+            existing1 = DelegTalks.query.filter_by(delegId=userId, talkId=talkIds[i], confId=conferenceId).first()
+            if existing1: # Update an existing preference
+                existing1.prefLvl = prefLvls[i]
+            else: # Or create a new one
+                recording = DelegTalks(
+                    delegId=userId,
+                    talkId=talkIds[i],
+                    confId=conferenceId,
+                    prefLvl=prefLvls[i]
+                )
+                db.session.add(recording)
+                db.session.commit()
+                
+                # Record a delegate's interest in each topic associated with a talk if above preference level 5
+                if int(prefLvls[i]) >= 6:
+                    topicsTalks = TopicTalks.query.filter_by(talkId=talkIds[i]).all()
+                    for record in topicsTalks:
+                        recordId = record.topicId
+                        newEntry = DelTopics(
+                            delegId=userId,
+                            topicId=recordId,
+                            confId=conferenceId
+                        )
+                        db.session.add(newEntry)
+                        db.session.commit()
+        flash("Your talk preferences for this conference has been saved!", category="success")
+        UpdateLog(f"User ID: {userId} has saved their talk preferences for conference ID: {conferenceId}.")
+        return redirect(url_for("views.home"))
     else:
         # Find the conference and the talks involved
         # Ensure user is registered
@@ -315,15 +369,39 @@ def previewTalks(conferenceId):
             return redirect(url_for("views.home"))
         else:
             talks = Talks.query.filter_by(confId=conferenceId).all()
-            collection = []
+            #print(talks)
+            
+            collectedTalks = []
+            # Assemble Talk information to pass onto to webpage
             for thing in talks:
                 speaker = Speakers.query.get(thing.speakerId)
-                talk = [thing.talkName, speaker, ]
+                talk = [thing.talkName, speaker.deleg]
+                correspond = TopicTalks.query.filter_by(talkId=thing.id).all()
+                topics = []
+                for row in correspond:
+                    wordSearch = Topics.query.get(row.id)
+                    topics.append(wordSearch.topic)
+                talk.append(topics)
+                talk.append(thing.id)
+                # RETRIEVE PREVIOUS PREFERENCES
+                delegTalk = DelegTalks.query.filter_by(delegId=userId, talkId=thing.id, confId=conferenceId).all()
+                if delegTalk != []: # A previous rating this talk exists
+                    talk.append(delegTalk[0].prefLvl)
+                else: # This talk has not been rated by the user.
+                    talk.append(5)
+                collectedTalks.append(talk)
+                
+    return render_template("talks.html", 
+                           user=current_user,
+                           userData=userData,
+                           conferenceId=conferenceId,
+                           collectedTalks=collectedTalks
+                        )
+                
 """ TODO 
     create:  
         - /edit-conference, 
         - /delete-conference, 
-        - /preview-talks, 
         - /leave-conference, 
         - /delete-conference,
         - /change-passwd

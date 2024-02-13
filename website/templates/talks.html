@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Preview Talks
+{% endblock %}
+
+{% block aboveNav %}
+<div class="container" style="text-align: center; font-weight: bolder;">
+	<h1 class="text-center">
+		Preview & Select Talks
+	</h1>
+</div>
+{% endblock %}
+
+{% block main %}
+<div>
+    {% if collectedTalks != [] %}
+    <p style="text-align: center;">
+        This page allows you to indicate your preference level 
+        for talks in your registered conference. <br> Please take a
+        look at the conferences below and use the sliders to
+        describe how much you would like to attend each talk.
+    </p>
+    <form action="/preview-talks/{{ conferenceId }}" method="POST">
+        <div class="separator"></div>
+            {% for talk in collectedTalks %}
+                <br>
+                <h4 style="font-weight: bold;">{{ talk[0] }}</h4>
+                <input type="hidden" name="talkIds[]" value="{{ talk[3] }}">
+                    <p>Presented by '{{ talk[1] }}'.</p>
+                    <p> 
+                        On the themes / topics of:
+                        {% for topic in talk[2][:-1] %}
+                            {{topic}},
+                        {% endfor %}
+                        and {{ talk[2]|last }}.<br>
+                    </p>
+                    <div style="text-align: center;">
+                        <h5>
+                            <label style="font-weight: bold;" for="talkPref[]">Preference Level (Low) → (High): </label>
+                            <input type="range" id="talkPref[]" name="talkPref[]" min="0" max="10" step="1" value="{{ talk[4] }}">
+                        </h5>
+                    </div>
+                <div class="separator"></div>
+            {% endfor %}
+            <br>
+            <div style="text-align: center;">
+                <button style="text-align: center;" class="btn btn-primary" type="submit"><h5>Save Preferences</h5></button>
+            </div>
+    </form>
+    {% else %}
+        <p style="text-align: center;">It seems that no talks have been created for this conference, please try again later or get in touch with the conference hosts.</p>
+    {% endif %}
+</div>
+{% endblock %}

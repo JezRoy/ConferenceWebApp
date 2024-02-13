@@ -49,8 +49,8 @@
             </thead>
             {% for conference in confFound %}
             <tr>
-                <td>
-                    {{ conference['confName'] }}
+                <td style="color: yellow;">
+                    {{ conference['confName'] }}<br>{{ conference['confURL'] }}
                 </td>
                 <td>
                     {{ conference['delegSignUpDeadline'] }}
@@ -70,11 +70,6 @@
                         <input type="hidden" name="conferenceId" value="{{ conference['confId'] }}">
                         <button class="btn btn-success" type="submit">Register</button>
                     </form>
-                </td>
-            </tr>
-            <tr>
-                <td style="color: yellow;">
-                    {{ conference['confURL'] }}
                 </td>
             </tr>
             {% endfor %}

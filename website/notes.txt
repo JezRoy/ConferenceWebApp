@@ -1,0 +1,7 @@
+Registered Delegates:
+C_Whitty, lol
+TestDelegate, test
+
+Registered Hosts:
+TestHost, test
+Grace, grace

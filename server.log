@@ -1430,3 +1430,447 @@ Error produced: (sqlite3.IntegrityError) NOT NULL constraint failed: conf_deleg.
 2024-02-11 16:19:07: Created Database.
 2024-02-11 16:24:50: Server Log initialisation/update
 2024-02-11 16:24:50: Created Database.
+2024-02-12 10:31:46: Server Log initialisation/update
+2024-02-12 10:31:46: Created Database.
+2024-02-12 10:31:47: Server Log initialisation/update
+2024-02-12 10:31:47: Created Database.
+2024-02-12 10:43:59: New host: TestHost added to the system.
+2024-02-12 10:45:54: Host 'TestHost' created conference:
+{'confName': 'ESA 2024', 'confURL': 'https://algo-conference.org/2023/esa/', 'paperFinalisationDate': datetime.date(2024, 4, 28), 'delegSignUpDeadline': datetime.date(2024, 9, 1), 'confStart': datetime.date(2024, 9, 4), 'confEnd': datetime.date(2024, 9, 6), 'confLength': 2, 'dayStart': datetime.time(9, 0), 'dayEnd': datetime.time(17, 25), 'dayDuration': 8.42, 'talkPerSession': 3, 'talkLength': 15, 'numSessions': 2} 
+2024-02-12 11:14:30: Server Log initialisation/update
+2024-02-12 11:14:30: Created Database.
+2024-02-12 11:15:06: Server Log initialisation/update
+2024-02-12 11:15:06: Created Database.
+2024-02-12 11:15:06: Server Log initialisation/update
+2024-02-12 11:15:06: Created Database.
+2024-02-12 13:27:15: Server Log initialisation/update
+2024-02-12 13:27:15: Created Database.
+2024-02-12 13:27:16: Server Log initialisation/update
+2024-02-12 13:27:16: Created Database.
+2024-02-12 13:27:44: New host: TestHost added to the system.
+2024-02-12 13:28:36: Host 'TestHost' created conference:
+{'confName': 'ESA 2024', 'confURL': 'https://algo-conference.org/2023/esa/', 'paperFinalisationDate': datetime.date(2023, 4, 28), 'delegSignUpDeadline': datetime.date(2023, 9, 1), 'confStart': datetime.date(2023, 9, 4), 'confEnd': datetime.date(2023, 9, 6), 'confLength': 2, 'dayStart': datetime.time(9, 0), 'dayEnd': datetime.time(17, 25), 'dayDuration': 8.42, 'talkPerSession': 3, 'talkLength': 15, 'numSessions': 2} 
+2024-02-12 13:29:50: Server Log initialisation/update
+2024-02-12 13:29:50: Created Database.
+2024-02-12 13:29:54: Server Log initialisation/update
+2024-02-12 13:29:54: Created Database.
+2024-02-12 13:31:34: Server Log initialisation/update
+2024-02-12 13:31:34: Created Database.
+2024-02-12 13:31:39: Server Log initialisation/update
+2024-02-12 13:31:39: Created Database.
+2024-02-12 13:31:57: Server Log initialisation/update
+2024-02-12 13:31:57: Created Database.
+2024-02-12 13:32:07: Server Log initialisation/update
+2024-02-12 13:32:07: Created Database.
+2024-02-12 13:32:44: Server Log initialisation/update
+2024-02-12 13:32:44: Created Database.
+2024-02-12 13:32:45: Server Log initialisation/update
+2024-02-12 13:32:45: Created Database.
+2024-02-12 13:36:54: Successefully added the following Talks to the conference ID 1:
+[['Talk 1', 'Speaker 1', 'topic1, topic2, topic3, topic4'], ['Talk 2', 'Speaker 2', 'topic1, topic2, topic5'], ['Talk 3', 'Speaker 3', 'topic3, topic4, topic6'], ['Talk 4', 'Speaker 1', 'topic5, topic6, topic7'], ['Talk 5', 'Speaker 4', 'topic6, topic7, topic8'], ['Talk 6', 'Speaker 2', 'topic1, topic2, topic3, topic4'], ['Talk 7', 'Speaker 4', 'topic4, topic5, topic7'], ['Talk 8', 'Speaker 5', 'topic7, topic8, topic9']]
+2024-02-12 13:38:24: Server Log initialisation/update
+2024-02-12 13:38:24: Created Database.
+2024-02-12 13:38:26: Server Log initialisation/update
+2024-02-12 13:38:26: Created Database.
+2024-02-12 13:38:31: Server Log initialisation/update
+2024-02-12 13:38:31: Created Database.
+2024-02-12 13:38:34: Server Log initialisation/update
+2024-02-12 13:38:34: Created Database.
+2024-02-12 13:38:40: Server Log initialisation/update
+2024-02-12 13:38:40: Created Database.
+2024-02-12 13:39:08: Server Log initialisation/update
+2024-02-12 13:39:08: Created Database.
+2024-02-12 13:39:10: Server Log initialisation/update
+2024-02-12 13:39:10: Created Database.
+2024-02-12 13:39:13: Server Log initialisation/update
+2024-02-12 13:39:13: Created Database.
+2024-02-12 13:39:17: Server Log initialisation/update
+2024-02-12 13:39:17: Created Database.
+2024-02-12 13:41:29: Server Log initialisation/update
+2024-02-12 13:41:29: Created Database.
+2024-02-12 13:41:32: Server Log initialisation/update
+2024-02-12 13:41:32: Created Database.
+2024-02-12 13:42:53: Server Log initialisation/update
+2024-02-12 13:42:53: Created Database.
+2024-02-12 13:42:56: Server Log initialisation/update
+2024-02-12 13:42:56: Created Database.
+2024-02-12 13:43:00: Server Log initialisation/update
+2024-02-12 13:43:00: Created Database.
+2024-02-12 13:43:15: Server Log initialisation/update
+2024-02-12 13:43:15: Created Database.
+2024-02-12 13:43:19: Server Log initialisation/update
+2024-02-12 13:43:19: Created Database.
+2024-02-12 13:43:33: Server Log initialisation/update
+2024-02-12 13:43:33: Created Database.
+2024-02-12 13:43:49: Server Log initialisation/update
+2024-02-12 13:43:49: Created Database.
+2024-02-12 13:43:52: Server Log initialisation/update
+2024-02-12 13:43:52: Created Database.
+2024-02-12 13:44:00: Server Log initialisation/update
+2024-02-12 13:44:00: Created Database.
+2024-02-12 13:44:20: Server Log initialisation/update
+2024-02-12 13:44:20: Created Database.
+2024-02-12 13:44:27: Server Log initialisation/update
+2024-02-12 13:44:27: Created Database.
+2024-02-12 13:44:51: Server Log initialisation/update
+2024-02-12 13:44:51: Created Database.
+2024-02-12 13:45:02: Server Log initialisation/update
+2024-02-12 13:45:02: Created Database.
+2024-02-12 13:45:04: Server Log initialisation/update
+2024-02-12 13:45:04: Created Database.
+2024-02-12 13:45:44: Server Log initialisation/update
+2024-02-12 13:45:44: Created Database.
+2024-02-12 13:45:49: Server Log initialisation/update
+2024-02-12 13:45:49: Created Database.
+2024-02-12 13:46:00: Server Log initialisation/update
+2024-02-12 13:46:00: Created Database.
+2024-02-12 13:46:03: Server Log initialisation/update
+2024-02-12 13:46:03: Created Database.
+2024-02-12 13:46:04: Server Log initialisation/update
+2024-02-12 13:46:04: Created Database.
+2024-02-12 13:46:06: Server Log initialisation/update
+2024-02-12 13:46:06: Created Database.
+2024-02-12 13:46:20: Server Log initialisation/update
+2024-02-12 13:46:20: Created Database.
+2024-02-12 13:46:26: Server Log initialisation/update
+2024-02-12 13:46:26: Created Database.
+2024-02-12 13:46:30: Server Log initialisation/update
+2024-02-12 13:46:30: Created Database.
+2024-02-12 13:46:34: Server Log initialisation/update
+2024-02-12 13:46:34: Created Database.
+2024-02-12 13:46:35: Server Log initialisation/update
+2024-02-12 13:46:35: Created Database.
+2024-02-12 13:46:38: Server Log initialisation/update
+2024-02-12 13:46:38: Created Database.
+2024-02-12 13:46:48: Server Log initialisation/update
+2024-02-12 13:46:48: Created Database.
+2024-02-12 13:50:04: Server Log initialisation/update
+2024-02-12 13:50:04: Created Database.
+2024-02-12 13:50:05: Server Log initialisation/update
+2024-02-12 13:50:05: Created Database.
+2024-02-12 13:54:02: Host '1, TestHost' created conference:
+{'confName': 'ESA 2024', 'confURL': 'https://algo-conference.org/2023/esa/', 'paperFinalisationDate': datetime.date(2024, 4, 28), 'delegSignUpDeadline': datetime.date(2024, 9, 1), 'confStart': datetime.date(2024, 9, 4), 'confEnd': datetime.date(2024, 9, 6), 'confLength': 2, 'dayStart': datetime.time(9, 0), 'dayEnd': datetime.time(17, 25), 'dayDuration': 8.42, 'talkPerSession': 3, 'talkLength': 15, 'numSessions': 2} 
+2024-02-12 14:01:52: Host ID: 1 successefully added the following Talks to the conference ID 2:
+[['Talk 1', 'Speaker 1', 'topic1, topic2, topic3, topic4'], ['Talk 2', 'Speaker 2', 'topic2, topic3, topic5'], ['Talk 3', 'Speaker 3', 'topic3, topic4, topic6'], ['Talk 4', 'Speaker 4', 'topic4, topic5, topic6'], ['Talk 5', 'Speaker 1', 'topic5, topic6, topic7'], ['Talk 6', 'Speaker 3', 'topic5, topic6, topic8, topic9'], ['Talk 7', 'Speaker 5', 'topic1, topic2, topic3, topic4'], ['Talk 8', 'Speaker 2', 'topic4, topic5, topic8'], ['Talk 9', 'Speaker 6', 'topic1, topic3, topic5'], ['Talk 10', 'Speaker 4', 'topic1, topic2, topic3, topic4']]
+2024-02-12 14:03:37: New delegate: TestDelegate added to the system.
+2024-02-12 14:04:44: User TestDelegate has signed up for conference ESA 2024 
+2024-02-12 14:05:38: Server Log initialisation/update
+2024-02-12 14:05:38: Created Database.
+2024-02-12 14:05:41: Server Log initialisation/update
+2024-02-12 14:05:41: Created Database.
+2024-02-12 14:14:20: Server Log initialisation/update
+2024-02-12 14:14:20: Created Database.
+2024-02-12 14:15:12: Server Log initialisation/update
+2024-02-12 14:15:12: Created Database.
+2024-02-12 14:15:14: Server Log initialisation/update
+2024-02-12 14:15:14: Created Database.
+2024-02-12 14:15:43: Server Log initialisation/update
+2024-02-12 14:15:43: Created Database.
+2024-02-12 14:15:44: Server Log initialisation/update
+2024-02-12 14:15:44: Created Database.
+2024-02-12 14:16:35: Server Log initialisation/update
+2024-02-12 14:16:35: Created Database.
+2024-02-12 14:17:27: Server Log initialisation/update
+2024-02-12 14:17:27: Created Database.
+2024-02-12 14:17:28: Server Log initialisation/update
+2024-02-12 14:17:28: Created Database.
+2024-02-12 14:18:06: Server Log initialisation/update
+2024-02-12 14:18:06: Created Database.
+2024-02-12 14:18:07: Server Log initialisation/update
+2024-02-12 14:18:07: Created Database.
+2024-02-12 14:20:38: Server Log initialisation/update
+2024-02-12 14:20:38: Created Database.
+2024-02-12 14:20:56: Server Log initialisation/update
+2024-02-12 14:20:56: Created Database.
+2024-02-12 14:20:58: Server Log initialisation/update
+2024-02-12 14:20:58: Created Database.
+2024-02-12 14:21:02: Server Log initialisation/update
+2024-02-12 14:21:02: Created Database.
+2024-02-12 14:21:03: Server Log initialisation/update
+2024-02-12 14:21:03: Created Database.
+2024-02-12 14:27:36: Server Log initialisation/update
+2024-02-12 14:27:36: Created Database.
+2024-02-12 14:27:37: Server Log initialisation/update
+2024-02-12 14:27:37: Created Database.
+2024-02-12 14:28:33: Server Log initialisation/update
+2024-02-12 14:28:33: Created Database.
+2024-02-12 14:28:35: Server Log initialisation/update
+2024-02-12 14:28:35: Created Database.
+2024-02-12 14:29:24: Server Log initialisation/update
+2024-02-12 14:29:24: Created Database.
+2024-02-12 14:29:45: Server Log initialisation/update
+2024-02-12 14:29:45: Created Database.
+2024-02-12 14:29:55: Server Log initialisation/update
+2024-02-12 14:29:55: Created Database.
+2024-02-12 14:30:04: Server Log initialisation/update
+2024-02-12 14:30:04: Created Database.
+2024-02-12 14:30:06: Server Log initialisation/update
+2024-02-12 14:30:06: Created Database.
+2024-02-12 14:30:33: Server Log initialisation/update
+2024-02-12 14:30:33: Created Database.
+2024-02-12 14:31:01: Server Log initialisation/update
+2024-02-12 14:31:01: Created Database.
+2024-02-12 14:31:03: Server Log initialisation/update
+2024-02-12 14:31:03: Created Database.
+2024-02-12 14:31:37: Server Log initialisation/update
+2024-02-12 14:31:37: Created Database.
+2024-02-12 14:34:57: Server Log initialisation/update
+2024-02-12 14:34:57: Created Database.
+2024-02-12 14:36:23: Server Log initialisation/update
+2024-02-12 14:36:23: Created Database.
+2024-02-12 14:36:23: Server Log initialisation/update
+2024-02-12 14:36:23: Created Database.
+2024-02-12 14:39:38: Server Log initialisation/update
+2024-02-12 14:39:38: Created Database.
+2024-02-12 14:39:39: Server Log initialisation/update
+2024-02-12 14:39:39: Created Database.
+2024-02-12 14:39:53: Server Log initialisation/update
+2024-02-12 14:39:53: Created Database.
+2024-02-12 14:42:16: Server Log initialisation/update
+2024-02-12 14:42:16: Created Database.
+2024-02-12 14:42:27: Server Log initialisation/update
+2024-02-12 14:42:27: Created Database.
+2024-02-12 15:09:03: Server Log initialisation/update
+2024-02-12 15:09:03: Created Database.
+2024-02-12 15:09:04: Server Log initialisation/update
+2024-02-12 15:09:04: Created Database.
+2024-02-12 15:09:20: Server Log initialisation/update
+2024-02-12 15:09:20: Created Database.
+2024-02-12 15:12:20: Server Log initialisation/update
+2024-02-12 15:12:20: Created Database.
+2024-02-12 15:12:24: Server Log initialisation/update
+2024-02-12 15:12:24: Created Database.
+2024-02-12 15:40:23: Server Log initialisation/update
+2024-02-12 15:40:23: Created Database.
+2024-02-12 15:40:24: Server Log initialisation/update
+2024-02-12 15:40:24: Created Database.
+2024-02-12 16:08:53: Server Log initialisation/update
+2024-02-12 16:08:53: Created Database.
+2024-02-12 16:09:49: Server Log initialisation/update
+2024-02-12 16:09:49: Created Database.
+2024-02-12 16:09:50: Server Log initialisation/update
+2024-02-12 16:09:50: Created Database.
+2024-02-12 16:13:08: Server Log initialisation/update
+2024-02-12 16:13:08: Created Database.
+2024-02-12 16:13:09: Server Log initialisation/update
+2024-02-12 16:13:09: Created Database.
+2024-02-12 16:15:36: Server Log initialisation/update
+2024-02-12 16:15:36: Created Database.
+2024-02-12 16:15:39: Server Log initialisation/update
+2024-02-12 16:15:39: Created Database.
+2024-02-12 16:15:42: Server Log initialisation/update
+2024-02-12 16:15:42: Created Database.
+2024-02-12 16:15:44: Server Log initialisation/update
+2024-02-12 16:15:44: Created Database.
+2024-02-12 16:16:03: Server Log initialisation/update
+2024-02-12 16:16:03: Created Database.
+2024-02-12 16:23:45: Server Log initialisation/update
+2024-02-12 16:23:45: Created Database.
+2024-02-12 16:23:45: Server Log initialisation/update
+2024-02-12 16:23:45: Created Database.
+2024-02-12 16:24:47: Server Log initialisation/update
+2024-02-12 16:24:47: Created Database.
+2024-02-12 16:24:51: Server Log initialisation/update
+2024-02-12 16:24:51: Created Database.
+2024-02-12 16:25:02: Server Log initialisation/update
+2024-02-12 16:25:02: Created Database.
+2024-02-12 16:26:59: Server Log initialisation/update
+2024-02-12 16:26:59: Created Database.
+2024-02-12 16:27:13: Server Log initialisation/update
+2024-02-12 16:27:13: Created Database.
+2024-02-12 16:27:24: Server Log initialisation/update
+2024-02-12 16:27:24: Created Database.
+2024-02-12 16:27:48: Server Log initialisation/update
+2024-02-12 16:27:48: Created Database.
+2024-02-12 16:28:00: Server Log initialisation/update
+2024-02-12 16:28:00: Created Database.
+2024-02-12 16:28:17: Server Log initialisation/update
+2024-02-12 16:28:17: Created Database.
+2024-02-12 16:28:18: Server Log initialisation/update
+2024-02-12 16:28:18: Created Database.
+2024-02-12 16:28:46: Server Log initialisation/update
+2024-02-12 16:28:46: Created Database.
+2024-02-12 16:28:48: Server Log initialisation/update
+2024-02-12 16:28:48: Created Database.
+2024-02-12 16:28:49: Server Log initialisation/update
+2024-02-12 16:28:49: Created Database.
+2024-02-12 16:29:30: Server Log initialisation/update
+2024-02-12 16:29:30: Created Database.
+2024-02-12 16:29:48: Server Log initialisation/update
+2024-02-12 16:29:48: Created Database.
+2024-02-12 16:29:51: Server Log initialisation/update
+2024-02-12 16:29:51: Created Database.
+2024-02-12 16:30:08: Server Log initialisation/update
+2024-02-12 16:30:08: Created Database.
+2024-02-12 16:30:26: Server Log initialisation/update
+2024-02-12 16:30:26: Created Database.
+2024-02-12 16:31:11: Server Log initialisation/update
+2024-02-12 16:31:11: Created Database.
+2024-02-12 16:31:22: Server Log initialisation/update
+2024-02-12 16:31:22: Created Database.
+2024-02-12 16:31:22: Server Log initialisation/update
+2024-02-12 16:31:22: Created Database.
+2024-02-12 16:32:55: Server Log initialisation/update
+2024-02-12 16:32:55: Created Database.
+2024-02-12 16:33:51: Server Log initialisation/update
+2024-02-12 16:33:51: Created Database.
+2024-02-12 16:34:40: Server Log initialisation/update
+2024-02-12 16:34:40: Created Database.
+2024-02-12 16:36:29: Server Log initialisation/update
+2024-02-12 16:36:29: Created Database.
+2024-02-12 16:36:29: Server Log initialisation/update
+2024-02-12 16:36:30: Created Database.
+2024-02-12 16:45:44: Server Log initialisation/update
+2024-02-12 16:45:44: Created Database.
+2024-02-12 16:45:45: Server Log initialisation/update
+2024-02-12 16:45:45: Created Database.
+2024-02-12 16:46:13: Server Log initialisation/update
+2024-02-12 16:46:13: Created Database.
+2024-02-12 16:46:16: Server Log initialisation/update
+2024-02-12 16:46:16: Created Database.
+2024-02-12 16:49:29: Server Log initialisation/update
+2024-02-12 16:49:29: Created Database.
+2024-02-12 16:49:29: Server Log initialisation/update
+2024-02-12 16:49:29: Created Database.
+2024-02-12 16:51:52: New delegate: C_Whitty added to the system.
+2024-02-12 16:55:02: New host: Grace added to the system.
+2024-02-12 17:00:34: Host '4, Grace' created conference:
+{'confName': 'ChemCon for the Nerds', 'confURL': '', 'paperFinalisationDate': datetime.date(2024, 2, 13), 'delegSignUpDeadline': datetime.date(2024, 2, 13), 'confStart': datetime.date(2024, 2, 14), 'confEnd': datetime.date(2024, 2, 28), 'confLength': 14, 'dayStart': datetime.time(5, 0), 'dayEnd': datetime.time(17, 0), 'dayDuration': 12, 'talkPerSession': 4, 'talkLength': 50, 'numSessions': 2} 
+2024-02-12 17:23:31: Server Log initialisation/update
+2024-02-12 17:23:31: Created Database.
+2024-02-12 17:23:33: Server Log initialisation/update
+2024-02-12 17:23:33: Created Database.
+2024-02-12 17:23:35: Server Log initialisation/update
+2024-02-12 17:23:35: Created Database.
+2024-02-12 17:23:39: Server Log initialisation/update
+2024-02-12 17:23:39: Created Database.
+2024-02-12 17:23:54: Host ID: 4 successefully added the following Talks to the conference ID 3:
+[['How to have chemistry with chemists 101', 'Detective Anna Michael Schuder', 'chemistry, chemists, love, attraction, science'], ['Why you should quit being a chemist and be a computer scientist instead? ', 'Monsieur Mikey OG PhD ', 'chemist, computer science, avid, confliction, confusion, midlife crisis'], ['What is a hydrocarbon??!?!?!?!?!?!?!?!?! and other unanswered questions! ', 'Professor Becks MD', 'hydrogen, carbon, hydrocarbon, questions, concerns, queries '], ['The safety benefits of bandanas in the lab: Why bandanas are more than just a fashion statement', 'Dame Anna Bandana ', 'waffle, lab, bandana, Anna, fashion, vogue, safety, security, concern, obsession, personality '], ['The challenges faced by salsa-dancing chemists in the lab-place', 'Senorita Jezza Leslie Roy', 'challenges, salsa, dancing, lab, chemists, loneliness, depression, isolation, hope'], ['How to have chemistry with chemists 102', 'Detective Anna Michael Schuder', 'chemistry, chemists, love, attraction, science, '], ['Why you should quit being a chemist and be a computer scientist instead? Part 2', 'Monsieur Mikey OG PhD ', 'chemist, computer science, avid, confliction, confusion, midlife crisis'], ['What is an alloy??!?!?!?!?!?!?!?!?! and other previously missing answers! ', 'Professor Becks MD', 'hydrogen, carbon, hydrocarbon, questions, concerns, queries '], ['The safety benefits of bandanas in the lab: Why bandanas are more than just a fashion statement', 'Dame Anna Bandana ', 'waffle, lab, bandana, Anna, fashion, vogue, safety, security, concern, obsession, personality '], ['How to box a salsa-dancing chemist in the lab.', 'Senorita Jezza Leslie Roy', 'challenges, salsa, dancing, lab, chemists, loneliness, depression, isolation, hope']]
+2024-02-12 17:29:07: User C_Whitty has signed up for conference ChemCon for the Nerds 
+2024-02-12 18:56:06: Server Log initialisation/update
+2024-02-12 18:56:06: Created Database.
+2024-02-12 18:58:27: Server Log initialisation/update
+2024-02-12 18:58:27: Created Database.
+2024-02-12 18:58:35: Server Log initialisation/update
+2024-02-12 18:58:35: Created Database.
+2024-02-12 18:58:36: Server Log initialisation/update
+2024-02-12 18:58:37: Created Database.
+2024-02-12 20:30:43: Server Log initialisation/update
+2024-02-12 20:30:43: Created Database.
+2024-02-12 20:30:43: Server Log initialisation/update
+2024-02-12 20:30:43: Created Database.
+2024-02-12 20:32:10: Server Log initialisation/update
+2024-02-12 20:32:10: Created Database.
+2024-02-12 20:32:10: Server Log initialisation/update
+2024-02-12 20:32:10: Created Database.
+2024-02-12 20:55:43: New host: TestHost added to the system.
+2024-02-12 21:00:25: New delegate: TestDelegate added to the system.
+2024-02-12 21:05:52: Host '1, TestHost' created conference:
+{'confName': 'ESA 2024', 'confURL': 'https://algo-conference.org/2023/esa/', 'paperFinalisationDate': datetime.date(2024, 4, 28), 'delegSignUpDeadline': datetime.date(2024, 9, 1), 'confStart': datetime.date(2024, 9, 4), 'confEnd': datetime.date(2024, 9, 6), 'confLength': 2, 'dayStart': datetime.time(9, 0), 'dayEnd': datetime.time(17, 30), 'dayDuration': 8.5, 'talkPerSession': 4, 'talkLength': 10, 'numSessions': 2} 
+2024-02-12 21:19:09: Host ID: 1 successefully added the following Talks to the conference ID 1:
+[['Parameterized Matroid-Constrained Maximum Coverage', 'François Sellier', 'Parameters, Matroid-Constrained, Maximum Coverage'], ['Sorting Finite Automata via Partition Refinement', 'Ruben Becker', 'Finite Automata, Partition Refinement'], ['Lyndon Arrays in Sublinear Time', 'Hideo Bannai', 'Lyndon Arrays, Sublinear Time'], ['Linear Time Construction of Cover Suffix Tree and Applications', 'Jakub Radoszewski', 'Linear Time Construction, Cover Suffix Tree, Applications'], ['Subcubic algorithm for (Unweighted) Unrooted Tree Edit Distance', 'Krzysztof Pióro', 'Subcubic algorithm, Unrooted Tree Edit Distance'], ['Lossy Kernelization for (Implicit) Hitting Set Problems', 'Stephan Thomasse', 'Lossy Kernelization, Hitting Set Problems'], ['Fault Tolerance in Euclidean Committee Selection', 'Jie Xue', 'Fault Tolerance, Euclidean Committee Selection']]
+2024-02-12 21:30:09: Server Log initialisation/update
+2024-02-12 21:30:09: Created Database.
+2024-02-12 21:30:10: Server Log initialisation/update
+2024-02-12 21:30:10: Created Database.
+2024-02-12 21:34:26: User TestDelegate has signed up for conference ESA 2024 
+2024-02-12 21:59:06: Server Log initialisation/update
+2024-02-12 21:59:06: Created Database.
+2024-02-12 22:05:38: Server Log initialisation/update
+2024-02-12 22:05:38: Created Database.
+2024-02-12 22:05:38: Server Log initialisation/update
+2024-02-12 22:05:39: Created Database.
+2024-02-12 23:17:47: Server Log initialisation/update
+2024-02-12 23:17:47: Created Database.
+2024-02-12 23:17:49: Server Log initialisation/update
+2024-02-12 23:17:49: Created Database.
+2024-02-12 23:17:58: Server Log initialisation/update
+2024-02-12 23:17:58: Created Database.
+2024-02-13 10:24:46: Server Log initialisation/update
+2024-02-13 10:24:46: Created Database.
+2024-02-13 10:31:06: Server Log initialisation/update
+2024-02-13 10:31:06: Created Database.
+2024-02-13 10:31:07: Server Log initialisation/update
+2024-02-13 10:31:07: Created Database.
+2024-02-13 10:31:58: Server Log initialisation/update
+2024-02-13 10:31:58: Created Database.
+2024-02-13 10:31:58: Server Log initialisation/update
+2024-02-13 10:31:58: Created Database.
+2024-02-13 10:32:14: Server Log initialisation/update
+2024-02-13 10:32:14: Created Database.
+2024-02-13 10:32:17: Server Log initialisation/update
+2024-02-13 10:32:17: Created Database.
+2024-02-13 10:32:20: Server Log initialisation/update
+2024-02-13 10:32:20: Created Database.
+2024-02-13 10:32:21: Server Log initialisation/update
+2024-02-13 10:32:21: Created Database.
+2024-02-13 10:32:46: Server Log initialisation/update
+2024-02-13 10:32:46: Created Database.
+2024-02-13 10:32:50: Server Log initialisation/update
+2024-02-13 10:32:50: Created Database.
+2024-02-13 10:32:51: Server Log initialisation/update
+2024-02-13 10:32:51: Created Database.
+2024-02-13 10:35:05: Server Log initialisation/update
+2024-02-13 10:35:05: Created Database.
+2024-02-13 10:35:05: Server Log initialisation/update
+2024-02-13 10:35:05: Created Database.
+2024-02-13 10:36:06: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-13 10:36:06: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-13 10:36:06: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-13 10:36:06: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-13 10:36:06: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-13 10:36:06: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-13 10:36:06: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-13 10:36:27: Server Log initialisation/update
+2024-02-13 10:36:27: Created Database.
+2024-02-13 10:36:27: Server Log initialisation/update
+2024-02-13 10:36:27: Created Database.
+2024-02-13 10:36:37: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-13 10:39:12: Server Log initialisation/update
+2024-02-13 10:39:12: Created Database.
+2024-02-13 10:48:15: Server Log initialisation/update
+2024-02-13 10:48:15: Created Database.
+2024-02-13 10:48:16: Server Log initialisation/update
+2024-02-13 10:48:16: Created Database.
+2024-02-13 10:49:21: New delegate: Jacky added to the system.
+2024-02-13 10:49:35: User Jacky has signed up for conference ESA 2024 
+2024-02-13 10:50:04: Server Log initialisation/update
+2024-02-13 10:50:04: Created Database.
+2024-02-13 10:52:27: Server Log initialisation/update
+2024-02-13 10:52:27: Created Database.
+2024-02-13 10:53:12: Server Log initialisation/update
+2024-02-13 10:53:12: Created Database.
+2024-02-13 10:53:14: Server Log initialisation/update
+2024-02-13 10:53:14: Created Database.
+2024-02-13 10:53:27: Server Log initialisation/update
+2024-02-13 10:53:27: Created Database.
+2024-02-13 10:53:43: Server Log initialisation/update
+2024-02-13 10:53:43: Created Database.
+2024-02-13 10:53:48: Server Log initialisation/update
+2024-02-13 10:53:48: Created Database.
+2024-02-13 10:53:50: User ID: 3 has saved their talk preferences for conference ID: 1.
+2024-02-13 10:54:06: Server Log initialisation/update
+2024-02-13 10:54:06: Created Database.
+2024-02-13 10:54:25: Server Log initialisation/update
+2024-02-13 10:54:25: Created Database.
+2024-02-13 10:54:26: Server Log initialisation/update
+2024-02-13 10:54:26: Created Database.
+2024-02-13 10:54:46: Server Log initialisation/update
+2024-02-13 10:54:46: Created Database.
+2024-02-13 10:54:52: Server Log initialisation/update
+2024-02-13 10:54:52: Created Database.
+2024-02-13 10:54:55: Server Log initialisation/update
+2024-02-13 10:54:55: Created Database.
+2024-02-13 10:55:03: User ID: 3 has saved their talk preferences for conference ID: 1.
+2024-02-13 11:11:30: Server Log initialisation/update
+2024-02-13 11:11:30: Created Database.
+2024-02-13 11:17:27: Server Log initialisation/update
+2024-02-13 11:17:27: Created Database.
+2024-02-13 11:17:27: Server Log initialisation/update
+2024-02-13 11:17:27: Created Database.
+2024-02-13 11:21:43: Server Log initialisation/update
+2024-02-13 11:21:43: Created Database.
+2024-02-13 11:21:44: Server Log initialisation/update
+2024-02-13 11:21:44: Created Database.
+2024-02-13 11:22:27: Server Log initialisation/update
+2024-02-13 11:22:27: Created Database.

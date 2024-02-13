@@ -106,7 +106,7 @@ class Talks(db.Model):
     talkName = db.Column(db.String(limit))
     speakerId = db.Column(db.Integer, db.ForeignKey('speakers.id')) # Foreign key from Speakers table
     confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
-    def __init__(self, talkName, speakerId, confId, topicId):
+    def __init__(self, talkName, speakerId, confId):
         self.talkName = talkName
         self.speakerId = speakerId
         self.confId = confId
@@ -156,13 +156,15 @@ class Topicsconf(db.Model):
         self.topicId = topicId
         self.confId = confId
 
-class DelTopics(db.Model):
+class DelTopics(db.Model): # Only recorded for topics in talks that have a preference of 6/10 or higher.
     id = db.Column(db.Integer, primary_key=True)
     delegId = db.Column(db.Integer, db.ForeignKey('user.id')) # Foreign key from user table - given they are a 'delegate'
     topicId = db.Column(db.Integer, db.ForeignKey('topicsconf.id')) # Foreign key from Topic table
-    def __init__(self, delegId, topicId):
+    confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
+    def __init__(self, delegId, topicId, confId):
         self.delegId = delegId
         self.topicId = topicId
+        self.confId = confId
 
 class Schedules(db.Model):
     id = db.Column(db.Integer, primary_key=True)

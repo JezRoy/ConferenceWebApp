@@ -46,7 +46,7 @@
 						{% if userData.type == 'host' %}
 							<button style="text-align: center;" class="btn btn-primary" href="/edit-conference">Edit Conference</button>
 						{% else %}
-						<button style="text-align: center;" class="btn btn-primary" href="/preview-talks">Select Talks</button>
+							<a href="/preview-talks/{{ ConferenceData['confId'] }}"><button style="text-align: center;" class="btn btn-primary">Select Talks</button></a>
 						{% endif %}
 					</td>
 					<td>
@@ -82,7 +82,11 @@
 							</tr>
 							<tr>
 								<td>
-									<button style="text-align: center;" class="btn btn-danger" href="/cancel-registration">Cancel Registration</button>
+									{% if userData.type == 'host' %}
+										<button style="text-align: center;" class="btn btn-danger" href="/terminate-conference/{{ ConferenceData['confId'] }}">Terminate Conference</button>
+									{% else %}
+										<button style="text-align: center;" class="btn btn-danger" href="/cancel-registration/{{ ConferenceData['confId'] }}">Cancel Registration</button>
+									{% endif %}
 								</td>
 							</tr>
 						</table>
