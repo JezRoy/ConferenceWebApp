@@ -50,11 +50,12 @@
 						{% endif %}
 					</td>
 					<td>
-						Date: <br><h3>{{ currentDate }}</h3>
+						Start Date: <br><h3>{{ ConferenceData["confStart"] }}</h3>
 					</td>
 				</tr>
 			</table>
 		</div>
+		<br><br>
 		<div>
 			<!-- A table in the left half of another table (of 1 row and 2 columns) -->
 			<!-- The other half of the 'super' table holds the schedule of the user -->
@@ -62,7 +63,7 @@
 				<tr>
 					<td>
 						<!-- Conference information and buttons -->
-						<table style="width:50%; align-self: center; align-items: center;">
+						<table style="width:50%; align-self: center; align-items: center;" cellpadding="5" cellspacing="4">
 							<tr>
 								<td>
 									Sign Up Deadline: {{ ConferenceData["delegSignUpDeadline"] }}
@@ -71,13 +72,13 @@
 							<br>
 							<tr style="font-weight: bold;">
 								<td>
-									Start Date: {{ ConferenceData["confStart"] }}
+									→ Start Date: {{ ConferenceData["confStart"] }}
 								</td>
 							</tr>
 							<br>
 							<tr style="font-weight: bold;">	
 								<td>
-									End Date: {{ ConferenceData["confEnd"] }}
+									→ End Date: {{ ConferenceData["confEnd"] }}
 								</td>
 							</tr>
 							<tr>
@@ -92,8 +93,45 @@
 						</table>
 					</td>
 					<td>
-						<!-- Conference schedule for the day -->
-						{% if schedule %}
+						<!-- Conference schedule for the day AT THE MOMENT only for HOST-->
+						{% if schedule and userData.type.capitalize() == "Host" %}
+						<td>
+							<h3>
+								My Talk Schedule
+							</h3>
+							<table class="schedule" style="color:#33ccff;" border="3" cellpadding="8" cellspacing="5">
+								<thead>
+									<td>
+										<p style="font-weight:bold;">
+											Time
+										</p>
+									</td>
+									<td>
+										<p style="font-weight:bold;">
+											Talk Name
+										</p>
+									</td>
+									<td>
+										<p style="font-weight:bold;">
+											Speaker
+										</p>
+									</td>
+								</thead>
+							{% for record in schedule %}
+								<tr>
+									<td>
+										{{ record[0] }}
+									</td>
+									<td>
+										{{ record[1][0] }}
+									</td>
+									<td>
+										{{ record[1][1] }}
+									</td>
+								</tr>
+							{% endfor %}
+							</table>
+						</td>
 						{% endif %}
 					</td>
 				</tr>
