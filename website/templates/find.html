@@ -14,18 +14,27 @@
 
 {% block main %}
 <div class="textFormContainer">
-    <form action="/find-conference" method="POST">
+    <form id="searchForm" name="searchForm" action="/find-conference" method="POST">
         <div class="form-group" >
-            <label id="field" for="conferenceSearch"><h3>Find a Conference: </h3></label>
+            <h3>Find a Conference: </h3>
             <input autocomplete="on" autofocus class="form-control" name="conferenceSearch" placeholder="Search here..." type="text">
         </div>
         <p></p>
-        <button class="btn btn-primary" type="submit" id="submit">Search</button>
+        <table width="100%">
+            <tr>
+                <td>
+                    <button class="btn btn-primary" name="submitButton" type="submit" value="1"><h5>Search</h5></button> 
+                </td>
+                <td style="left:  auto; right: 25px;" align="right">
+                    <button class="btn btn-danger" name="submitButton" type="submit" value="2"><h5>Show All</h5></button>
+                </td>
+            </tr>
+        </table>        
     </form>
 </div>
 {% if confFound %}
     <div class="textFormContainer">
-        <h3>Conferences Found!</h3>
+        <h3>List of Conferences:</h3>
         <table class="table table-striped sortable" id="sortTable">
             <thead>
                 <td>
@@ -65,11 +74,17 @@
                     {{ conference['confEnd'] }}
                 </td>
                 <td>
+                    {% if conference['registered'] == False %}
                     <!-- Register Button -->
                     <form id="registration-form" method="POST" action="{{ url_for('views.registerConference') }}">
                         <input type="hidden" name="conferenceId" value="{{ conference['confId'] }}">
                         <button class="btn btn-success" type="submit">Register</button>
                     </form>
+                    {% else %}
+                    <p>
+                        Already registered.
+                    </p>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

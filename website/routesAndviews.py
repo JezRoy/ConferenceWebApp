@@ -273,14 +273,19 @@ def findConferences():
     userData = User.query.get(userId)
     if request.method == 'POST':
         query = request.form.get("conferenceSearch", "").strip()
-        results = Conferences.query.filter(Conferences.confName.ilike(f"%{query}%")).all()
+        button = request.form.get('submitButton')
+        if button == 1: # Search for conferences that have a similar name to search query.
+            results = Conferences.query.filter(Conferences.confName.ilike(f"%{query}%")).all()
+        else: # Just return all registered conferences.
+            results = Conferences.query.all()
         setOfResults = []
         for conf in results:
             retrieve = conf.__dict__
             retrieve.pop('_sa_instance_state', None)
             retrieve = {key: retrieve[key] for key in dbOrderingConf if key in retrieve}
             retrieve["confId"] = conf.id
-            #print(retrieve)
+            registered = db.session.query(db.exists().where(ConfDeleg.delegId == userId and ConfDeleg.confId == conf.id)).scalar()
+            retrieve["registered"] = registered
             setOfResults.append(retrieve)
         confFound = setOfResults
     else:
@@ -314,7 +319,7 @@ def registerConference():
         # Get a user to register their talks
         UpdateLog(f"User {userData.username} has signed up for conference {confName} ")
     else:
-        flash("You have already pre-registered for this conference.", category="warning")
+        flash("You have already registered for this conference.", category="warning")
     return redirect(url_for("views.home"))
 
 @views.route('/preview-talks/<int:conferenceId>', methods=['GET', 'POST'])
@@ -332,6 +337,8 @@ def previewTalks(conferenceId):
             existing1 = DelegTalks.query.filter_by(delegId=userId, talkId=talkIds[i], confId=conferenceId).first()
             if existing1: # Update an existing preference
                 existing1.prefLvl = prefLvls[i]
+                db.session.add(existing1)
+                db.session.commit()
             else: # Or create a new one
                 recording = DelegTalks(
                     delegId=userId,
@@ -352,8 +359,8 @@ def previewTalks(conferenceId):
                             topicId=recordId,
                             confId=conferenceId
                         )
-                        db.session.add(newEntry)
-                        db.session.commit()
+                db.session.add(newEntry)
+                db.session.commit()
         flash("Your talk preferences for this conference has been saved!", category="success")
         UpdateLog(f"User ID: {userId} has saved their talk preferences for conference ID: {conferenceId}.")
         return redirect(url_for("views.home"))

@@ -50,7 +50,7 @@
 						{% endif %}
 					</td>
 					<td>
-						Start Date: <br><h3>{{ ConferenceData["confStart"] }}</h3>
+						Start Date: <br><h3>{{ ConferenceData["confStart"].strftime('%d-%m-%Y') }}</h3>
 					</td>
 				</tr>
 			</table>
@@ -66,19 +66,19 @@
 						<table style="width:50%; align-self: center; align-items: center;" cellpadding="5" cellspacing="4">
 							<tr>
 								<td>
-									Sign Up Deadline: {{ ConferenceData["delegSignUpDeadline"] }}
+									Sign Up Deadline: {{ ConferenceData["delegSignUpDeadline"].strftime('%d-%m-%Y') }}
 								</td>
 							</tr>
 							<br>
 							<tr style="font-weight: bold;">
 								<td>
-									→ Start Date: {{ ConferenceData["confStart"] }}
+									→ Start Date: {{ ConferenceData["confStart"].strftime('%d-%m-%Y') }}
 								</td>
 							</tr>
 							<br>
 							<tr style="font-weight: bold;">	
 								<td>
-									→ End Date: {{ ConferenceData["confEnd"] }}
+									→ End Date: {{ ConferenceData["confEnd"].strftime('%d-%m-%Y') }}
 								</td>
 							</tr>
 							<tr>
@@ -97,7 +97,7 @@
 						{% if schedule and userData.type.capitalize() == "Host" %}
 						<td>
 							<h3 style="font-weight: bold;">
-								My Talk Schedule
+								Schedule of Talks
 							</h3>
 							<table class="schedule" style="color:#33ccff;" border="3" cellpadding="8" cellspacing="5">
 								<thead>
