@@ -2064,3 +2064,10 @@ Error produced: (sqlite3.IntegrityError) NOT NULL constraint failed: conf_deleg.
 2024-02-16 12:36:53: User ID: 2 has saved their talk preferences for conference ID: 1.
 2024-02-16 12:37:02: User ID: 2 has saved their talk preferences for conference ID: 1.
 2024-02-16 12:37:06: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-16 12:41:19: Server Log initialisation/update
+2024-02-16 12:41:19: Created Database.
+2024-02-16 12:41:22: Server Log initialisation/update
+2024-02-16 12:41:22: Created Database.
+2024-02-16 12:45:05: Server Log initialisation/update
+2024-02-16 12:45:05: Created Database.
+2024-02-16 12:45:06: Server Log initialisation/update

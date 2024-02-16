@@ -411,11 +411,11 @@ def previewTalks(conferenceId):
 @views.route('/edit-profile', methods=['GET', 'POST'])
 @login_required
 def editProfile():
-    """Login a user"""
+    """Edit a user's profile details"""
     # Find logged in user data
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
-    if  request.method == "POST":
+    if request.method == "POST":
         dataFetch = request.form
         valid = True
         # Validate fields if necesary
@@ -453,13 +453,27 @@ def editProfile():
     return render_template("profedit.html",
                            user=current_user,
                            userData=userData)
-        
-        
+  
+@views.route('/edit-conference/<int:conferenceId>', methods=['GET', 'POST'])
+@login_required
+def editConference(conferenceId):
+    """Edit the details of a conference."""
+    # Find logged in user data
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    if request.method == "POST":
+        flash("This functionality is still yet to be implemented.", category="warning")
+        return redirect(url_for("views.home"))
+    else:
+        return render_template("editconf.html",
+                               user=current_user,
+                               userData=userData,
+                               stage=1,
+                               confId=conferenceId)
+
 """ TODO 
     create:  
         - /edit-conference, 
-        - /delete-conference, 
         - /leave-conference, 
         - /delete-conference,
-        - /change-passwd
 """

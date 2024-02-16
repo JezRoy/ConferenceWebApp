@@ -1,0 +1,211 @@
+{% extends "layout.html" %}
+
+{% block title %}
+	{% if user.is_authenticated %}
+		Edit Conference
+	{% endif %}
+{% endblock %}
+
+{% block aboveNav %}
+<div class="container" style="text-align: center; font-weight: bolder;">
+	<h1 class="text-center">
+		{% if user.is_authenticated %}
+		    Edit a Conference
+		{% endif %}
+	</h1>
+</div>
+{% endblock %}
+
+{% block main %}
+<br>
+<p>Please fill out all following conference details. If you wish to leave a field unchanged, then please leave that field's entry box blank. Use the 'Home' button to cancel making changes, and go back to the dashboard.</p>
+{% if stage == 1 %}
+<!-- First page of conference creation - Conference Details -->
+<div class="textFormContainer">
+    <div class="form-container">
+        <form action="/edit-conference/{{ conferenceId if conferenceId != None }}" method="POST">
+            <div class="form-group">
+                <div class="form-column">
+                    <label id="field" for="confname">Conference Name </label>
+                    <input autocomplete="off" autofocus class="form-control" name="confname" placeholder="Conference Name" type="text">
+                    <br>
+                    <label id="field" for="confurl">Conference URL </label>
+                    <input autocomplete="off" autofocus class="form-control" name="confurl" placeholder="Conference Website URL" type="text">
+                    <p id="labelled">A direct link to your conference's main website page.</p>
+                    <br>
+                    <label id="field" for="paperfinal">Paper / Talk Finalisation Date: </label>
+                    <input autocomplete="off" class="form-control" name="paperfinal" type="date">
+                    <p id="labelled">A date for talks and papers to be submitted, so that delegates know when a complete list of talks will be shown.
+                        Allowing them to better make choices with which talks they wish to attend.
+                    </p>
+                    <label id="field" for="delegRegisterDeadline">Delegate Registration Deadline: </label>
+                    <input autocomplete="off" class="form-control" name="delegRegisterDeadline" type="date">
+                </div>
+                <br>
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <label id="field" for="confstart">Conference Start Date: </label>
+                            <input autocomplete="off" class="form-control" name="confstart" type="date">
+                        </td>
+                        <td>
+                            <label id="field" for="confend">Conference End Date: </label>
+                            <input autocomplete="off" class="form-control" name="confend" type="date">
+                        </td>
+                    </tr>
+                    <tr>&nbsp;</tr>
+                    <br>
+                    <tr>
+                        <td>
+                            <label id="field" for="daystart">Starting Time for each day: </label>
+                            <input autocomplete="off" class="form-control" name="daystart" type="time">
+                        </td>
+                        <td>
+                            <label id="field" for="dayend">Ending Time for each day </label>
+                            <input autocomplete="off" class="form-control" name="dayend" type="time">
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <div class="form-column">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td>
+                                <label id="field" for="talksPerSession">Talks per sessions:</label>
+                                <input class="form-control" type="number" name="talksPerSession" step="1">
+                                <p id="labelled">Refers to the number of talks to take place in any one session.
+                                    The Schedule Optimiser will calculate the ideal number of sessions per day.
+                                </p>
+                            </td>
+                            <td>
+                                <label id="field" for="talkLength">Talk Length (mins): </label>
+                                <input class="form-control" type="number" value="30" name="talkLength" step="5">
+                                <p id="labelled">Refers to the average length of all talks in the conference.
+                                    To help guide the Schedule Optimiser.
+                                </p>
+                            </td>
+                            <td>
+                                <label id="field" for="numSessions">Number of Parallel sessions:</label>
+                                <input class="form-control" type="number" name="numSessions" step="1">
+                                <p id="labelled">The number of parallel sessions refer to the number of talks that take place 
+                                    at any time during a day of a conference. For example, 2 sessions to run at the same time, at any point in time. 
+                                    Might be dependant on the number of rooms available
+                                    for your conference.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+                </div>
+            </div>
+            <br>
+            <p id="labelled">
+                Please ensure the above details are correct before proceeding.
+            </p>
+            <br>
+            <button style="width: 20%; text-align: center;" class="btn btn-primary" type="submit">Save details, Add Talks</button>
+        </form>
+    </div>
+</div>
+{% elif stage == 2 %}
+<!-- Second page of conference creation - Conference Details -->
+<div class="textFormContainer">
+    <div class="form-container">
+        <form action="/edit-conference/{{ conferenceId if conferenceId != None }}" method="POST">
+            <div class="form-group">
+                <div class="form-column">
+                    <div id="objects-container">
+                        <div class="object-row">
+                            <div class="separator"></div>
+                            <label id="field" for="talkname">+ Talk Name</label>
+                            <input autocomplete="off" class="form-control" name="talkname[]">
+                            <br>
+                            <label id="field" for="talkspeaker">Talk Presenter / Speaker</label>
+                            <input class="form-control" name="talkspeaker[]">
+                            <br>
+                            <label id="field" for="talktags">Topics / Tags associated</label>
+                            <input class="form-control" name="talktags[]">
+                            <p id="labelled">
+                                Enter all the topics / tag words associated with a talk, separated by commas.
+                            </p>
+                            <br>
+                            <div class="separator"></div>
+                            <p>
+                        </div>
+                    </div>
+                    <button style="width: 20%; text-align: center;" class="btn btn-primary" type="button" id="add-object">+</button>
+                </div>
+                <!-- Script for dynamically adding talks to the conference -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        // Add event listener to the form submission
+                        document.querySelector('form').addEventListener('submit', function (event) {
+                            // Check if either speaker or tags is filled
+                            var speakers = document.querySelectorAll('[name="talkspeaker[]"]');
+                            var tags = document.querySelectorAll('[name="talktags[]"]');
+                            var names = document.querySelectorAll('[name="talkname[]"]');
+                
+                            for (var i = 0; i < names.length; i++) {
+                                var name = names[i].value;
+                                var speaker = speakers[i].value;
+                                var tag = tags[i].value;
+                
+                                if ((speaker || tag) && !name) {
+                                    // Prevent form submission
+                                    event.preventDefault();
+                                    // Display an alert or update the UI to inform the user
+                                    alert('If you fill in Speaker or Tags for a talk, you must also provide a Name.');
+                                    break;  // Stop checking further rows if one is invalid
+                                }
+                            }
+                        });
+                    });
+                </script>
+                <script>
+                    // JavaScript for dynamically adding new rows
+                    document.getElementById('add-object').addEventListener('click', function () {
+                        const container = document.getElementById('objects-container');
+                        const newRow = document.createElement('div');
+                        newRow.className = 'object-row';
+                
+                        newRow.innerHTML = `
+                            <label id="field" for="talkname">+ Talk Name</label>
+                            <input autocomplete="off" class="form-control" name="talkname[]">
+                            <br>
+                            <label id="field" for="talkspeaker">Talk Presenter / Speaker</label>
+                            <input class="form-control" name="talkspeaker[]">
+                            <br>
+                            <label id="field" for="talktags">Topics / Tags associated</label>
+                            <input class="form-control" name="talktags[]">
+                            <p id="labelled">
+                                Enter all the topics / tag words associated with a talk, separated by commas.
+                            </p>
+                            <br>
+                            <div class="separator"></div>
+                        `;
+                
+                        container.appendChild(newRow);
+                    });
+                </script>
+            </div>
+            <br>
+            <p id="labelled">
+                Please ensure the above details are correct before proceeding. If you wish to change your mind and remove a talk, simply clear the input fields containing all of its information, for that specific talk.
+            </p>
+            <br>
+            <button style="width: 20%; text-align: center;" class="btn btn-success" type="submit">Save Conference</button>
+        </form>
+    </div>
+</div>
+{% else %}
+<!-- The user probably shouldn't be here.-->
+<div>
+    <br>
+    <br>
+    <h3>
+        You probably shouldn't be here.
+    </h3>
+</div>
+{% endif %}
+{% endblock %}
+

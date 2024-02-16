@@ -44,7 +44,7 @@
 					</td>
 					<td>
 						{% if userData.type == 'host' %}
-							<button style="text-align: center;" class="btn btn-primary" href="/edit-conference">Edit Conference</button>
+							<button style="text-align: center;" class="btn btn-primary" href="/edit-conference/{{ ConferenceData['confId'] }}">Edit Conference</button>
 						{% else %}
 							<a href="/preview-talks/{{ ConferenceData['confId'] }}"><button style="text-align: center;" class="btn btn-primary">Select Talks</button></a>
 						{% endif %}
