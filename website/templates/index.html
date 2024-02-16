@@ -84,9 +84,13 @@
 							<tr>
 								<td>
 									{% if userData.type == 'host' %}
-										<button style="text-align: center;" class="btn btn-danger" href="/terminate-conference/{{ ConferenceData['confId'] }}">Terminate Conference</button>
+									<form action="/terminate-conference/{{ ConferenceData['confId'] }}" method="POST" onsubmit="return confirmSubmit()">
+										<button style="text-align: center;" class="btn btn-danger" type="subtmit">Terminate Conference</button>
+									</form>
 									{% else %}
-										<button style="text-align: center;" class="btn btn-danger" href="/cancel-registration/{{ ConferenceData['confId'] }}">Cancel Registration</button>
+									<form action="/cancel-registration/{{ ConferenceData['confId'] }}" method="POST" onsubmit="confirmSubmit()">
+										<button style="text-align: center;" class="btn btn-danger" type="subtmit">Cancel Registration</button>
+									</form>
 									{% endif %}
 								</td>
 							</tr>
@@ -148,4 +152,18 @@
 		<p style="text-align: center;">Please login to our system <a style="font-weight: bold;" href="/login">Here</a> to get started.</p>
 	{% endif %}
 </div>
+<script>
+    function confirmSubmit(type) {
+        // Display a confirmation dialog
+		var result = false
+		if (type == 1) { // Conference termination
+			var result = confirm("Are you sure you want to terminate this conference?");
+		} else { // Registration cancellation
+			var result = confirm("Are you sure you do not want to attend?");
+		}
+    
+        // If the user clicks "OK," proceed with the form submission
+        return result;
+    }
+</script>
 {% endblock %}

@@ -2071,3 +2071,13 @@ Error produced: (sqlite3.IntegrityError) NOT NULL constraint failed: conf_deleg.
 2024-02-16 12:45:05: Server Log initialisation/update
 2024-02-16 12:45:05: Created Database.
 2024-02-16 12:45:06: Server Log initialisation/update
+2024-02-16 12:58:03: Server Log initialisation/update
+2024-02-16 12:58:03: Created Database.
+2024-02-16 12:58:03: Server Log initialisation/update
+2024-02-16 12:58:03: Created Database.
+2024-02-16 13:17:34: New host: TonyD added to the system.
+2024-02-16 13:26:47: New delegate: Grace added to the system.
+2024-02-16 13:27:26: User Grace has signed up for conference ESA 2024 
+2024-02-16 13:28:12: User ID: 5 has saved their talk preferences for conference ID: 1.
+2024-02-16 14:14:36: Server Log initialisation/update
+2024-02-16 14:14:36: Created Database.
