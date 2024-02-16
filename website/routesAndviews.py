@@ -2,6 +2,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_required, current_user
 from datetime import datetime, date, time
+from werkzeug.security import generate_password_hash, check_password_hash
 from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, TopicTalks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
 
@@ -275,7 +276,9 @@ def findConferences():
         query = request.form.get("conferenceSearch", "").strip()
         button = request.form.get('submitButton')
         if button == 1: # Search for conferences that have a similar name to search query.
+            results = Conferences.query.filter(Conferences.confName.ilike(f"{query}%")).all()
             results = Conferences.query.filter(Conferences.confName.ilike(f"%{query}%")).all()
+            results = list(set(results))
         else: # Just return all registered conferences.
             results = Conferences.query.all()
         setOfResults = []
@@ -404,7 +407,54 @@ def previewTalks(conferenceId):
                            conferenceId=conferenceId,
                            collectedTalks=collectedTalks
                         )
-                
+   
+@views.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def editProfile():
+    """Login a user"""
+    # Find logged in user data
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    if  request.method == "POST":
+        dataFetch = request.form
+        valid = True
+        # Validate fields if necesary
+        if dataFetch['username'] != '':
+            userData.username = dataFetch['username']
+        if dataFetch['email'] != '':
+            if "@" not in dataFetch['email']:
+                flash('Please enter a valid email address','error')
+                valid = False
+            else:
+                userData.email = dataFetch['email']
+        if dataFetch['password'] != '':
+            if dataFetch['confirmation']:
+                same = check_password_hash(generate_password_hash(dataFetch['password']), dataFetch['confirmation'])
+                if same:
+                    hasher = generate_password_hash(dataFetch['password'])
+                    userData.passwordHash = hasher
+                else:
+                    valid = False
+                    flash("Please enter matching passwords.", category="error")
+            else:
+                valid = False
+                flash("If you wish to change your password, please fill in both password fields. ", category="error")
+        if dataFetch['first_name'] != '':
+            userData.firstName = dataFetch['first_name']
+        if dataFetch['last_name'] != '':
+            userData.lastName = dataFetch['last_name']
+        if valid:
+            # Update database with new details
+            db.session.commit()
+            flash("Profile details successfully changed!", category="success")
+            UpdateLog(f"User {userId}: {userData.username} updated their profile with the following details: {dataFetch}.")
+            return redirect(url_for("views.home"))
+        
+    return render_template("profedit.html",
+                           user=current_user,
+                           userData=userData)
+        
+        
 """ TODO 
     create:  
         - /edit-conference, 

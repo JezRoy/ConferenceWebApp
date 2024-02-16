@@ -8,3 +8,77 @@
     - NOT change usertype
     - delete account
 -->
+
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Profile
+{% endblock %}
+
+{% block aboveNav %}
+<div class="container" style="text-align: center; font-weight: bolder;">
+	<h1 class="text-center">
+		Edit Profile
+	</h1>
+</div>
+{% endblock %}
+
+{% block main %}
+<div class="textFormContainer">
+    <p style="font-weight: bold; font-style: italic;">
+        Your User ID: {{ user._get_current_object().id }}.<br> Please click 'Home' to go back to the dashboard and cancel the changes.
+    </p>
+    <div class="form-container">
+    <form action="/edit-profile" method="POST" onsubmit="return confirmSubmit()">
+        <div class="form-group">
+            <div class="form-column">
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <label id="field" for="username">*Enter Username: </label>
+                            <input autofocus class="form-control" name="username" placeholder="Username" type="text">
+                        </td>
+                        <td>
+                            <label id="field" for="email">*Enter Email: </label>
+                            <input class="form-control" name="email" placeholder="youremail@example.com" type="text">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label id="field" for="password">*Enter Password: </label>
+                            <input class="form-control" name="password" placeholder="Password" type="password">
+                        </td>
+                        <td>
+                            <label id="field" for="confirmation">*Confirm Password: </label>
+                            <input class="form-control" name="confirmation" placeholder="Password (Again)" type="password">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-column">
+            <p></p>
+                <label id="field" for="first_name">*First Name: </label>
+                <input class="form-control" name="first_name" placeholder="John" type="text">
+            <p></p>
+                <label id="field" for="last_name">*Last Name: </label>
+                <input class="form-control" name="last_name" placeholder="Smith" type="text">
+            <p></p>
+            </div>
+        </div>
+        <p style="font-size: small;">
+            *Only fill in the fields that you wish to change. Any fields left empty will not be changed within the database.
+        </p>
+        <button style="text-align: center;" class="btn btn-primary" type="submit">Save Changes</button>
+    </form>
+    <script>
+        function confirmSubmit() {
+            // Display a confirmation dialog
+            var result = confirm("Are you sure you want to submit the form?");
+    
+            // If the user clicks "OK," proceed with the form submission
+            return result;
+        }
+    </script>    
+    </div>
+</div>
+{% endblock %}

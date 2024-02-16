@@ -1979,3 +1979,88 @@ Error produced: (sqlite3.IntegrityError) NOT NULL constraint failed: conf_deleg.
 2024-02-15 17:03:54: Created Database.
 2024-02-15 17:03:54: Server Log initialisation/update
 2024-02-15 17:03:54: Created Database.
+2024-02-16 09:22:58: Server Log initialisation/update
+2024-02-16 09:22:59: Created Database.
+2024-02-16 09:22:59: Server Log initialisation/update
+2024-02-16 09:22:59: Created Database.
+2024-02-16 09:33:43: Server Log initialisation/update
+2024-02-16 09:33:43: Created Database.
+2024-02-16 09:33:45: Server Log initialisation/update
+2024-02-16 09:33:45: Created Database.
+2024-02-16 09:33:46: Server Log initialisation/update
+2024-02-16 09:33:46: Created Database.
+2024-02-16 09:33:48: Server Log initialisation/update
+2024-02-16 09:33:48: Created Database.
+2024-02-16 09:33:48: Server Log initialisation/update
+2024-02-16 09:33:48: Created Database.
+2024-02-16 09:47:24: Server Log initialisation/update
+2024-02-16 09:47:25: Created Database.
+2024-02-16 09:47:25: Server Log initialisation/update
+2024-02-16 09:47:25: Created Database.
+2024-02-16 09:54:36: Server Log initialisation/update
+2024-02-16 09:54:36: Created Database.
+2024-02-16 09:54:38: Server Log initialisation/update
+2024-02-16 09:54:38: Created Database.
+2024-02-16 09:54:42: Server Log initialisation/update
+2024-02-16 09:54:42: Created Database.
+2024-02-16 11:27:16: Server Log initialisation/update
+2024-02-16 11:27:16: Created Database.
+2024-02-16 11:27:19: Server Log initialisation/update
+2024-02-16 11:27:19: Created Database.
+2024-02-16 11:27:24: Server Log initialisation/update
+2024-02-16 11:27:24: Created Database.
+2024-02-16 11:27:28: Server Log initialisation/update
+2024-02-16 11:27:28: Created Database.
+2024-02-16 11:28:15: Server Log initialisation/update
+2024-02-16 11:28:15: Created Database.
+2024-02-16 11:28:18: Server Log initialisation/update
+2024-02-16 11:28:18: Created Database.
+2024-02-16 11:34:56: Server Log initialisation/update
+2024-02-16 11:34:56: Created Database.
+2024-02-16 11:35:00: Server Log initialisation/update
+2024-02-16 11:35:00: Created Database.
+2024-02-16 11:35:04: Server Log initialisation/update
+2024-02-16 11:35:04: Created Database.
+2024-02-16 11:35:47: Server Log initialisation/update
+2024-02-16 11:35:47: Created Database.
+2024-02-16 11:35:50: Server Log initialisation/update
+2024-02-16 11:35:50: Created Database.
+2024-02-16 11:36:46: Server Log initialisation/update
+2024-02-16 11:36:46: Created Database.
+2024-02-16 11:37:05: Server Log initialisation/update
+2024-02-16 12:23:58: Server Log initialisation/update
+2024-02-16 12:23:58: Created Database.
+2024-02-16 12:23:59: Server Log initialisation/update
+2024-02-16 12:23:59: Created Database.
+2024-02-16 12:25:16: Server Log initialisation/update
+2024-02-16 12:25:16: Created Database.
+2024-02-16 12:25:20: Server Log initialisation/update
+2024-02-16 12:26:19: Server Log initialisation/update
+2024-02-16 12:26:19: Created Database.
+2024-02-16 12:26:20: Server Log initialisation/update
+2024-02-16 12:26:20: Created Database.
+2024-02-16 12:26:44: Server Log initialisation/update
+2024-02-16 12:26:44: Created Database.
+2024-02-16 12:27:07: Server Log initialisation/update
+2024-02-16 12:27:07: Created Database.
+2024-02-16 12:27:28: Server Log initialisation/update
+2024-02-16 12:27:34: Server Log initialisation/update
+2024-02-16 12:27:34: Created Database.
+2024-02-16 12:27:35: Server Log initialisation/update
+2024-02-16 12:27:35: Created Database.
+2024-02-16 12:27:38: User 2: TestDelegate updated their profile.
+2024-02-16 12:27:54: User 2: TestDelegate updated their profile.
+2024-02-16 12:28:22: User 2: TestDelegate123 updated their profile.
+2024-02-16 12:28:50: User 2: TestDelegate updated their profile.
+2024-02-16 12:29:56: Server Log initialisation/update
+2024-02-16 12:34:39: Server Log initialisation/update
+2024-02-16 12:34:39: Created Database.
+2024-02-16 12:34:39: Server Log initialisation/update
+2024-02-16 12:34:39: Created Database.
+2024-02-16 12:35:02: User 2: TestDelegate updated their profile with the following details: ImmutableMultiDict([('username', ''), ('email', ''), ('password', 'tester'), ('confirmation', 'tester'), ('first_name', ''), ('last_name', '')]).
+2024-02-16 12:35:23: User 2: TestDelegate updated their profile with the following details: ImmutableMultiDict([('username', ''), ('email', ''), ('password', 'test'), ('confirmation', 'test'), ('first_name', ''), ('last_name', '')]).
+2024-02-16 12:36:13: User 1: TheFirstHost updated their profile with the following details: ImmutableMultiDict([('username', 'TheFirstHost'), ('email', ''), ('password', ''), ('confirmation', ''), ('first_name', ''), ('last_name', '')]).
+2024-02-16 12:36:23: User 1: TestHost updated their profile with the following details: ImmutableMultiDict([('username', 'TestHost'), ('email', ''), ('password', ''), ('confirmation', ''), ('first_name', ''), ('last_name', '')]).
+2024-02-16 12:36:53: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-16 12:37:02: User ID: 2 has saved their talk preferences for conference ID: 1.
+2024-02-16 12:37:06: User ID: 2 has saved their talk preferences for conference ID: 1.
