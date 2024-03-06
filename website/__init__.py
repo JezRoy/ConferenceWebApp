@@ -1,7 +1,10 @@
 from flask import Flask, flash, session
+# Using Celery and redis for asynchronus and parallel task management
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin
 from datetime import timedelta
+from random import randint
+import os
 
 """CREDITS:
 This web app functionality was created with help from a tutorial on YouTube
@@ -12,6 +15,9 @@ created by creator 'Tech with Tim'. Found at:
 
 db = SQLAlchemy()
 DB_NAME = "ConfWebApp.db"
+
+from apscheduler.schedulers.background import BackgroundScheduler
+parallelSys = BackgroundScheduler()
 
 def CreateApp():
     app = Flask(__name__)
@@ -39,6 +45,8 @@ def CreateApp():
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
+    
+    os.system("celery -A app.celery worker --loglevel=info")
     
     @login_manager.user_loader
     def load_user(id):

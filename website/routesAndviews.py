@@ -1,10 +1,12 @@
 # Initialisations
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from flask_login import login_required, current_user
-from datetime import datetime, date, time
+from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
+from .scheduler import SCHEDULEConference as schedule
 from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, TopicTalks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
+from . import parallelSys
 
 dbOrderingConf = [
     'confName',
@@ -20,7 +22,7 @@ dbOrderingConf = [
     'talkPerSession',
     'talkLength',
     'numSessions'
-] 
+]
 
 # Arguments to consider when rendering a template
 """

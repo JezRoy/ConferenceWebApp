@@ -2081,3 +2081,120 @@ Error produced: (sqlite3.IntegrityError) NOT NULL constraint failed: conf_deleg.
 2024-02-16 13:28:12: User ID: 5 has saved their talk preferences for conference ID: 1.
 2024-02-16 14:14:36: Server Log initialisation/update
 2024-02-16 14:14:36: Created Database.
+2024-02-16 14:34:49: Server Log initialisation/update
+2024-02-16 14:34:49: Created Database.
+2024-02-16 14:34:50: Server Log initialisation/update
+2024-02-16 14:34:50: Created Database.
+2024-02-16 14:35:17: New host: TestHost2 added to the system.
+2024-02-16 14:38:22: Host '6, TestHost2' created conference:
+{'confName': 'ICALP 2024', 'confURL': 'https://icalp2023.cs.upb.de/programme/', 'paperFinalisationDate': datetime.date(2024, 2, 11), 'delegSignUpDeadline': datetime.date(2024, 5, 15), 'confStart': datetime.date(2024, 7, 10), 'confEnd': datetime.date(2024, 7, 14), 'confLength': 4, 'dayStart': datetime.time(8, 0), 'dayEnd': datetime.time(17, 30), 'dayDuration': 9.5, 'talkPerSession': 4, 'talkLength': 30, 'numSessions': 1} 
+2024-02-16 14:41:19: Host ID: 6 successefully added the following Talks to the conference ID 2:
+[['Approximating Long Cycle Above Dirac’s Guarantee', 'Fedor Fomin', "Approximation, Long Cycles, Dirac's Guarantee"], [' Compound Logics for Modification Problems', 'Fedor Fomin', 'Logic, Modification Problems, Modification'], ['New Additive Emulators', 'Shimon Kogan', 'Emulators']]
+2024-02-16 14:43:12: Server Log initialisation/update
+2024-02-16 14:43:12: Created Database.
+2024-02-16 14:43:15: Server Log initialisation/update
+2024-02-16 14:43:15: Created Database.
+2024-02-16 14:43:45: Server Log initialisation/update
+2024-02-16 14:43:45: Created Database.
+2024-02-16 14:43:57: Server Log initialisation/update
+2024-02-16 14:44:01: Server Log initialisation/update
+2024-02-16 14:44:01: Created Database.
+2024-02-16 14:44:01: Server Log initialisation/update
+2024-02-16 14:44:01: Created Database.
+2024-02-16 14:44:24: Server Log initialisation/update
+2024-02-16 14:44:24: Created Database.
+2024-02-16 14:46:16: New delegate: JezzaHost added to the system.
+2024-02-16 14:47:02: New host: JezzaDaHost added to the system.
+2024-02-16 14:49:20: Host '8, JezzaDaHost' created conference:
+{'confName': 'IJCAI 2024', 'confURL': 'https://www.ijcai-23.org/ijcai-2023-schedule/', 'paperFinalisationDate': datetime.date(2024, 6, 1), 'delegSignUpDeadline': datetime.date(2024, 8, 1), 'confStart': datetime.date(2024, 8, 19), 'confEnd': datetime.date(2024, 8, 25), 'confLength': 6, 'dayStart': datetime.time(9, 0), 'dayEnd': datetime.time(17, 30), 'dayDuration': 8.5, 'talkPerSession': 2, 'talkLength': 90, 'numSessions': 5} 
+2024-02-16 14:52:52: Host ID: 8 successefully added the following Talks to the conference ID 3:
+[['Advances in Optimal Transport-based Machine Learning', 'Hongteng Xu', 'Optimal Transport, Machine Learning, AI'], ['Moving Beyond Traditional Anomaly Detection', 'Ye Zhu', 'Anomaly Detection, new'], ['Trustworthy Recommender Systems: Foundations and Frontiers', 'Wenqi FAN', 'Recommender Systems, research boundaries, trust'], ['Combinatorial Solving with Provably Correct Results', 'Bart Bogaerts', 'Combinatorics, Correct Results'], ['The Greatest Graph Theory Talk of all Time', 'Thomas Erlebach', 'Graph Theory, combinatorics']]
+2024-02-16 14:53:36: Server Log initialisation/update
+2024-02-16 14:53:36: Created Database.
+2024-02-16 14:53:59: Server Log initialisation/update
+2024-02-16 14:53:59: Created Database.
+2024-02-16 14:55:46: Host '8, JezzaDaHost' created conference:
+{'confName': 'Test Conference', 'confURL': 'test.com', 'paperFinalisationDate': datetime.date(2025, 5, 16), 'delegSignUpDeadline': datetime.date(2025, 8, 8), 'confStart': datetime.date(2025, 9, 16), 'confEnd': datetime.date(2025, 9, 22), 'confLength': 6, 'dayStart': datetime.time(9, 0), 'dayEnd': datetime.time(16, 30), 'dayDuration': 7.5, 'talkPerSession': 4, 'talkLength': 20, 'numSessions': 3} 
+2024-02-16 14:57:26: Host ID: 8 successefully added the following Talks to the conference ID 4:
+[['Test Talk 1', 'Jeremy Roy', 'test1'], ['Test Talk 2', 'Emmanuel Taiwo', 'test2, test3'], ['Test Talk 3', 'Luke Holland', 'test1, test4'], ['Test Talk 4', 'Joshua Royle', 'test5']]
+2024-02-16 15:01:34: Server Log initialisation/update
+2024-02-16 15:01:34: Created Database.
+2024-02-16 15:01:34: Server Log initialisation/update
+2024-02-16 15:01:34: Created Database.
+2024-02-16 15:02:34: Server Log initialisation/update
+2024-02-16 15:02:34: Created Database.
+2024-02-16 15:02:34: Server Log initialisation/update
+2024-02-16 15:02:34: Created Database.
+2024-02-16 15:04:17: New delegate: isabelRoy added to the system.
+2024-02-16 15:06:39: User isabelRoy has signed up for conference IJCAI 2024 
+2024-02-16 15:08:21: User ID: 9 has saved their talk preferences for conference ID: 3.
+2024-02-16 15:08:34: User ID: 9 has saved their talk preferences for conference ID: 3.
+2024-02-16 15:19:29: User 9: IzzyRoy updated their profile with the following details: ImmutableMultiDict([('username', 'IzzyRoy'), ('email', ''), ('password', 'roy'), ('confirmation', 'roy'), ('first_name', ''), ('last_name', '')]).
+2024-02-16 15:20:20: New host: TestHost3 added to the system.
+2024-02-16 15:25:03: Host '10, TestHost3' created conference:
+{'confName': 'ESA 2025', 'confURL': '', 'paperFinalisationDate': datetime.date(2025, 5, 13), 'delegSignUpDeadline': datetime.date(2025, 7, 7), 'confStart': datetime.date(2025, 9, 4), 'confEnd': datetime.date(2025, 9, 7), 'confLength': 3, 'dayStart': datetime.time(10, 0), 'dayEnd': datetime.time(18, 0), 'dayDuration': 8, 'talkPerSession': 4, 'talkLength': 10, 'numSessions': 3} 
+2024-02-16 15:28:31: Host ID: 10 successefully added the following Talks to the conference ID 5:
+[['Talk 1', 'Speaker 1', 'topic1, topic2, topic3'], ['Talk 2', 'Speaker 2', 'topic4, topic5, topic6'], ['Talk 3', 'Speaker 3', 'topic4, topic7']]
+2024-02-27 13:56:57: Server Log initialisation/update
+2024-02-27 13:57:04: Server Log initialisation/update
+2024-02-27 13:57:52: Server Log initialisation/update
+2024-02-27 14:01:29: Server Log initialisation/update
+2024-02-27 14:01:29: Created Database.
+2024-02-27 14:01:29: Server Log initialisation/update
+2024-02-27 14:01:29: Created Database.
+2024-02-27 14:01:42: Server Log initialisation/update
+2024-02-27 14:04:11: Server Log initialisation/update
+2024-02-27 14:04:17: Server Log initialisation/update
+2024-02-27 14:04:47: Server Log initialisation/update
+2024-02-27 14:04:51: Server Log initialisation/update
+2024-02-27 14:05:41: Server Log initialisation/update
+2024-02-27 14:05:41: Created Database.
+2024-02-27 14:05:42: Server Log initialisation/update
+2024-02-27 14:05:42: Created Database.
+2024-02-27 14:06:16: Server Log initialisation/update
+2024-02-27 14:06:16: Created Database.
+2024-02-27 14:06:16: Server Log initialisation/update
+2024-02-27 14:06:16: Created Database.
+2024-02-27 14:06:26: Server Log initialisation/update
+2024-02-27 14:06:26: Created Database.
+2024-02-27 14:06:26: Server Log initialisation/update
+2024-02-27 14:06:26: Created Database.
+2024-02-27 14:06:43: Server Log initialisation/update
+2024-02-27 14:06:43: Created Database.
+2024-02-27 14:06:43: Server Log initialisation/update
+2024-02-27 14:06:43: Server Log initialisation/update
+2024-02-27 14:06:43: Created Database.
+2024-02-27 14:06:43: Created Database.
+2024-02-27 14:06:43: Server Log initialisation/update
+2024-02-27 14:06:44: Created Database.
+2024-02-27 14:07:37: Server Log initialisation/update
+2024-02-27 14:07:37: Created Database.
+2024-02-27 14:07:38: Server Log initialisation/update
+2024-02-27 14:07:38: Created Database.
+2024-02-27 14:11:30: Server Log initialisation/update
+2024-02-27 14:11:31: Created Database.
+2024-02-27 14:11:45: Server Log initialisation/update
+2024-02-27 14:11:45: Created Database.
+2024-02-27 14:15:51: Server Log initialisation/update
+2024-02-27 14:15:51: Created Database.
+2024-02-27 14:15:52: Server Log initialisation/update
+2024-02-27 14:15:52: Server Log initialisation/update
+2024-02-27 14:15:52: Created Database.
+2024-02-27 14:15:52: Server Log initialisation/update
+2024-02-27 14:17:46: Server Log initialisation/update
+2024-02-27 14:17:46: Created Database.
+2024-02-27 14:17:47: Server Log initialisation/update
+2024-02-27 14:17:47: Server Log initialisation/update
+2024-02-27 14:17:47: Created Database.
+2024-02-27 14:17:47: Server Log initialisation/update
+2024-02-27 15:20:08: Server Log initialisation/update
+2024-02-27 15:50:45: Server Log initialisation/update
+2024-02-27 15:50:45: Created Database.
+2024-02-27 15:50:46: Server Log initialisation/update
+2024-02-27 15:50:46: Server Log initialisation/update
+2024-02-27 15:50:46: Created Database.
+2024-02-27 15:50:46: Server Log initialisation/update
+2024-02-27 15:57:40: Server Log initialisation/update
+2024-02-27 15:57:40: Created Database.
+2024-02-27 15:57:40: Server Log initialisation/update
+2024-02-27 15:57:40: Created Database.
