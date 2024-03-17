@@ -12,7 +12,7 @@ requiredModules = [
     "numpy",
     "flask",
     "Flask",
-    "flask-login",
+    "flask_login",
     "flask_sqlalchemy",
     "werkzeug.security",
     'datetime',
