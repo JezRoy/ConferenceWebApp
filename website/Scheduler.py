@@ -22,9 +22,16 @@ def SCHEDULEConference():
     conferenceIds = db.session.query(Conferences).all()
     print(conferenceIds)
     #model = pulp.LpProblem("DelegateSatisfaction", pulp.LpMaximize)
-    #UpdateLog("New schedule created")
+    
+    # TODO:
+    # Handle a empty database,
+    # Handle an empty conference
+    # Creating a conference using IP, and Graphs
     
     # Define decision variables
     #x = pulp.LpVariable("x", lowBound=0)
     #y = pulp.LpVariable("y", lowBound=0)
+
+
+    #UpdateLog("New schedule created")
     pass

@@ -17,7 +17,8 @@ requiredModules = [
     "werkzeug.security",
     'datetime',
     'functools',
-    'apscheduler'
+    'apscheduler',
+    'networkx'
 ]
 
 # Given pip is installed on the machine.

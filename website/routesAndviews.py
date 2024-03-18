@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
-from .scheduler import SCHEDULEConference as schedule
+from .Scheduler import SCHEDULEConference as schedule
 from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, TopicTalks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
 from . import parallelSys
@@ -23,6 +23,14 @@ dbOrderingConf = [
     'talkLength',
     'numSessions'
 ]
+
+# Running the scheduler
+def keepScheduling():
+    schedule()
+    message = "Scheduler is still running... Designed to run once every 30 mins for every conference..."
+    print(message)
+
+parallelSys.add_job(keepScheduling, trigger='interval', minutes=30)
 
 # Arguments to consider when rendering a template
 """
@@ -47,6 +55,7 @@ views = Blueprint('views', __name__)
 @views.route('/') # The main page of the website
 @login_required
 def home():
+    parallelSys.start()
     # Find logged in user data
     
     userId = current_user._get_current_object().id
