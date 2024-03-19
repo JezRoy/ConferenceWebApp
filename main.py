@@ -1,4 +1,5 @@
 from website import CreateApp
+import os
 
 ### To be dragged from out of the website folder
 # This web app has been created with help from
@@ -19,3 +20,4 @@ if __name__ == '__main__':
     
     # Run app
     app.run(debug=True)
+    

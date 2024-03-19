@@ -2204,3 +2204,107 @@ Error produced: (sqlite3.IntegrityError) NOT NULL constraint failed: conf_deleg.
 2024-03-18 10:53:55: Created Database.
 2024-03-18 10:58:16: Server Log initialisation/update
 2024-03-18 10:58:16: Created Database.
+2024-03-18 20:41:54: Server Log initialisation/update
+2024-03-18 20:41:54: Created Database.
+2024-03-18 20:41:55: Server Log initialisation/update
+2024-03-18 20:41:55: Created Database.
+2024-03-18 20:44:37: New delegate: JohnnyTest added to the system.
+2024-03-18 20:46:56: User JohnnyTest has signed up for conference ESA 2024 
+2024-03-18 20:48:56: Server Log initialisation/update
+2024-03-18 20:48:56: Created Database.
+2024-03-18 20:48:59: Server Log initialisation/update
+2024-03-18 20:48:59: Created Database.
+2024-03-18 20:50:06: Server Log initialisation/update
+2024-03-18 20:50:06: Created Database.
+2024-03-18 20:50:07: Server Log initialisation/update
+2024-03-18 20:50:07: Created Database.
+2024-03-18 20:53:43: Server Log initialisation/update
+2024-03-18 20:53:43: Created Database.
+2024-03-18 20:53:45: Server Log initialisation/update
+2024-03-18 20:53:45: Created Database.
+2024-03-18 21:53:31: Server Log initialisation/update
+2024-03-18 21:53:31: Created Database.
+2024-03-18 21:53:32: Server Log initialisation/update
+2024-03-18 21:53:32: Created Database.
+2024-03-18 22:07:18: Server Log initialisation/update
+2024-03-18 22:07:18: Created Database.
+2024-03-18 22:07:19: Server Log initialisation/update
+2024-03-18 22:07:19: Created Database.
+2024-03-18 22:08:02: Server Log initialisation/update
+2024-03-18 22:08:02: Created Database.
+2024-03-18 22:08:03: Server Log initialisation/update
+2024-03-18 22:08:03: Created Database.
+2024-03-18 22:22:03: Server Log initialisation/update
+2024-03-18 22:25:04: Server Log initialisation/update
+2024-03-18 22:27:32: Server Log initialisation/update
+2024-03-18 22:27:32: Created Database.
+2024-03-18 22:27:33: Server Log initialisation/update
+2024-03-18 22:27:33: Created Database.
+2024-03-18 22:46:26: Server Log initialisation/update
+2024-03-18 22:46:26: Created Database.
+2024-03-18 22:46:26: Server Log initialisation/update
+2024-03-18 22:46:26: Created Database.
+2024-03-18 22:46:35: Server Log initialisation/update
+2024-03-18 22:46:35: Created Database.
+2024-03-18 22:47:02: Server Log initialisation/update
+2024-03-18 22:47:02: Created Database.
+2024-03-18 22:47:07: Server Log initialisation/update
+2024-03-18 22:47:18: Server Log initialisation/update
+2024-03-18 22:47:18: Created Database.
+2024-03-18 22:47:19: Server Log initialisation/update
+2024-03-18 22:47:19: Created Database.
+2024-03-18 22:47:24: Server Log initialisation/update
+2024-03-18 22:47:26: Server Log initialisation/update
+2024-03-19 09:38:42: Server Log initialisation/update
+2024-03-19 09:38:42: Created Database.
+2024-03-19 09:38:43: Server Log initialisation/update
+2024-03-19 09:38:43: Created Database.
+2024-03-19 09:57:07: Server Log initialisation/update
+2024-03-19 09:57:07: Created Database.
+2024-03-19 09:57:08: Server Log initialisation/update
+2024-03-19 09:57:08: Created Database.
+2024-03-19 10:01:59: Server Log initialisation/update
+2024-03-19 10:01:59: Created Database.
+2024-03-19 10:02:00: Server Log initialisation/update
+2024-03-19 10:02:00: Created Database.
+2024-03-19 10:02:25: Server Log initialisation/update
+2024-03-19 10:02:25: Created Database.
+2024-03-19 10:02:26: Server Log initialisation/update
+2024-03-19 10:02:26: Created Database.
+2024-03-19 10:09:30: Server Log initialisation/update
+2024-03-19 10:09:30: Created Database.
+2024-03-19 10:09:31: Server Log initialisation/update
+2024-03-19 10:09:31: Created Database.
+2024-03-19 10:09:58: Server Log initialisation/update
+2024-03-19 10:09:58: Created Database.
+2024-03-19 10:09:59: Server Log initialisation/update
+2024-03-19 10:09:59: Created Database.
+2024-03-19 10:16:54: Server Log initialisation/update
+2024-03-19 10:16:54: Created Database.
+2024-03-19 10:16:55: Server Log initialisation/update
+2024-03-19 10:16:55: Created Database.
+2024-03-19 10:18:41: Server Log initialisation/update
+2024-03-19 10:18:42: Created Database.
+2024-03-19 10:18:42: Server Log initialisation/update
+2024-03-19 10:18:42: Created Database.
+2024-03-19 10:23:41: Server Log initialisation/update
+2024-03-19 10:23:41: Created Database.
+2024-03-19 10:23:41: Server Log initialisation/update
+2024-03-19 10:23:42: Created Database.
+2024-03-19 10:46:24: Server Log initialisation/update
+2024-03-19 10:46:25: Created Database.
+2024-03-19 10:46:25: Server Log initialisation/update
+2024-03-19 10:46:25: Created Database.
+2024-03-19 11:05:29: Server Log initialisation/update
+2024-03-19 11:05:29: Created Database.
+2024-03-19 11:05:30: Server Log initialisation/update
+2024-03-19 11:05:30: Created Database.
+2024-03-19 11:28:33: Server Log initialisation/update
+2024-03-19 11:28:59: Server Log initialisation/update
+2024-03-19 11:28:59: Created Database.
+2024-03-19 11:29:00: Server Log initialisation/update
+2024-03-19 11:29:00: Created Database.
+2024-03-19 11:36:20: Server Log initialisation/update
+2024-03-19 11:36:21: Created Database.
+2024-03-19 11:36:21: Server Log initialisation/update
+2024-03-19 11:36:21: Created Database.

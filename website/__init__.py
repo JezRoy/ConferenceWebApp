@@ -1,4 +1,4 @@
-from flask import Flask, flash, session
+from flask import Flask, flash, session, current_app
 # Using Celery and redis for asynchronus and parallel task management
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin
