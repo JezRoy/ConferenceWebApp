@@ -1,0 +1,129 @@
+[
+    'ESA 2024', 
+    'TestHost', 
+    'https://algo-conference.org/2023/esa/', 
+    2, 
+    datetime.time(9, 0), 
+    datetime.time(17, 30), 
+    4, 
+    10,
+    2, 
+    [
+        [1, 'Parameterized Matroid-Constrained Maximum Coverage', 
+            [1, 'Fran�ois Sellier'], 
+                [[<TopicTalks 1>, 'Parameters'], 
+                [<TopicTalks 2>, 'Matroid-Constrained'], 
+                [<TopicTalks 3>, 'Maximum Coverage']]], 
+        [2, 'Sorting Finite Automata via Partition Refinement', 
+            [2, 'Ruben Becker'], 
+                [[<TopicTalks 4>, 'Finite Automata'], 
+                [<TopicTalks 5>, 'Partition Refinement']]], 
+        [3, 'Lyndon Arrays in Sublinear Time', 
+            [3, 'Hideo Bannai'], 
+                [[<TopicTalks 6>, 'Lyndon Arrays'], 
+                [<TopicTalks 7>, 'Sublinear Time']]], 
+        [4, 'Linear Time Construction of Cover Suffix Tree and Applications', 
+            [4, 'Jakub Radoszewski'], 
+                [[<TopicTalks 8>, 'Linear Time Construction'], 
+                [<TopicTalks 9>, 'Cover Suffix Tree'], 
+                [<TopicTalks 10>, 'Applications']]], 
+        [5, 'Subcubic algorithm for (Unweighted) Unrooted Tree Edit Distance', 
+            [5, 'Krzysztof Pi�ro'], 
+                [[<TopicTalks 11>, 'Subcubic algorithm'], 
+                [<TopicTalks 12>, 'Unrooted Tree Edit Distance']]], 
+        [6, 'Lossy Kernelization for (Implicit) Hitting Set Problems', 
+            [6, 'Stephan Thomasse'], 
+                [[<TopicTalks 13>, 'Lossy Kernelization'],
+                 [<TopicTalks 14>, 'Hitting Set Problems']]], 
+        [7, 'Fault Tolerance in Euclidean Committee Selection', 
+            [7, 'Jie Xue'], 
+                [[<TopicTalks 15>, 'Fault Tolerance'], 
+                [<TopicTalks 16>, 'Euclidean Committee Selection']]]], 
+        [
+            [1, 2, 9], 
+            [1, 2, 5], 
+            [1, 2, 4], 
+            [1, 3, 9], 
+            [1, 5, 10], 
+            [2, 2, 2], 
+            [2, 3, 6], 
+            [2, 5, 1], 
+            [3, 2, 8], 
+            [3, 2, 8], 
+            [3, 2, 8], 
+            [3, 3, 8], 
+            [3, 5, 10],
+            [4, 2, 3],  
+            [4, 3, 9], 
+            [4, 5, 5], 
+            [5, 2, 8], 
+            [5, 3, 4], 
+            [5, 5, 5], 
+            [6, 2, 10], 
+            [6, 2, 4], 
+            [6, 3, 7], 
+            [6, 5, 5], 
+            [7, 2, 3], 
+            [7, 2, 8],  
+            [7, 3, 3], 
+            [7, 5, 5]
+        ]
+],
+        [
+            [2, 'TestDelegate'], 
+            [3, 'Jacky'], 
+            [5, 'Grace'], 
+            [11, 'JohnnyTest']
+        ]
+{1: 
+    [1, 'Parameterized Matroid-Constrained Maximum Coverage', 
+    [1, 'Fran�ois Sellier'], 
+    [
+        [1, 'Parameters'], 
+        [2, 'Matroid-Constrained'], 
+        [3, 'Maximum Coverage']]
+    ], 
+2: 
+    [2, 'Sorting Finite Automata via Partition Refinement', 
+    [2, 'Ruben Becker'], 
+    [
+        [4, 'Finite Automata'], 
+        [5, 'Partition Refinement']]
+    ], 
+3: 
+    [3, 'Lyndon Arrays in Sublinear Time', 
+    [3, 'Hideo Bannai'], 
+    [
+        [6, 'Lyndon Arrays'], 
+        [7, 'Sublinear Time']]
+    ], 
+4: 
+    [4, 'Linear Time Construction of Cover Suffix Tree and Applications', 
+    [4, 'Jakub Radoszewski'], 
+    [
+        [8, 'Linear Time Construction'], 
+        [9, 'Cover Suffix Tree'], 
+        [10, 'Applications']]
+    ], 
+5: 
+    [5, 'Subcubic algorithm for (Unweighted) Unrooted Tree Edit Distance', 
+    [5, 'Krzysztof Pi�ro'], 
+    [
+        [11, 'Subcubic algorithm'], 
+        [12, 'Unrooted Tree Edit Distance']]
+    ], 
+6: 
+    [6, 'Lossy Kernelization for (Implicit) Hitting Set Problems', 
+    [6, 'Stephan Thomasse'], 
+    [
+        [13, 'Lossy Kernelization'], 
+        [14, 'Hitting Set Problems']]
+    ], 
+7:
+    [7, 'Fault Tolerance in Euclidean Committee Selection', 
+    [7, 'Jie Xue'], 
+    [
+        [15, 'Fault Tolerance'], 
+        [16, 'Euclidean Committee Selection']
+    ]
+]}
