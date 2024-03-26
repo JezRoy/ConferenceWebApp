@@ -14,6 +14,7 @@ Set the right python interpreter using:
 
 from flask import session, current_app
 import networkx as nx
+from datetime import datetime, timedelta, time
 import pulp
 import random
 from website import CreateApp
@@ -86,10 +87,12 @@ def SCHEDULEConference(app):
                             "ConfName": conferId.confName, 
                             "Host": host.username, 
                             "NumOfDays": conferId.confLength,
+                            "StartDate": conferId.confStart,
+                            "EndDate": conferId.confEnd,
                             "DayStartTime": conferId.dayStart,
                             "DayEndTime": conferId.dayEnd,
                             "IdealNoTalkPerSession": conferId.talkPerSession,
-                            "AverageTalkLength": conferId.talkLength,
+                            "AverageTalkLength": conferId.talkLength, # In minutes
                             "MaxNumParallelSessions": conferId.numSessions, # Number of parallel sessions
                             "TalkInfo": talks,
                             "DelegLikesTalks": Deleg2Talks,
@@ -98,18 +101,73 @@ def SCHEDULEConference(app):
                 SchedulerOUT(ConferenceData)
                 dataset.append(ConferenceData)
 
-                '''jsonData = ConferenceData
-                jsonData["DayStartTime"] = str(jsonData["DayStartTime"])
-                jsonData["DayEndTime"] = str(jsonData["DayEndTime"])
-                import json
-                file_path = str(ConferenceData["ConfName"]) + ".json"
-                with open(file_path, "w") as json_file:
-                    json.dump(jsonData, json_file)'''
-
                 # Track breaks, lunches and talks for all conferences
                 
+                '''SCHEDULE CREATION Pt 1 - Timing Setup & Graph Theory'''
+                SCHEDULETimeData = { # THE ACTUAL SCHEDULE
+                    # Each time slot is saved as a datetime structure
+                }
                 
-                '''SCHEDULE CREATION Pt 1 - Pseudo Random Schedule'''
+                timeLength = ConferenceData["AverageTalkLength"] # In minutes
+                maxTalks = ConferenceData["IdealNoTalkPerSession"]
+                breakTime = 15 # Possibly an option to give users
+
+                for i in range(ConferenceData["NumOfDays"]):
+                    day = i + 1
+                    SCHEDULETimeData[day] = {}
+                    lunchMade = False
+                    
+                    #dayInQ = ConferenceData["StartDate"] + timedelta(days=i)
+
+                    # Initialize the current datetime
+                    currentTime = ConferenceData["DayStartTime"] # 'datetime.time' object
+                    sessionCount = 0 # TODO ACCOUNT FOR LUNCH
+    
+                    # Iterate over the datetime frames with the fixed interval to create a set of slots
+                    while currentTime <= ConferenceData["DayEndTime"]:
+                        # Convert currentTime to seconds since midnight
+                        totalS = currentTime.hour * 3600 + currentTime.minute * 60 + currentTime.second
+
+                        if currentTime.hour >= 12 and lunchMade == False: # Time for lunch - 60 minutes
+                            SCHEDULETimeData[day][currentTime] = "LUNCH & REFRESHMENTS"
+                            totalS += 3600
+                            sessionCount = 0
+                            lunchMade = True
+                        else:
+                            if sessionCount < maxTalks:
+                                SCHEDULETimeData[day][currentTime] = None # Space for an actual talk to be scheduled here
+                                sessionCount += 1
+
+                                # Add or subtract the specified hours, minutes, and seconds
+                                minutes = timeLength # If timeLength is less than 60 minutes
+                                hours = 0
+                                if timeLength >= 60:
+                                    hours = timeLength // 60
+                                    minutes = timeLength - (hours * 60)
+                                totalS += hours * 3600 + minutes * 60
+                            else:
+                                SCHEDULETimeData[day][currentTime] = "BREAK" # An extended break is placed after a session
+                                sessionCount = 0
+                                totalS += breakTime * 60
+
+                        # Ensure the result is within a 24-hour period
+                        totalS %= 24 * 3600
+                        # Convert the total seconds back to a time object AND increment currentTime by the interval
+                        currentTime = time(totalS // 3600, (totalS % 3600) // 60, totalS % 60)
+
+                #print(SCHEDULETimeData)
+
+                with open(f"scheduleTIME_{conferId.confName}.txt", "w") as file:
+                    file.write(f"{ConferenceData}\n")
+                    # Iterate over dictionary items
+                    things = SCHEDULETimeData.items()
+                    for key1, value1 in things:
+                        # Write each key-value pair to a new line
+                        file.write(f"{key1}:\n")
+                        for key2, value2 in value1.items():
+                            file.write(f"{key2}: {value2}\n")
+                
+                '''SCHEDULE CREATION Pt 2 - IP Scheduler
                 # Create a LP problem
                 SchedulePt1model = pulp.LpProblem("PseudoRandomSchedule", pulp.LpMaximize)
 
@@ -145,7 +203,9 @@ def SCHEDULEConference(app):
                     for session in range(ConferenceData["MaxNumParallelSessions"]):
                         SchedulePt1model += pulp.lpSum(ScheduleVars[(day, session, talkId)] 
                                             for talkId, _, _ in ConferenceData["TalkInfo"]) <= 1
-
+                
+                '''
+                SchedulerOUT("--------------------------------")
                 # TODO:
                 # Handle an empty conference
                 # Creating a conference using IP, and Graphs

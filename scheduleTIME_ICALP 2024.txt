@@ -1,0 +1,84 @@
+{'ConfName': 'ICALP 2024', 'Host': 'TestHost2', 'NumOfDays': 4, 'StartDate': datetime.date(2024, 7, 10), 'EndDate': datetime.date(2024, 7, 14), 'DayStartTime': datetime.time(8, 0), 'DayEndTime': datetime.time(17, 30), 'IdealNoTalkPerSession': 4, 'AverageTalkLength': 30, 'MaxNumParallelSessions': 1, 'TalkInfo': [[8, 'Approximating Long Cycle Above Dirac’s Guarantee', [8, 'Fedor Fomin'], [[17, 'Approximation'], [18, 'Long Cycles'], [19, "Dirac's Guarantee"]]], [9, ' Compound Logics for Modification Problems', [9, 'Fedor Fomin'], [[20, 'Logic'], [21, 'Modification Problems'], [22, 'Modification']]], [10, 'New Additive Emulators', [10, 'Shimon Kogan'], [[23, 'Emulators']]]], 'DelegLikesTalks': [], 'DelegateInfo': []}1:
+08:00:00: None
+08:30:00: None
+09:00:00: None
+09:30:00: None
+10:00:00: BREAK
+10:15:00: None
+10:45:00: None
+11:15:00: None
+11:45:00: None
+12:15:00: LUNCH & REFRESHMENTS
+13:15:00: None
+13:45:00: None
+14:15:00: None
+14:45:00: None
+15:15:00: BREAK
+15:30:00: None
+16:00:00: None
+16:30:00: None
+17:00:00: None
+17:30:00: BREAK
+2:
+08:00:00: None
+08:30:00: None
+09:00:00: None
+09:30:00: None
+10:00:00: BREAK
+10:15:00: None
+10:45:00: None
+11:15:00: None
+11:45:00: None
+12:15:00: LUNCH & REFRESHMENTS
+13:15:00: None
+13:45:00: None
+14:15:00: None
+14:45:00: None
+15:15:00: BREAK
+15:30:00: None
+16:00:00: None
+16:30:00: None
+17:00:00: None
+17:30:00: BREAK
+3:
+08:00:00: None
+08:30:00: None
+09:00:00: None
+09:30:00: None
+10:00:00: BREAK
+10:15:00: None
+10:45:00: None
+11:15:00: None
+11:45:00: None
+12:15:00: LUNCH & REFRESHMENTS
+13:15:00: None
+13:45:00: None
+14:15:00: None
+14:45:00: None
+15:15:00: BREAK
+15:30:00: None
+16:00:00: None
+16:30:00: None
+17:00:00: None
+17:30:00: BREAK
+4:
+08:00:00: None
+08:30:00: None
+09:00:00: None
+09:30:00: None
+10:00:00: BREAK
+10:15:00: None
+10:45:00: None
+11:15:00: None
+11:45:00: None
+12:15:00: LUNCH & REFRESHMENTS
+13:15:00: None
+13:45:00: None
+14:15:00: None
+14:45:00: None
+15:15:00: BREAK
+15:30:00: None
+16:00:00: None
+16:30:00: None
+17:00:00: None
+17:30:00: BREAK
