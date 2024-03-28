@@ -100,124 +100,160 @@ def SCHEDULEConference(app):
                 }
                 SchedulerOUT(ConferenceData)
                 dataset.append(ConferenceData)
-
-                # Track breaks, lunches and talks for all conferences
                 
-                '''SCHEDULE CREATION Pt 1 - Timing Setup & Graph Theory'''
-                SCHEDULETimeData = { # THE ACTUAL SCHEDULE
-                    # Each time slot is saved as a datetime structure
-                }
+                if talks != []:
+                    if DelegateInfo != []:
+                        if Deleg2Talks != []:
+                            # Track breaks, lunches and talks for all conferences
+                            
+                            '''SCHEDULE CREATION Pt 1 - Timing Setup & Graph Theory'''
+                            SCHEDULETimeData = { # THE ACTUAL SCHEDULE
+                                # Each time slot is saved as a datetime structure
+                            }
+                            AvailableSlots = {
+                                # Only the available slots to schedule will be given to the model
+                            }
+
+                            timeLength = ConferenceData["AverageTalkLength"] # In minutes
+                            maxTalks = ConferenceData["IdealNoTalkPerSession"]
+                            breakTime = 15 # Possibly an option to give users
+
+                            del talks
+                            del Deleg2Talks
+                            del DelegateInfo
+
+                            for i in range(ConferenceData["NumOfDays"]):
+                                day = i + 1
+                                SCHEDULETimeData[day] = {}
+                                AvailableSlots[day] = {}
+                                lunchMade = False
+
+                                # Initialize the current datetime
+                                currentTime = ConferenceData["DayStartTime"] # 'datetime.time' object
+                                sessionCount = 0 # TODO ACCOUNT FOR LUNCH
                 
-                timeLength = ConferenceData["AverageTalkLength"] # In minutes
-                maxTalks = ConferenceData["IdealNoTalkPerSession"]
-                breakTime = 15 # Possibly an option to give users
+                                # Iterate over the datetime frames with the fixed interval to create a set of slots
+                                while currentTime <= ConferenceData["DayEndTime"]:
+                                    # Convert currentTime to seconds since midnight
+                                    totalS = currentTime.hour * 3600 + currentTime.minute * 60 + currentTime.second
 
-                for i in range(ConferenceData["NumOfDays"]):
-                    day = i + 1
-                    SCHEDULETimeData[day] = {}
-                    lunchMade = False
-                    
-                    #dayInQ = ConferenceData["StartDate"] + timedelta(days=i)
+                                    if currentTime.hour >= 12 and lunchMade == False: # Time for lunch - 60 minutes
+                                        SCHEDULETimeData[day][currentTime] = "LUNCH & REFRESHMENTS"
+                                        totalS += 3600
+                                        sessionCount = 0
+                                        lunchMade = True
+                                    else:
+                                        if sessionCount < maxTalks:
+                                            SCHEDULETimeData[day][currentTime] = [] # Space for an actual talk to be scheduled here
+                                            AvailableSlots[day][currentTime] = []
+                                            sessionCount += 1
 
-                    # Initialize the current datetime
-                    currentTime = ConferenceData["DayStartTime"] # 'datetime.time' object
-                    sessionCount = 0 # TODO ACCOUNT FOR LUNCH
-    
-                    # Iterate over the datetime frames with the fixed interval to create a set of slots
-                    while currentTime <= ConferenceData["DayEndTime"]:
-                        # Convert currentTime to seconds since midnight
-                        totalS = currentTime.hour * 3600 + currentTime.minute * 60 + currentTime.second
+                                            # Add or subtract the specified hours, minutes, and seconds
+                                            minutes = timeLength # If timeLength is less than 60 minutes
+                                            hours = 0
+                                            if timeLength >= 60:
+                                                hours = timeLength // 60
+                                                minutes = timeLength - (hours * 60)
+                                            totalS += hours * 3600 + minutes * 60
+                                        else:
+                                            SCHEDULETimeData[day][currentTime] = "BREAK" # An extended break is placed after a session
+                                            sessionCount = 0
+                                            totalS += breakTime * 60
 
-                        if currentTime.hour >= 12 and lunchMade == False: # Time for lunch - 60 minutes
-                            SCHEDULETimeData[day][currentTime] = "LUNCH & REFRESHMENTS"
-                            totalS += 3600
-                            sessionCount = 0
-                            lunchMade = True
+                                    # Ensure the result is within a 24-hour period
+                                    totalS %= 24 * 3600
+                                    # Convert the total seconds back to a time object AND increment currentTime by the interval
+                                    currentTime = time(totalS // 3600, (totalS % 3600) // 60, totalS % 60)
+                            
+                            '''SCHEDULE CREATION Pt 2 - IP Scheduler'''
+                            # Create a LP problem
+                            SchedulePt1model = pulp.LpProblem("ConferenceScheduling", pulp.LpMaximize)
+
+                            days = AvailableSlots.keys()
+                            # Decision Variables
+                            x = pulp.LpVariable.dicts("TalkSlotsDayParallel", ((day, timeslot, talkId, parallel) 
+                                        for day in days
+                                        for timeslot in AvailableSlots[day] 
+                                        for talkId, _, _, _ in ConferenceData["TalkInfo"]
+                                        for parallel in range(1, ConferenceData["MaxNumParallelSessions"] + 1)), 
+                                        cat='Binary')
+
+                            # Objective function
+                            SchedulePt1model += pulp.lpSum(x[(day, timeslot, delegateLikes[0], parallel)] * delegateLikes[2]
+                                        for delegateLikes in ConferenceData["DelegLikesTalks"]
+                                        for day in days
+                                        for timeslot in AvailableSlots[day]
+                                        for parallel in range(1, ConferenceData["MaxNumParallelSessions"] + 1)
+                                        if delegateLikes[0] in [t[0] for t in ConferenceData["TalkInfo"]])
+
+                            # Constraints
+                            # Each talk can only be scheduled once
+                            for thing in ConferenceData["TalkInfo"]:
+                                talkId = thing[0]
+                                SchedulePt1model += pulp.lpSum(x[(day, timeslot, talkId, parallel)]
+                                            for day in days
+                                            for timeslot in AvailableSlots[day]
+                                            for parallel in range(1, ConferenceData["MaxNumParallelSessions"] + 1)) == 1
+                                
+                            # Each talk must be scheduled at least once
+                            for thing in ConferenceData["TalkInfo"]:
+                                talkId = thing[0]
+                                SchedulePt1model += pulp.lpSum(x[(day, timeslot, talkId, parallel)]
+                                            for day in days
+                                            for timeslot in AvailableSlots[day]
+                                            for parallel in range(1, ConferenceData["MaxNumParallelSessions"] + 1)) >= 1
+                                
+                            # Only one talk per timeslot and parallelslot
+                            for timeslot in AvailableSlots[day]:
+                                for parallel in range(1, ConferenceData["MaxNumParallelSessions"] + 1):
+                                    talksInSlot = []
+                                    for thing in ConferenceData["TalkInfo"]:
+                                        talkId = thing[0]
+                                        if x[(day, timeslot, talkId, parallel)] == 1:
+                                            talksInSlot.append(talkId)
+                                    SchedulePt1model += pulp.lpSum(x[(day, timeslot, talkId, parallel)]
+                                                                for day in days
+                                                                for talkId in talksInSlot) <= 1
+
+                            # TODO
+                            '''# Speaker constraint: A speaker can only give one talk at a time
+                            for day in days:
+                                for timeslot in SCHEDULETimeData[day]:
+                                    for parallel in range(1, ConferenceData["MaxNumParallelSessions"] + 1):
+                                        for thing in ConferenceData["TalkInfo"]:
+                                            talkId = thing[0]
+                                            speakerId = thing[1]
+                                            if timeslot not in ['BREAK', 'LUNCH & REFRESHMENTS']:
+                                                SchedulePt1model += pulp.lpSum(x[(day, timeslot, otherthing[0], parallel)]
+                                                            for otherthing in ConferenceData["TalkInfo"] # Referring to talkId
+                                                            if otherthing[0] != talkId and speakerId == otherthing[2][0]) <= 1'''
+                            try:
+                                # Solve the problem
+                                SchedulePt1model.solve()
+                                SchedulerOUT("Solution:")
+                            except Exception as e:
+                                SchedulerOUT(f"An error occured: {e} <<<<<<<<<<<<")
+                            
+                            # Print the solution
+                            print(conferId.confName)
+                            for var in SchedulePt1model.variables():
+                                if var.varValue == 1:
+                                    print(var.name, "=", var.varValue)
+                                    SchedulerOUT(f"{var.name} = {var.varValue}")
+
+                            SchedulerOUT("--------------------------------")
+                            # TODO:
+                            # Creating a conference using IP, and Graphs
+                            
+                            # Write schedule to a text file and save a trace to it
+
+                            #UpdateLog(f"New schedule created for {conferId.confName}.")
                         else:
-                            if sessionCount < maxTalks:
-                                SCHEDULETimeData[day][currentTime] = None # Space for an actual talk to be scheduled here
-                                sessionCount += 1
-
-                                # Add or subtract the specified hours, minutes, and seconds
-                                minutes = timeLength # If timeLength is less than 60 minutes
-                                hours = 0
-                                if timeLength >= 60:
-                                    hours = timeLength // 60
-                                    minutes = timeLength - (hours * 60)
-                                totalS += hours * 3600 + minutes * 60
-                            else:
-                                SCHEDULETimeData[day][currentTime] = "BREAK" # An extended break is placed after a session
-                                sessionCount = 0
-                                totalS += breakTime * 60
-
-                        # Ensure the result is within a 24-hour period
-                        totalS %= 24 * 3600
-                        # Convert the total seconds back to a time object AND increment currentTime by the interval
-                        currentTime = time(totalS // 3600, (totalS % 3600) // 60, totalS % 60)
-
-                #print(SCHEDULETimeData)
-
-                with open(f"scheduleTIME_{conferId.confName}.txt", "w") as file:
-                    file.write(f"{ConferenceData}\n")
-                    # Iterate over dictionary items
-                    things = SCHEDULETimeData.items()
-                    for key1, value1 in things:
-                        # Write each key-value pair to a new line
-                        file.write(f"{key1}:\n")
-                        for key2, value2 in value1.items():
-                            file.write(f"{key2}: {value2}\n")
-                
-                '''SCHEDULE CREATION Pt 2 - IP Scheduler
-                # Create a LP problem
-                SchedulePt1model = pulp.LpProblem("PseudoRandomSchedule", pulp.LpMaximize)
-
-                #### ScheduleVars = pulp.LpVariable.dicts("Schedule", ((s, t) for s in range(ConferenceData[8]) for t in range(ConferenceData[6])), 0, 1, pulp.LpBinary)
-
-                # Decision variables
-                ScheduleVars = {}
-                for day in range(ConferenceData["NumOfDays"]):
-                    for session in range(ConferenceData["MaxNumParallelSessions"]):
-                        for talkId, _, _ in ConferenceData["TalkInfo"]:
-                            ScheduleVars[(day, session, talkId)] = pulp.LpVariable(
-                                f"Talk_{day}_{session}_{talkId}", 0, 1, pulp.LpBinary)
-
-                # Associating talk data with the decision variables in the IP
-                TalksToModel = {}
-
-                numOfTalks = len(talks)
-                for i in range(numOfTalks):
-                    TalksToModel[i+1] = talks[i]
-                SchedulerOUT(TalksToModel)
-                SchedulerOUT("--------------------------------")
-
-
-                # Constraints
-                # Each talk is scheduled only once
-                for talkId, _, _ in ConferenceData["TalkInfo"]:
-                    SchedulePt1model += pulp.lpSum(ScheduleVars[(day, session, talkId)] 
-                                        for day in range(ConferenceData["NumOfDays"]) 
-                                        for session in range(ConferenceData["MaxNumParallelSessions"])) <= 1
-                
-                # One talk per time slot in a session
-                for day in range(ConferenceData["NumOfDays"]):
-                    for session in range(ConferenceData["MaxNumParallelSessions"]):
-                        SchedulePt1model += pulp.lpSum(ScheduleVars[(day, session, talkId)] 
-                                            for talkId, _, _ in ConferenceData["TalkInfo"]) <= 1
-                
-                '''
-                SchedulerOUT("--------------------------------")
-                # TODO:
-                # Handle an empty conference
-                # Creating a conference using IP, and Graphs
-            
-                # Define decision variables
-                #x = pulp.LpVariable("x", lowBound=0)
-                #y = pulp.LpVariable("y", lowBound=0)
-                
-                # Write schedule to a text file and save a trace to it
-
-                #UpdateLog("New schedule created")
-                pass
+                            UpdateLog(f"Scheduler cannot create any schedules for {conferId.confName}, as the conference has no Delegate preference data to use.")
+                    else:
+                        UpdateLog(f"Scheduler cannot create any schedules for {conferId.confName}, as the conference has no Delegates registered to it.")
+                else:
+                    UpdateLog(f"Scheduler cannot create any schedules for {conferId.confName}, as the conference has no talks created for it.")
         else:
             UpdateLog("Scheduler cannot create any schedules, as the conference database is empty.")
             return False
@@ -239,6 +275,6 @@ def SchedulerOUT(thing):
 
 if __name__ == '__main__':
     # Run app
-    parallelSys.add_job(scheduleStuff, trigger='interval', minutes=0.5)
+    parallelSys.add_job(scheduleStuff, trigger='interval', minutes=0.3)
     parallelSys.start()
     app.run(debug=True)
