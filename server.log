@@ -2981,3 +2981,9 @@ Error produced: (sqlite3.IntegrityError) NOT NULL constraint failed: conf_deleg.
 2024-03-28 10:08:52: Scheduler cannot create any schedules for ICALP 2024, as the conference has no Delegates registered to it.
 2024-03-28 10:08:52: Scheduler cannot create any schedules for Test Conference, as the conference has no Delegates registered to it.
 2024-03-28 10:08:52: Scheduler cannot create any schedules for ESA 2025, as the conference has no Delegates registered to it.
+2024-03-28 10:09:09: Scheduler cannot create any schedules for ICALP 2024, as the conference has no Delegates registered to it.
+2024-03-28 10:09:09: Scheduler cannot create any schedules for Test Conference, as the conference has no Delegates registered to it.
+2024-03-28 10:09:09: Scheduler cannot create any schedules for ESA 2025, as the conference has no Delegates registered to it.
+2024-03-28 10:09:10: Scheduler cannot create any schedules for ICALP 2024, as the conference has no Delegates registered to it.
+2024-03-28 10:09:10: Scheduler cannot create any schedules for Test Conference, as the conference has no Delegates registered to it.
+2024-03-28 10:09:10: Scheduler cannot create any schedules for ESA 2025, as the conference has no Delegates registered to it.
