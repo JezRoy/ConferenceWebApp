@@ -19,6 +19,8 @@ requiredModules = [
     'functools',
     'apscheduler',
     'networkx',
+    'random',
+    'string'
 ]
 
 # Given pip is installed on the machine.

@@ -90,7 +90,13 @@ def signUp():
                             #dateItem = datetime.date(dateObj.year, dateObj.month, dateObj.day)
                         else:
                             dateObj = None
-                        newUser = User(username=username, passwordHash=passwdHash,email=emailAddr, firstName=firstName, lastName=lastName, dob=dateObj, type=usertype)
+                        newUser = User(username=username, 
+                                       passwordHash=passwdHash,
+                                       email=emailAddr, 
+                                       firstName=firstName, 
+                                       lastName=lastName, 
+                                       dob=dateObj, 
+                                       type=usertype)
                         db.session.add(newUser)
                         db.session.commit()
                         flash("Successfully signed up!", category='success')

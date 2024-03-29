@@ -1,5 +1,120 @@
 
-                
+# TODO REMOVE - Automating the creation of 200 test delegates for conference ID 8
+import string
+import random
+from werkzeug.security import generate_password_hash
+
+def generateRandomString(length=7):
+    # Define the characters to choose from
+    characters = string.ascii_letters + string.digits  # You can add more characters if needed
+    
+    # Generate the random string
+    randomString = ''.join(random.choice(characters) for _ in range(length))
+    
+    return randomString
+
+def generateRandomDateOfBirth(start_date, end_date):
+    # Convert start_date and end_date strings to datetime objects
+    startDate = datetime.strptime(start_date, '%Y-%m-%d')
+    endDate = datetime.strptime(end_date, '%Y-%m-%d')
+    
+    # Calculate the range of days between start_date and end_date
+    delta = endDate - startDate
+    
+    # Generate a random number of days within the range
+    randomNumberOfDays = random.randint(0, delta.days)
+    
+    # Add the random number of days to start_date to get the random date of birth
+    randomDateOfBirth = startDate + timedelta(days=randomNumberOfDays)
+    
+    return randomDateOfBirth
+
+# Create new delegates and assign random preference scores for each talk
+def createNewDelegates(app, conference_id):
+    def MessageMe(thing):
+        """
+        Tracking scheduler output seprately from the rest of the app.
+        """
+        myFile = open("autoGen.txt", "a")
+        contents = f"{thing}\n"
+        myFile.write(contents)
+        myFile.close()
+        return True
+    
+    with app.app_context():
+        MessageMe("Starting to run autoGen >>>>")
+        # Create random user details
+        username = generateRandomString(6)
+        password = generate_password_hash(generateRandomString(13))
+        emailAddr = generateRandomString(6).join("@gmail.com")
+        firstName = username
+        lastName = generateRandomString(6)
+        dateObj = generateRandomDateOfBirth('1950-01-01', '2005-12-31')
+        dateStr = dateObj.strftime('%Y-%m-%d')
+        # Parse the string date
+        dob = datetime.strptime(dateStr, '%Y-%m-%d').date()
+        usertype = 'delegate'
+        newUser = User(
+            username=username,
+            passwordHash=password,
+            email=emailAddr,
+            firstName=firstName,
+            lastName=lastName,
+            dob=dob,
+            type=usertype
+        )
+        db.session.add(newUser)
+        db.session.commit()
+        MessageMe(f"--> User {newUser.id} : {[username, password, emailAddr, firstName, lastName, dob]}")
+        # Register the user for the conference
+        userId = newUser.id
+        registration = ConfDeleg(
+            confId=conference_id,
+            delegId=userId
+        )
+        db.session.add(registration)
+        db.session.commit()
+        # Retrieve all talks associated with the conference
+        talks = Talks.query.filter_by(confId=conference_id).all()
+        collection = []
+        for thing in talks:
+            talkId = thing.id
+            topicIDs = []
+            assoTopics = TopicTalks.query.filter_by(talkId=talkId).all()
+            for topic in assoTopics:
+                topicIDs.append(topic.topicId)
+            record = [talkId, topicIDs]
+            collection.append(record)
+        # And rate the talks
+        for talk in collection:
+            rating = random.randint(1, 10)
+            recording = DelegTalks(
+                delegId=userId,
+                talkId=talk[0],
+                confId=conference_id,
+                prefLvl=rating
+            )
+            db.session.add(recording)
+            db.session.commit()
+            MessageMe(f"--|--|--> {userId} : {talk[0]}, {rating}")
+            if rating >= 6:
+                # Add a record to DelTopics table too
+                for topicId in talk[1]:
+                    entry = DelTopics(
+                        delegId=userId,
+                        topicId=topicId,
+                        confId=conference_id
+                    )
+                    db.session.add(entry)
+                    db.session.commit()
+                    MessageMe(f"--|--|--|--|--> {userId} : {topicId}")
+        return True
+    
+'''# Usage example
+conference_id = 8 # ID of the new conference
+num_delegates = 193 # Number of delegates to create
+runTime = datetime.now() + timedelta(seconds=10)
+jobArgs = (app, conference_id)'''          
                 
                 
                 

@@ -1,7 +1,7 @@
 # Initialisations
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
 from flask_login import login_required, current_user
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, TopicTalks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
@@ -42,7 +42,7 @@ DEFAULTS:
 
 # Setting up a navigation blueprint for the flask application
 views = Blueprint('views', __name__)
-
+'''TODO MAYBE UPDATE CONFERENCE ID 8 WITH THE TOPICCONF TABLE'''
 @views.route('/') # The main page of the website
 @login_required
 def home():
@@ -61,15 +61,11 @@ def home():
     else:
         userConferences = ConfDeleg.query.filter_by(delegId=userData.id).all()
     
-    #print(userConferences[0].__dict__)
-    
     conferenceIds = [conference.confId for conference in userConferences]
         # Query the Conferences table to get the details of the conferences
-    #print(conferenceIds)
-    
+
     conferencesUserRegister = Conferences.query.filter(Conferences.id.in_(conferenceIds)).all()
-        # Get the current date and time
-    #print(conferencesUserRegister)    
+        # Get the current date and time 
         
     rightNow = datetime.now()
         # Filter out conferences that have yet to be engaged and store them in a list
@@ -219,8 +215,6 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
         for i in range(len(talkNames)):
             talksGenerated.append([talkNames[i], talkSpeakers[i], talkTopics[i]])
             # Entities involved include:
-            # TODO include Topicsconf in the code below:
-            
             speaker = Speakers(
                 deleg=talkSpeakers[i]
             )
@@ -249,6 +243,12 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
                     topicId=wordId
                 )
                 db.session.add(talktopic)
+                db.session.commit()
+                topic2conf = Topicsconf(
+                    topicId=wordId,
+                    confId=conferenceId
+                )
+                db.session.add(topic2conf)
                 db.session.commit()
         UpdateLog(f"Host ID: {userId} successefully added the following Talks to the conference ID {conferenceId}:\n{talksGenerated}")    
         flash("Talks added to conference successfully!", category="success")
@@ -360,7 +360,7 @@ def previewTalks(conferenceId):
                         recordId = record.topicId
                         newEntry = DelTopics(
                             delegId=userId,
-                            topicId=recordId,
+                            topicId=recordId, # Every topic appears to be unique, because of a unique ID by default
                             confId=conferenceId
                         )
                 db.session.add(newEntry)
@@ -380,7 +380,6 @@ def previewTalks(conferenceId):
             return redirect(url_for("views.home"))
         else:
             talks = Talks.query.filter_by(confId=conferenceId).all()
-            #print(talks)
             
             collectedTalks = []
             # Assemble Talk information to pass onto to webpage
@@ -475,6 +474,7 @@ def editConference(conferenceId):
 """ TODO 
     create:  
         - /edit-conference, 
+        - /view-conferences (HOSTs)
         - /leave-conference, 
         - /delete-conference,
 """

@@ -159,7 +159,7 @@ class Topicsconf(db.Model):
 class DelTopics(db.Model): # Only recorded for topics in talks that have a preference of 6/10 or higher.
     id = db.Column(db.Integer, primary_key=True)
     delegId = db.Column(db.Integer, db.ForeignKey('user.id')) # Foreign key from user table - given they are a 'delegate'
-    topicId = db.Column(db.Integer, db.ForeignKey('topicsconf.id')) # Foreign key from Topic table
+    topicId = db.Column(db.Integer, db.ForeignKey('topics.id')) 
     confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
     def __init__(self, delegId, topicId, confId):
         self.delegId = delegId
