@@ -45,45 +45,6 @@ def find_hamiltonian_path(G):
     path = [starting_node]
     return hamiltonian_path_util(starting_node, path)
 
-def find_hamilton_paths(graph):
-    # Step 1: Find the coloring of the graph
-    coloring = nx.greedy_color(graph, strategy='largest_first')
-    
-    # Step 2: Group nodes by color
-    color_groups = {}
-    for node, color in coloring.items():
-        if color not in color_groups:
-            color_groups[color] = [node]
-        else:
-            color_groups[color].append(node)
-    
-    # Step 3: Find Hamiltonian paths for each color group
-    hamilton_paths = []
-    for group in color_groups.values():
-        subgraph = graph.subgraph(group)
-        cycle = list(nx.find_cycle(subgraph))
-        hamilton_paths.extend(cycle)
-    
-    return hamilton_paths
-
-def create_topics_graph(talks_info):
-    G = nx.Graph()
-    
-    # Add nodes for talks
-    for talk_info in talks_info:
-        talk_id = talk_info[0]
-        G.add_node(talk_id)
-    
-    # Add edges based on common topics
-    for i in range(len(talks_info)):
-        talk_id_1, _, _, topics_1 = talks_info[i]
-        for j in range(i + 1, len(talks_info)):
-            talk_id_2, _, _, topics_2 = talks_info[j]
-            common_topics = set(topic_1[0] for topic_1 in topics_1).intersection(set(topic_2[0] for topic_2 in topics_2))
-            if common_topics:
-                G.add_edge(talk_id_1, talk_id_2, weight=len(common_topics))
-    
-    return G
 
 talks_info = [
     [1, 'Parameterized Matroid-Constrained Maximum Coverage', [1, 'Fran�ois Sellier'], [[1, 'Parameters'], [2, 'Matroid-Constrained'], [3, 'Maximum Coverage']]],
@@ -103,7 +64,6 @@ talks_info_large = [(i, f"Talk {i}", f"Speaker {i}") for i in range(1, numTalks 
 #preferences_graph_large = create_preferences_graph(delegate_likes_talks_large, talks_info_large)
 
 preferences_graph_large = create_preferences_graph(delegate_likes_talks_large)
-topics_graph = create_topics_graph(talks_info)
 
 # Colouring THEN hamilton:
 coloring = apply_graph_coloring(preferences_graph_large)

@@ -37,14 +37,15 @@ def scheduleStuff():
         conferences = db.session.query(Conferences).all()
         if conferences:
             # Check active jobs
-            active = [job.id for job in parallelSys.get_jobs()]
+            active = [job.name for job in parallelSys.get_jobs()]
             # Start a separate job for each conference
             for conferId in conferences:
-                if f"conference_job_{conferId}" not in active:
-                    UpdateLog(f"-----Running scheduler for conference {conferId.id}: {conferId.confName}...-----")
-                    parallelSys.add_job(SCHEDULEConference, args=(app, conferId,), id=f"conference_job_{conferId}")
+                jobName = f"conference_job_{conferId}"
+                if jobName not in active:
+                    UpdateLog(f"-----Running scheduler for conference {conferId.confName}: {jobName}...-----")
+                    parallelSys.add_job(SCHEDULEConference, args=(app, conferId,), name=jobName)
                 else: 
-                    UpdateLog(f"-----Scheduler is already dealing with {conferId.id}: {conferId.confName}!-----")
+                    UpdateLog(f"-----Scheduler is already dealing with {conferId.confName}: {jobName}!-----")
         else:
             UpdateLog("Scheduler cannot create any schedules, as the conference database is empty.")
 
@@ -247,19 +248,43 @@ def SCHEDULEConference(app, conferId):
                     
                     # Print the solution
                     print(conferId.confName)
+                    solution = []
                     for var in SchedulePt1model.variables():
                         if var.varValue == 1:
+                            solution.append(var.name)
                             print(var.name, "=", var.varValue)
                             SchedulerOUT(f"{var.name} = {var.varValue}")
 
                     SchedulerOUT("--------------------------------")
+                    
+                    '''SCHEDULE CREATION Pt 3 - Graph Theory'''
+                    print("==================", len(solution))
 
+                    for i in range(len(solution)):
+                        # Some reformatting of the solution
+                        label = solution[i][22:len(solution[i])-1] # Eg 1,_datetime.time(14,_15),_35,_1
+                        label = label.replace("_", "") # Eg 1,datetime.time(14,15),35,1
+                        sep = label.split(",") # ['1', 'datetime.time(14', '15)', '35', '1']
+                        day = int(sep[0]) # 1
+                        talkId = int(sep[3]) # 35
+                        parallel = int(sep[4]) # 1
+                        hour, minute = int(sep[1][14:]), int(sep[2][0:-1]) # 14, 15
+                        timeObj = time(hour, minute)
+                        element = {
+                            "day":day,
+                            "time":timeObj, 
+                            "talkId":talkId,
+                            "parallelSesh":parallel
+                        }
+                        solution[i] = element
+
+                    '''SCHEDULE CREATION Pt 4 - Evaluate & Save'''
                     # TODO:
-                    # Creating a conference using IP, and Graphs
+                    # Creating a conference using Graphs
                     
                     # Write schedule to a text file and save a trace to it
 
-                    UpdateLog(f"New schedule created for {conferId.confName}:\n{SchedulePt1model.variables()}")
+                    UpdateLog(f"New schedule created for {conferId.confName}:\n{solution}")
                     return True
                 else:
                     UpdateLog(f"Scheduler cannot create any schedules for {conferId.confName}, as the conference has no Delegate preference data to use.")
@@ -284,7 +309,6 @@ def SchedulerOUT(thing):
     myFile.close()
     return True
 
-   
 
 if __name__ == '__main__':
     # Run app
