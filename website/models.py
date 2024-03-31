@@ -170,7 +170,7 @@ class Schedules(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
     file = db.Column(db.String(limit), unique=True)
-    dayOfConf = db.Column(db.Integer) # Should a conference have multiple days, there will be multiple schedules for each day of the conference
+    dayOfConf = db.Column(db.Integer) # Not Needed anymore, reset database without this later
     score = db.Column(db.Integer) # Delegate satisfaction 
     paraSesh = db.Column(db.Integer) # Number of parallel sessions during each day in the conference
     def __init__(self, confId, file, dayOfConf, score, paraSesh):

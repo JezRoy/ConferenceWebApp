@@ -1,7 +1,7 @@
 # Initialisations
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
 from flask_login import login_required, current_user
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, time, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, TopicTalks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
@@ -89,28 +89,35 @@ def home():
     else:
         ConferenceData = None
     
-    #print(ConferenceData)
-    
-    ''' A DUMMY conference for testing - this should be database queried in future
-    ConferenceData = {
-        "id": 0,
-        "name":"Blank2024",
-        "confURL":"conf.blank.2024",
-        "delegSignUpDeadline":date.today().strftime('%d-%m-%Y'),
-        "confStart": datetime(2023, 1, 9, 0, 0).strftime('%d-%m-%Y'),
-        "confEnd": datetime(2023, 1, 12, 0, 0).strftime('%d-%m-%Y')
-    } '''
-    
     # Find most optimised schedule from the schedules created for the upcoming conference
-    # TODO - CHANGE THIS TO WORK WITH SCHEDULER
-    schedule = []
+    lookup = Schedules.query.filter_by(confId=confId).first()
+    fileToSee = lookup.file
+    schedule = {}
+    with open(fileToSee, "r") as file:
+        content = fileToSee.readlines()
+    for line in content:
+        if line[0:2] == 'D-':
+            day = int(line[3])
+        else:
+            hour = line[0:2]
+            minute = line[3:5]
+            timing = time(hour, minute)
+            try:
+                start = line.index("[")
+                end = len(start) - 1
+                
+                talks = line[start+1:end].split(",")
+                paraSesh = []
+                for talk in talks:
+                    paraSesh.append(eval(talk))
+                slot = {timing:paraSesh}
+                schedule[day] = slot
     # RETRIEVE SCHEDULE WITH HIGHEST SCORE FROM DATABASE
-    if session['type'] == "host":
-        TalksAssociated = Talks.query.filter_by(confId=confId).all()
-        for talk in TalksAssociated:
-            speaker = Speakers.query.filter_by(id=talk.speakerId).first()
-            schEntry = [talk.talkName, speaker.deleg]
-            schedule.append(["Not scheduled yet", schEntry])
+    TalksAssociated = Talks.query.filter_by(confId=confId).all()
+    for talk in TalksAssociated:
+        speaker = Speakers.query.filter_by(id=talk.speakerId).first()
+        schEntry = [talk.talkName, speaker.deleg]
+        schedule.append(["Not scheduled yet", schEntry])
     
     # Load HTML page
     return render_template("index.html", 

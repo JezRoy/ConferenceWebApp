@@ -55,7 +55,7 @@ for talk_id in range(1, 51):
     speaker_name = f"Speaker {speaker_id}"
     topic_ids = random.sample(range(1, 21), random.randint(1, 5))  # Assuming 20 topics
     topics = [[topic_id, f"Topic {topic_id}"] for topic_id in topic_ids]
-    talk_information.append([talk_id, talk_name, [speaker_id, speaker_name], *topics])
+    talk_information.append([talk_id, talk_name, [speaker_id, speaker_name], topics])
 
 delegate_preferences = [
     [1, 2, 9], [1, 2, 5], [1, 2, 4], [1, 3, 9], [1, 5, 10],
@@ -109,24 +109,116 @@ def apply_graph_colouring(G):
     coloring = greedy_color(G, strategy='largest_first')
     return coloring
 
+# Step 4: Calculate topic similarity between talks
+similarity_threshold = 4  # Adjust as needed
+def calculate_topic_similarity(talk_info):
+    topic_similarity = {}
+    for i in range(len(talk_info)):
+        for j in range(i + 1, len(talk_info)):
+            talk1_topics = set(topic[1] for topic in talk_info[i][3])
+            talk2_topics = set(topic[1] for topic in talk_info[j][3])
+            similarity = len(talk1_topics.intersection(talk2_topics))
+            topic_similarity[(talk_info[i][0], talk_info[j][0])] = similarity
+    return topic_similarity
+
+def adjust_schedule_for_topic_similarity1(ip_model_schedule, final_schedule, topic_similarity, max_parallel_sessions):
+    # Ensure all entries in ip_model_schedule have 'talkId' key
+    ip_model_schedule = [entry for entry in ip_model_schedule if 'talkId' in entry]
+
+    #print(ip_model_schedule, "==============", topic_similarity)
+    #for entry in ip_model_schedule:
+    #    print(entry)
+
+    # Filter out entries in ip_model_schedule that have corresponding entries in topic_similarity
+    ip_model_schedule = [entry for entry in ip_model_schedule if entry['talkId'] in topic_similarity]
+    print(ip_model_schedule, )
+    # Sort talks based on similarity and time
+    sorted_schedule = sorted(ip_model_schedule, key=lambda x: (x['time'], topic_similarity[x['talkId']]), reverse=True)
+    sorted_schedule = sorted(ip_model_schedule, key=lambda x: (x['time'], topic_similarity.get(x['talkId'], 0)), reverse=True)
+
+    for entry in sorted_schedule:
+        talk_id = entry['talkId']
+        similar_talks = [t_id for t_id, sim in topic_similarity.items() if talk_id in t_id and sim >= similarity_threshold]
+        if similar_talks:
+            # Check if any similar talks are already scheduled
+            for scheduled_talk in final_schedule:
+                if scheduled_talk['talkId'] in similar_talks:
+                    # Adjust the schedule to avoid parallel scheduling
+                    similar_talk = scheduled_talk
+                    # Attempt to schedule the current talk closer to its time if there's available space
+                    current_talk = entry
+                    current_day = current_talk['day']
+                    current_time = current_talk['time']
+                    similar_time = similar_talk['time']
+                    if similar_time > current_time:
+                        # Attempt to schedule the current talk closer to the similar talk
+                        if len([talk for talk in final_schedule if talk['day'] == current_day and talk['time'] == current_time]) < max_parallel_sessions:
+                            # Schedule the current talk in the same time slot as the similar talk
+                            final_schedule.append({'day': current_day, 'time': current_time, 'talkId': current_talk['talkId'], 'parallelSesh': current_talk['parallelSesh']})
+                        else:
+                            # Find an alternative time slot
+                            alternative_slot = find_alternative_slot(final_schedule, current_day, current_time)
+                            if alternative_slot:
+                                final_schedule.append({'day': current_day, 'time': alternative_slot, 'talkId': current_talk['talkId'], 'parallelSesh': current_talk['parallelSesh']})
+                            else:
+                                # Handle conflict by rescheduling the similar talk
+                                similar_talk_slot = find_alternative_slot(final_schedule, current_day, similar_time)
+                                if similar_talk_slot:
+                                    similar_talk['time'] = similar_talk_slot
+                                    final_schedule.append(similar_talk)
+                                else:
+                                    # No alternative slot available, replace conflicting talk
+                                    final_schedule.remove(similar_talk)
+                                    final_schedule.append(current_talk)
+                    break
+
+def adjust_schedule_for_topic_similarity(ip_model_schedule, final_schedule, topic_similarity, max_parallel_sessions):
+    for entry in ip_model_schedule:
+        talk_id = entry['talkId']
+        similar_talks = [t_id for t_id, sim in topic_similarity.items() if talk_id in t_id and sim >= similarity_threshold]
+        if similar_talks:
+            # Check if any similar talks are already scheduled
+            for scheduled_talk in final_schedule:
+                if scheduled_talk['talkId'] in similar_talks:
+                    # Adjust the schedule to avoid parallel scheduling
+                    similar_talk = scheduled_talk
+                    # Attempt to schedule the current talk closer to its time if there's available space
+                    current_talk = entry
+                    current_day = current_talk['day']
+                    current_time = current_talk['time']
+                    similar_time = similar_talk['time']
+                    if similar_time > current_time:
+                        # Attempt to schedule the current talk closer to the similar talk
+                        if len([talk for talk in final_schedule if talk['day'] == current_day and talk['time'] == current_time]) < max_parallel_sessions:
+                            # Schedule the current talk in the same time slot as the similar talk
+                            final_schedule.append({'day': current_day, 'time': current_time, 'talkId': current_talk['talkId'], 'parallelSesh': current_talk['parallelSesh']})
+                        else:
+                            # Find an alternative time slot
+                            alternative_slot = find_alternative_slot(final_schedule, current_day, current_time)
+                            if alternative_slot:
+                                final_schedule.append({'day': current_day, 'time': alternative_slot, 'talkId': current_talk['talkId'], 'parallelSesh': current_talk['parallelSesh']})
+                            else:
+                                # Handle conflict by rescheduling the similar talk
+                                similar_talk_slot = find_alternative_slot(final_schedule, current_day, similar_time)
+                                if similar_talk_slot:
+                                    similar_talk['time'] = similar_talk_slot
+                                    final_schedule.append(similar_talk)
+                                else:
+                                    # No alternative slot available, replace conflicting talk
+                                    final_schedule.remove(similar_talk)
+                                    final_schedule.append(current_talk)
+                    break
+
 # Step 4: Generate final schedule
 def generate_schedule(ip_model_schedule, talk_information, delegate_preferences, available_slots):
     # Create preference graph
     G = create_preferences_graph(delegate_preferences)
 
-    # Plot the graph TODO REMOVE LATER
-    pos = nx.spring_layout(G)
-    edge_labels = nx.get_edge_attributes(G, 'weight')
-    nx.draw(G, with_labels=True, node_size=1000, node_color="lightblue", font_size=8)
-    nx.draw_networkx_edges(G, pos, width=0.5, alpha=0.1)
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
-    plt.show()
-    
     # Apply graph coloring
     colouring = apply_graph_colouring(G)
     
     # Generate final schedule
-    final_schedule = []
+    final_schedule_mk1 = []
     for entry in ip_model_schedule:
         day = entry['day']
         time_slot = entry['time']
@@ -137,15 +229,20 @@ def generate_schedule(ip_model_schedule, talk_information, delegate_preferences,
         colour = colouring[talk_id]
         if colour not in available_slots[day][time_slot]:
             available_slots[day][time_slot].append(colour)
-            final_schedule.append({'day': day, 'time': time_slot, 'talkId': talk_id, 'parallelSesh': parallel_session})
+            final_schedule_mk1.append({'day': day, 'time': time_slot, 'talkId': talk_id, 'parallelSesh': parallel_session})
         else:
             # Handle conflict by finding an alternative slot
             alternative_slot = find_alternative_slot(available_slots, day)
             if alternative_slot:
                 available_slots[day][alternative_slot].append(colour)
-                final_schedule.append({'day': day, 'time': alternative_slot, 'talkId': talk_id, 'parallelSesh': parallel_session})
-    
-    return final_schedule
+                final_schedule_mk1.append({'day': day, 'time': alternative_slot, 'talkId': talk_id, 'parallelSesh': parallel_session})
+
+
+    # Adjust schedule for topic similarity
+    topic_similarity = calculate_topic_similarity(talk_information)
+    adjust_schedule_for_topic_similarity(ip_model_schedule, final_schedule_mk1, topic_similarity, max_parallel_sessions)
+    print(final_schedule_mk1)
+    return final_schedule_mk1
 
 # Function to find alternative slot in case of conflict
 def find_alternative_slot(available_slots, day):
@@ -154,10 +251,18 @@ def find_alternative_slot(available_slots, day):
             return slot
     return None
 
+# Define a function to extract the sorting key
+def get_sort_key(item):
+    return item['day'], item['time'], item['parallelSesh']
+
 # Generate final schedule
 max_parallel_sessions = 3  # Example maximum parallel sessions allowed
 final_schedule = generate_schedule(ip_model_schedule, talk_information, delegate_preferences, available_slots)
 
 # Print final schedule
+print("final_schedule")
 for entry in final_schedule:
     print(entry)
+
+# Sort the final schedules
+final_schedule.sort(key=get_sort_key)
