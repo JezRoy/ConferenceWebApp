@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-04-03T15:31:33.140Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="Vazz4oEWr-EsyqCxtBCN" version="24.2.2" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-03T15:34:11.450Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="zfIRDXkkJh6IVYbYfX3W" version="24.2.2" type="github">
   <diagram name="Page-1" id="SofZ-TxEMM_bQElyoqnX">
     <mxGraphModel dx="794" dy="446" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -38,7 +38,7 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="VICcimvdXO61rm-0oXNb-7" value="Create / maintain conferences." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="190" y="380" width="120" height="60" as="geometry" />
+          <mxGeometry x="190" y="340" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="VICcimvdXO61rm-0oXNb-17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-10" target="VICcimvdXO61rm-0oXNb-16" edge="1">
           <mxGeometry relative="1" as="geometry" />
@@ -52,16 +52,11 @@
         <mxCell id="VICcimvdXO61rm-0oXNb-16" value="Register to a conference." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="380" y="440" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-19" target="VICcimvdXO61rm-0oXNb-23" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="250" y="620" />
-              <mxPoint x="345" y="620" />
-            </Array>
-          </mxGeometry>
+        <mxCell id="sZlqUl5n9bXA4ht1riF3-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-19" target="sZlqUl5n9bXA4ht1riF3-1">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="VICcimvdXO61rm-0oXNb-19" value="Design / maintain the conferences phases." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="190" y="500" width="120" height="60" as="geometry" />
+          <mxGeometry x="190" y="440" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="VICcimvdXO61rm-0oXNb-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-21" target="VICcimvdXO61rm-0oXNb-23" edge="1">
           <mxGeometry relative="1" as="geometry">
@@ -94,6 +89,17 @@
         </mxCell>
         <mxCell id="VICcimvdXO61rm-0oXNb-33" value="END (of Process)" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="285" y="960" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="sZlqUl5n9bXA4ht1riF3-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="sZlqUl5n9bXA4ht1riF3-1" target="VICcimvdXO61rm-0oXNb-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="620" />
+              <mxPoint x="345" y="620" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="sZlqUl5n9bXA4ht1riF3-1" value="Add / edit conference talks / activities" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="190" y="540" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
