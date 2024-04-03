@@ -1,22 +1,22 @@
-<mxfile host="app.diagrams.net" modified="2024-04-03T15:13:59.018Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="3y8xp-1VQFS_AvwIe3Bz" version="24.2.2" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-03T15:16:19.986Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="9Rpz7T1Do5R9_AWQtN8H" version="24.2.2" type="github">
   <diagram name="Page-1" id="SofZ-TxEMM_bQElyoqnX">
     <mxGraphModel dx="794" dy="446" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="VICcimvdXO61rm-0oXNb-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-1" target="VICcimvdXO61rm-0oXNb-2">
+        <mxCell id="VICcimvdXO61rm-0oXNb-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-1" target="VICcimvdXO61rm-0oXNb-2" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-1" value="START (Launch the web application)" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-1" value="START (Launch the web application)" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="285" y="30" width="120" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-2" target="VICcimvdXO61rm-0oXNb-4">
+        <mxCell id="VICcimvdXO61rm-0oXNb-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-2" target="VICcimvdXO61rm-0oXNb-4" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-2" value="Users create their account, on the front-end of the site." style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-2" value="Users create their account, on the front-end of the site." style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
           <mxGeometry x="240" y="140" width="210" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-8" value="Host" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-4" target="VICcimvdXO61rm-0oXNb-7">
+        <mxCell id="VICcimvdXO61rm-0oXNb-8" value="Host" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="VICcimvdXO61rm-0oXNb-4" target="VICcimvdXO61rm-0oXNb-7" edge="1">
           <mxGeometry x="-0.3333" relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="250" y="300" />
@@ -24,35 +24,35 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-11" value="Delegate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-4" target="VICcimvdXO61rm-0oXNb-10">
+        <mxCell id="VICcimvdXO61rm-0oXNb-11" value="Delegate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="VICcimvdXO61rm-0oXNb-4" target="VICcimvdXO61rm-0oXNb-10" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="440" y="300" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-4" value="Host OR Delegate?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-4" value="Host OR Delegate?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="305" y="260" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-7" target="VICcimvdXO61rm-0oXNb-19">
+        <mxCell id="VICcimvdXO61rm-0oXNb-20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-7" target="VICcimvdXO61rm-0oXNb-19" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-7" value="Create Conferences." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-7" value="Create Conferences." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="190" y="380" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-10" target="VICcimvdXO61rm-0oXNb-16">
+        <mxCell id="VICcimvdXO61rm-0oXNb-17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-10" target="VICcimvdXO61rm-0oXNb-16" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-10" value="Search for Conferences." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-10" value="Search for Conferences." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="380" y="340" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-16" target="VICcimvdXO61rm-0oXNb-21">
+        <mxCell id="VICcimvdXO61rm-0oXNb-22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-16" target="VICcimvdXO61rm-0oXNb-21" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-16" value="Register to a conference." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-16" value="Register to a conference." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="380" y="440" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-19" target="VICcimvdXO61rm-0oXNb-23">
+        <mxCell id="VICcimvdXO61rm-0oXNb-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-19" target="VICcimvdXO61rm-0oXNb-23" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="250" y="620" />
@@ -60,10 +60,10 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-19" value="Design the Conferences phases." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-19" value="Design the Conferences phases." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="190" y="500" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-21" target="VICcimvdXO61rm-0oXNb-23">
+        <mxCell id="VICcimvdXO61rm-0oXNb-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-21" target="VICcimvdXO61rm-0oXNb-23" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="440" y="620" />
@@ -71,28 +71,28 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-21" value="Rate each conference talk / activity by preference." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-21" value="Rate each conference talk / activity by preference." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="380" y="540" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-27" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-23" target="VICcimvdXO61rm-0oXNb-26">
+        <mxCell id="VICcimvdXO61rm-0oXNb-27" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-23" target="VICcimvdXO61rm-0oXNb-26" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-23" value="Save changes in information to database." style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-23" value="Save changes in information to database." style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
           <mxGeometry x="285" y="660" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-32" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-26" target="VICcimvdXO61rm-0oXNb-31">
+        <mxCell id="VICcimvdXO61rm-0oXNb-32" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-26" target="VICcimvdXO61rm-0oXNb-31" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-26" value="Create Schedule based on database information." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-26" value="Create Schedule based on database information." style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="285" y="760" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-34" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="VICcimvdXO61rm-0oXNb-31" target="VICcimvdXO61rm-0oXNb-33">
+        <mxCell id="VICcimvdXO61rm-0oXNb-34" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="VICcimvdXO61rm-0oXNb-31" target="VICcimvdXO61rm-0oXNb-33" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-31" value="Present the schedule and other conference data to the user." style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-31" value="Present the schedule and other conference data to the user." style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
           <mxGeometry x="247.5" y="860" width="195" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="VICcimvdXO61rm-0oXNb-33" value="END (of Process)" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="VICcimvdXO61rm-0oXNb-33" value="END (of Process)" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="285" y="960" width="120" height="80" as="geometry" />
         </mxCell>
       </root>
