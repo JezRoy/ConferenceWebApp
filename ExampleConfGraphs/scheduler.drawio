@@ -1,9 +1,92 @@
-<mxfile host="app.diagrams.net" modified="2024-04-06T16:04:42.515Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" version="24.2.2" etag="DMsB1a_YnZ-4w0eIoXhJ" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-06T16:23:36.821Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" etag="bp0wZci2Skf_OmSVdMJn" version="24.2.2" type="github">
   <diagram name="Page-1" id="L9EWdKngObACSbmYC5S1">
-    <mxGraphModel>
+    <mxGraphModel dx="794" dy="446" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="2SStMUthoinW3wqzKq2l-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-1" target="2SStMUthoinW3wqzKq2l-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-1" value="Start" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="100" y="120" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-2" target="2SStMUthoinW3wqzKq2l-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-2" value="Retrieve conference information from the database" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+          <mxGeometry x="85" y="240" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-4" target="2SStMUthoinW3wqzKq2l-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-4" value="Create timeslots for each break" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="87.5" y="360" width="145" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-7" target="2SStMUthoinW3wqzKq2l-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-7" value="Add breaks and lunch slots" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="87.5" y="460" width="145" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-9" target="2SStMUthoinW3wqzKq2l-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-9" value="Run the scheduler to fill in the timeslots" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="555" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-12" target="2SStMUthoinW3wqzKq2l-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-12" value="Evaluate the scheduler using simulated scoring function" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="650" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-15" target="2SStMUthoinW3wqzKq2l-17">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-20" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="2SStMUthoinW3wqzKq2l-19">
+          <mxGeometry x="-0.3545" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-24" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-15" target="2SStMUthoinW3wqzKq2l-22">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="1000" />
+              <mxPoint x="225" y="1000" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-15" value="Better performing compared to what currently exists?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="95" y="734" width="130" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-17" target="2SStMUthoinW3wqzKq2l-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-17" value="Save the new schedule" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="840" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-25" value="Yes,&amp;nbsp;&lt;div&gt;new conference loaded&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-22" target="2SStMUthoinW3wqzKq2l-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="1001" />
+              <mxPoint x="380" y="220" />
+              <mxPoint x="160" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-27" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="2SStMUthoinW3wqzKq2l-22" target="2SStMUthoinW3wqzKq2l-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-22" value="Web application running?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="225" y="946" width="110" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="2SStMUthoinW3wqzKq2l-26" value="END" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="1110" width="120" height="80" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
