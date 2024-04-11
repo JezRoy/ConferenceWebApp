@@ -20,7 +20,9 @@ requiredModules = [
     'apscheduler',
     'networkx',
     'random',
-    'string'
+    'string',
+    'multiprocessing',
+    'gc-python-utils'
 ]
 
 # Given pip is installed on the machine.

@@ -35,6 +35,57 @@ def login():
                 flash("Un-registered Username. Please use a different username, or sign up.", category="error")
     return render_template("login.html", user=current_user)
 
+@auth.route('/forgot-password-1', methods=['GET', 'POST'])
+def forgotPasswd1():
+    if request.method == "POST":
+        username = request.form.get('username')
+        email = request.form.get('email')
+        if len(username) == 0 and len(email) == 0:
+            flash("Please enter a valid username or email.", category="error")
+        else:
+            findUser = None
+            if len(username) != 0:
+                findUser = User.query.filter_by(username=username).first()
+                if findUser == None:
+                    flash(f"A user with a username of {username} does not exist in the system.", category="error")
+            else:
+                findUser = User.query.filter_by(email=email).first()
+                if findUser == None:
+                    flash(f"A user with an email of {email} does not exist in the system.", category="error")
+            if findUser != None:
+                # Valid user is found
+                flash("User found! Please enter and confirm your new password choice below.", category="success")
+                return redirect(url_for("auth.forgotPasswd2", userId=findUser.id))
+    return render_template("forgot.html", user=current_user,
+                                        stage=1,
+                                        userId=None
+                                        )
+
+@auth.route('/forgot-password-2/<int:userId>', methods=['GET', 'POST'])
+def forgotPasswd2(userId):
+    if request.method == "POST":
+        password = request.form.get('password')
+        confirm = request.form.get('confirmation')
+        if len(password) == 0:
+            flash("Please enter a valid password.", category="error")
+        else:
+            if len(confirm) == 0:
+                flash("Please re-confirm your password entry by entering it in the confirmation box.", category="error")
+            else:
+                user = User.query.filter_by(id=userId).first()
+                passwdHash = generate_password_hash(password)
+                if check_password_hash(passwdHash, confirm):
+                    user.passwordHash = passwdHash
+                db.session.commit()
+                # Password change
+                flash("Your password has been successfully changed! Please login to the system.", category="success")
+                UpdateLog(f"User Id {userId} changed their password.")
+                return redirect(url_for("views.home"))
+    return render_template("forgot.html", user=current_user,
+                                        stage=2,
+                                        userId=userId
+                                        )
+
 @auth.route('/logout')
 @login_required
 def logout():

@@ -1,0 +1,57 @@
+{1: 
+    {datetime.time(9, 0): ['None', 'None', 'None'], 
+    datetime.time(9, 15): ['None', 'None', 'None'], 
+    datetime.time(9, 30): ['None', 'None', 'None'], 
+    datetime.time(9, 45): ['None', 'None', 'None'], 
+    datetime.time(10, 0): 'BREAK', 
+    datetime.time(10, 15): ['None', 'None', 'None'], 
+    datetime.time(10, 30): ['None', 'None', 'None'], 
+    datetime.time(10, 45): ['None', 'None', 'None'], 
+    datetime.time(11, 0): ['None', 'None', 'None'], 
+    datetime.time(11, 15): 'BREAK', 
+    datetime.time(11, 30): ['None', 'None', 'None'], 
+    datetime.time(11, 45): ['None', 'None', 'None'], 
+    datetime.time(12, 0): 'LUNCH & REFRESHMENTS', 
+    datetime.time(13, 0): ['None', 'None', 'None'], 
+    datetime.time(13, 15): ['None', 'None', 'None'], 
+    datetime.time(13, 30): ['None', 'None', 'None'], 
+    datetime.time(13, 45): ['None', 'None', 'None'], 
+    datetime.time(14, 0): 'BREAK', 
+    datetime.time(14, 15): [35, 'None', 'None'], 
+    datetime.time(14, 30): [18, 'None', 'None'], 
+    datetime.time(14, 45): ['None', 'None', 'None'], 
+    datetime.time(15, 0): ['None', 'None', 'None'], 
+    datetime.time(15, 15): 'BREAK', 
+    datetime.time(15, 30): ['None', 15, 'None'], 
+    datetime.time(15, 45): ['None', 'None', 'None'], 
+    datetime.time(16, 0): ['None', 'None', 'None'], 
+    datetime.time(16, 15): ['None', 'None', 'None'],
+    datetime.time(16, 30): 'BREAK', 
+    datetime.time(16, 45): [29, 'None', 'None'], 
+    datetime.time(17, 0): ['None', 'None', 5], 
+    datetime.time(17, 15): ['None', 'None', 'None'], 
+    datetime.time(17, 30): ['None', 'None', 'None'], 
+    datetime.time(17, 45): 'BREAK', 
+    datetime.time(18, 0): ['None', 'None', 'None'], 
+    datetime.time(18, 15): ['None', 'None', 'None'], 
+    datetime.time(18, 30): ['None', 'None', 'None']}, 
+2: 
+    {datetime.time(9, 0): [30, 'None', 'None'], datetime.time(9, 15): ['None', 'None', 'None'], datetime.time(9, 30): [14, 'None', 'None'], datetime.time(9, 45): ['None', 11, 'None'], datetime.time(10, 0): 'BREAK', datetime.time(10, 15): ['None', 40, 'None'], datetime.time(10, 30): [7, 'None', 'None'], datetime.time(10, 45): [13, 'None', 2], datetime.time(11, 0): [37, 'None', 'None'], datetime.time(11, 15): 'BREAK', datetime.time(11, 30): ['None', 39, 'None'], datetime.time(11, 45): ['None', 27, 'None'], datetime.time(12, 0): 'LUNCH & REFRESHMENTS', datetime.time(13, 0): ['None', 'None', 'None'], datetime.time(13, 15): [24, 26, 'None'], datetime.time(13, 30): ['None', 'None', 'None'], datetime.time(13, 45): ['None', 'None', 'None'], datetime.time(14, 0): 'BREAK', datetime.time(14, 15): ['None', 6, 'None'], datetime.time(14, 30): ['None', 'None', 'None'], datetime.time(14, 45): ['None', 'None', 'None'], datetime.time(15, 0): [3, 'None', 10], datetime.time(15, 15): 'BREAK', datetime.time(15, 30): ['None', 'None', 32], datetime.time(15, 45): ['None', 'None', 'None'], datetime.time(16, 0): ['None', 'None', 'None'], datetime.time(16, 15): [1, 8, 'None'], datetime.time(16, 30): 'BREAK', datetime.time(16, 45): ['None', 'None', 'None'], datetime.time(17, 0): ['None', 36, 'None'], datetime.time(17, 15): ['None', 'None', 'None'], datetime.time(17, 30): ['None', 'None', 'None'], datetime.time(17, 45): 'BREAK', datetime.time(18, 0): [20, 'None', 16], datetime.time(18, 15): ['None', 'None', 'None'], datetime.time(18, 30): ['None', 'None', 23]}, 3: {datetime.time(9, 0): ['None', 'None', 'None'], datetime.time(9, 15): ['None', 'None', 'None'], datetime.time(9, 30): ['None', 'None', 'None'], datetime.time(9, 45): ['None', 'None', 'None'], datetime.time(10, 0): 'BREAK', datetime.time(10, 15): ['None', 'None', 'None'], datetime.time(10, 30): ['None', 'None', 'None'], datetime.time(10, 45): ['None', 'None', 'None'], datetime.time(11, 0): ['None', 'None', 'None'], datetime.time(11, 15): 'BREAK', datetime.time(11, 30): ['None', 'None', 'None'], datetime.time(11, 45): ['None', 'None', 'None'], datetime.time(12, 0): 'LUNCH & REFRESHMENTS', datetime.time(13, 0): [21, 'None', 25], datetime.time(13, 15): ['None', 'None', 'None'], datetime.time(13, 30): ['None', 22, 38], datetime.time(13, 45): ['None', 'None', 17], datetime.time(14, 0): 'BREAK', datetime.time(14, 15): ['None', 'None', 'None'], datetime.time(14, 30): ['None', 'None', 'None'], datetime.time(14, 45): ['None', 'None', 9], datetime.time(15, 0): ['None', 'None', 'None'], datetime.time(15, 15): 'BREAK', datetime.time(15, 30): ['None', 'None', 'None'], datetime.time(15, 45): ['None', 'None', 'None'], datetime.time(16, 0): ['None', 'None', 'None'], datetime.time(16, 15): ['None', 'None', 'None'], datetime.time(16, 30): 'BREAK', datetime.time(16, 45): ['None', 19, 28], datetime.time(17, 0): ['None', 'None', 'None'], datetime.time(17, 15): ['None', 'None', 31], datetime.time(17, 30): [4, 'None', 33], datetime.time(17, 45): 'BREAK', datetime.time(18, 0): ['None', 'None', 'None'], datetime.time(18, 15): ['None', 12, 'None'], datetime.time(18, 30): [34, 'None', 'None']}}
+-----------------------
+datetime.time(14, 15): [
+    [35, 
+    'Random Walks on Rotating Expanders', 
+    'Gil Cohen', 
+        [35, 75, 155, 235, 275, 315, 395, 635, 715, 755, 875, 955, 1275, 1315, 1395, 1435, 1515, 1595, 1675, 1755, 1915, 2115, 2155, 2235, 2275, 2355, 2555, 2595, 2675, 2715, 2755, 2795, 2995, 3035, 3115, 3155, 3315, 3515, 3635, 3715, 3755, 3795, 3835, 3955, 3995, 4035, 4115, 4275, 4315, 4395, 4435, 4475, 4515, 4635, 4675, 4755, 4875, 4915, 5115, 5195, 5235, 5315, 5355, 5555, 5595, 5635, 5715, 5755, 5795, 5875, 5955, 6035, 6195, 6235, 6275, 6315, 6475, 6515, 6595, 6635, 6795, 6835, 6955, 6995, 7075, 7115, 7195, 7235, 7355, 7395, 7435, 7595, 7635, 7675, 7995]], 'None', 'None']
+
+
+        ['None', 'None', 'None'],
+        [
+            [29, 
+            'Succinct Computational Secret Sharing', 
+            'Benny Applebaum', 
+            [69, 309, 349, 509, 669, 709, 749, 789, 869, 909, 1029, 1149, 1189, 1229, 1269, 1309, 1349, 1429, 1509, 1589, 1629, 1669, 1709, 1829, 1869, 1909, 2029, 2069, 2109, 2229, 2309, 2349, 2389, 2469, 2509, 2669, 2709, 2909, 3029, 3109, 3189, 3229, 3269, 3349, 3389, 3429, 3469, 3549, 3629, 3789, 3829, 3869, 3909, 3989, 4109, 4309, 4349, 4389, 4509, 4549, 4589, 4669, 4749, 4789, 4869, 4909, 5069, 5109, 5149, 5269, 5309, 5349, 5429, 5549, 5669, 5749, 5869, 5989, 6149, 6229, 6269, 6309, 6389, 6469, 6509, 6549, 6589, 6629, 6669, 6789, 6909, 6989, 7069, 7109, 7189, 7269, 7309, 7509, 7549, 7629, 7669, 7829, 7949]
+            ], 
+            'None', 
+            'None']
+        ]

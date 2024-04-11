@@ -16,7 +16,7 @@
 <div class="container" style="text-align: center; font-weight: bolder;">
 	<h1 class="text-center">
 		{% if user.is_authenticated %}
-		    Create a Conference
+		    Enter Conference Details
 		{% endif %}
 	</h1>
 </div>
@@ -24,8 +24,10 @@
 
 {% block main %}
 <br>
-<p>Please fill out all conference details:</p>
+
 {% if stage == 1 %}
+<p>For all practical purposes, it is assumed that all aspects of a conference (with the exception of
+    of generating a schedule) has been planned out. Please fill out all conference details below:</p>
 <!-- First page of conference creation - Conference Details -->
 <div class="textFormContainer">
     <div class="form-container">
@@ -91,7 +93,7 @@
                                 </p>
                             </td>
                             <td>
-                                <label id="field" for="numSessions">Number of Parallel sessions:</label>
+                                <label id="field" for="numSessions">Number of Parallel Slots:</label>
                                 <input class="form-control" type="number" name="numSessions" step="1">
                                 <p id="labelled">The number of parallel sessions refer to the number of talks that take place 
                                     at any time during a day of a conference. For example, 2 sessions to run at the same time, at any point in time. 
@@ -114,6 +116,11 @@
     </div>
 </div>
 {% elif stage == 2 %}
+<div>
+    <!-- Snapshot of conference details -->
+</div>
+<p>For all practical purposes, it is assumed that all aspects of a conference (with the exception of
+    of generating a schedule) has been planned out. Please fill out all conference details below:</p>
 <!-- Second page of conference creation - Conference Details -->
 <div class="textFormContainer">
     <div class="form-container">

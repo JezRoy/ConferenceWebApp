@@ -12,44 +12,51 @@
     [
         [1, "Parameters"], 
         [2, "Matroid-Constrained"], 
-        [3, "Maximum Coverage"]]
+        [3, "Maximum Coverage"], 
+    34, 1]
     ], 
     [2, "Sorting Finite Automata via Partition Refinement", 
     [2, "Ruben Becker"], 
     [
         [4, "Finite Automata"], 
-        [5, "Partition Refinement"]]
+        [5, "Partition Refinement"]
+    ]
     ], 
     [3, "Lyndon Arrays in Sublinear Time", 
     [3, "Hideo Bannai"], 
     [
         [6, "Lyndon Arrays"], 
-        [7, "Sublinear Time"]]
+        [7, "Sublinear Time"]
+    ]
     ], 
     [4, "Linear Time Construction of Cover Suffix Tree and Applications", 
     [4, "Jakub Radoszewski"], 
     [
         [8, "Linear Time Construction"], 
         [9, "Cover Suffix Tree"], 
-        [10, "Applications"]]
+        [10, "Applications"]
+    ]
     ], 
     [5, "Subcubic algorithm for (Unweighted) Unrooted Tree Edit Distance", 
     [5, "Krzysztof Pi\u00f3ro"], 
     [
         [11, "Subcubic algorithm"], 
-        [12, "Unrooted Tree Edit Distance"]]
+        [12, "Unrooted Tree Edit Distance"]
+    ]
     ], 
     [6, "Lossy Kernelization for (Implicit) Hitting Set Problems", 
     [6, "Stephan Thomasse"], 
     [
         [13, "Lossy Kernelization"], 
-        [14, "Hitting Set Problems"]]
+        [14, "Hitting Set Problems"]
+    ]
     ],
     [7, "Fault Tolerance in Euclidean Committee Selection", 
     [7, "Jie Xue"], 
     [
         [15, "Fault Tolerance"], 
-        [16, "Euclidean Committee Selection"]]
+        [16, "Euclidean Committee Selection"]
+    ]
     ]
     ], 
     "DelegLikesTalks": [
@@ -57,19 +64,19 @@
         [1, 2, 5], 
         [1, 2, 4], 
         [1, 3, 9], 
-        [1, 5, 10], 
+        [1, 5, 10], 6 
         [2, 2, 2], 
         [2, 3, 6], 
-        [2, 5, 1], 
+        [2, 5, 1], 1
         [3, 2, 8], 
         [3, 3, 8], 
-        [3, 5, 10], 
+        [3, 5, 10], 6 
         [4, 2, 3], 
         [4, 3, 9], 
-        [4, 5, 5],
+        [4, 5, 5], 2
         [5, 2, 8], 
         [5, 3, 4],
-        [5, 5, 5], 
+        [5, 5, 5], 2
         [6, 2, 10], 
         [6, 2, 4], 
         [6, 3, 7], 

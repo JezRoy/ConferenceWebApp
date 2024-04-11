@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Forgot Password?
+{% endblock %}
+
+{% block aboveNav %}
+<div class="container" style="text-align: center; font-weight: bolder;">
+	<h1 class="text-center">
+		Forgot Password?
+	</h1>
+</div>
+{% endblock %}
+
+{% block main %}
+{% if stage == 1 %}
+<p>Please authorise yourself using your account's username and/or email address (if you provided one before).</p>
+{% elif stage == 2 %}
+<p>Please enter and confirm your new password.</p>
+{% endif %}
+
+<div class="textFormContainer">
+    <div class="form-container">
+        <div class="form-group">
+            <div class="form-column">
+                    {% if stage == 1 %}
+                    <form action="/forgot-password-1" method="POST">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td>
+                                <label id="field" for="username">Enter Username: </label>
+                                <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+                            </td>
+                            <td>
+                                <label id="field" for="email">Enter Email: </label>
+                                <input autocomplete="off" class="form-control" name="email" placeholder="youremail@example.com" type="text">
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+                    <button style="text-align: center;" class="btn btn-primary" type="submit">Authorise Yourself</button>
+                    </form>
+                    {% elif stage == 2 %}
+                    <form action="/forgot-password-2/{{ userId if userId != None }}" method="POST" onsubmit="return confirmSubmit()">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td>
+                                <label id="field" for="password">Enter Password: </label>
+                                <input class="form-control" name="password" placeholder="Password" type="password">
+                            </td>
+                            <td>
+                                <label id="field" for="confirmation">Confirm Password: </label>
+                                <input class="form-control" name="confirmation" placeholder="Password (Again)" type="password">
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+                    <button style="text-align: center;" class="btn btn-primary" type="submit">Change Password</button>
+                    </form>
+                    <script>
+                        function confirmSubmit() {
+                            // Display a confirmation dialog
+                            var result = confirm("Are you sure you want to change your password?");
+                    
+                            // If the user clicks "OK," proceed with the form submission
+                            return result;
+                        }
+                    </script> 
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -57,6 +57,7 @@
 		</div>
 		<br><br>
 		<div>
+			<!-- TODO Perhaps a 'See Entire Schedule' button, and a scroll between days option for hosts -->
 			<!-- A table in the left half of another table (of 1 row and 2 columns) -->
 			<!-- The other half of the 'super' table holds the schedule of the user -->
 			<table style="width:100%;">
@@ -84,7 +85,7 @@
 							<tr>
 								<td>
 									{% if userData.type == 'host' %}
-									<form action="/terminate-conference/{{ ConferenceData['confId'] }}" method="POST" onsubmit="return confirmSubmit()">
+									<form action="/terminate-conference/{{ ConferenceData['confId'] }}" method="POST" onsubmit="return confirmSubmit(1)">
 										<button style="text-align: center;" class="btn btn-danger" type="subtmit">Terminate Conference</button>
 									</form>
 									{% else %}
@@ -97,44 +98,79 @@
 						</table>
 					</td>
 					<td>
-						<!-- Conference schedule for the day AT THE MOMENT only for HOST-->
-						{% if schedule and userData.type.capitalize() == "Host" %}
+						<!-- Conference schedule for the day -->
+						{% if schedule %}
 						<td>
 							<h3 style="font-weight: bold;">
 								Schedule of Talks
+								{% if ConferenceData['currentDay'] %}
+									: Day {{ ConferenceData['currentDay'] }}
+								{% endif %}
 							</h3>
-							<table class="schedule" style="color:#33ccff;" border="3" cellpadding="8" cellspacing="5">
-								<thead>
-									<td>
-										<p style="font-weight:bold;">
-											Time
-										</p>
-									</td>
-									<td>
-										<p style="font-weight:bold;">
-											Talk Name
-										</p>
-									</td>
-									<td>
-										<p style="font-weight:bold;">
-											Speaker
-										</p>
-									</td>
-								</thead>
-							{% for record in schedule %}
-								<tr>
-									<td>
-										{{ record[0] }}
-									</td>
-									<td>
-										{{ record[1][0] }}
-									</td>
-									<td>
-										{{ record[1][1] }}
-									</td>
-								</tr>
-							{% endfor %}
+							<!-- TABLE OF TALKS START -->
+							<table class="schedule" style="color:#33ccff;" border="3" cellpadding="8" cellspacing="5" columns="{{ ConferenceData['numSessions'] + 1}}">
+								{% if userData.type == "delegate" %}
+									<thead style="text-align: center;">
+										<td>
+											<p style="font-weight:bold;">
+												Time
+											</p>
+										</td>
+										<td>
+											<p style="font-weight:bold;">
+												Talk
+											</p>
+										</td>
+										<td>
+											<p style="font-weight:bold;">
+												Speaker
+											</p>
+										</td>
+									</thead>
+								{% else %}
+									<thead style="text-align: center;">
+										<td>
+											<p style="font-weight:bold;">
+												Time
+											</p>
+										</td>
+										{% for i in range(ConferenceData['numSessions']) %}
+										<td>
+											<p style="font-weight:bold;"> <!-- So for a 3 session conference there would be 4 columns in this table -->
+												Session {{ i + 1 }}
+											</p>
+										</td>
+										{% endfor %}
+									</thead>
+									{% for timing, slots in schedule.items() %}
+										<tr style="vertical-align: top;"> <!-- The time slot -->
+											<td>
+												{{ timing }}
+											</td>
+										{% if not slots is string %}
+											{% for thing in slots %}
+												<td>
+													{% if thing != 'None' %}
+													<span style="font-style: italic;">
+														"{{ thing[1] }}"
+													</span> by {{ thing[2] }}
+													{% else %}
+													<div>
+														No talk scheduled
+													</div>
+													{% endif %}
+												</td>
+											{% endfor %}
+										{% else %}
+											<td style="font-style: italic; font-weight: bold;">
+												{{ slots }}
+											</td>
+										{% endif %}
+										</tr>
+									{% endfor %}
+								{% endif %}
 							</table>
+							<!-- TABLE OF TALKS END -->
 						</td>
 						{% endif %}
 					</td>

@@ -48,3 +48,9 @@ h1 {
   background-color: white;
   margin: 10px 0; /* Adjust the margin as needed */
 }
+
+table .schedule {
+  tr:not(:last-child) td {
+    border-bottom: 1px grey; /* Add bottom border to all table rows except the last one */
+  }
+}
