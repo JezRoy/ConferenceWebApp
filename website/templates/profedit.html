@@ -36,11 +36,11 @@
                     <tr>
                         <td>
                             <label id="field" for="username">*Enter Username: </label>
-                            <input autofocus class="form-control" name="username" placeholder="Username" type="text">
+                            <input autofocus class="form-control" name="username" placeholder="Username" value="{{ userData['username'] }}" type="text">
                         </td>
                         <td>
                             <label id="field" for="email">*Enter Email: </label>
-                            <input class="form-control" name="email" placeholder="youremail@example.com" type="text">
+                            <input class="form-control" name="email" placeholder="youremail@example.com" value="{{ userData['email'] }}" type="text">
                         </td>
                     </tr>
                     <tr>
@@ -58,10 +58,10 @@
             <div class="form-column">
             <p></p>
                 <label id="field" for="first_name">*First Name: </label>
-                <input class="form-control" name="first_name" placeholder="John" type="text">
+                <input class="form-control" name="first_name" placeholder="John" value="{{ userData['firstName'] }}" type="text">
             <p></p>
                 <label id="field" for="last_name">*Last Name: </label>
-                <input class="form-control" name="last_name" placeholder="Smith" type="text">
+                <input class="form-control" name="last_name" placeholder="Smith" value="{{ userData['lastName'] }}" type="text">
             <p></p>
             </div>
         </div>

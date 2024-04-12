@@ -1,6 +1,93 @@
 <!--
 Needs to include:
  - What conferences a users is currently signed up to
- - Each element in this list should act as a button to that conference's
+ - Each element in this list should act as a button to that redirects to conference's
  dashboard and be a clone of the dashboard 'index' page with a schedule for that conference
 -->
+{% extends "layout.html" %}
+
+{% block title %}
+    My Conferences
+{% endblock %}
+
+{% block aboveNav %}
+<div class="container" style="text-align: center; font-weight: bolder;">
+	<h1 class="text-center">
+		See My Conferences
+	</h1>
+</div>
+{% endblock %}
+
+{% block main %}
+{% if conferences %}
+    <p>These are the conferences that you 
+        {% if userType == "host" %}
+            have created. Select which conference you would like to edit or view within the dashboard:
+        {% else %}
+            are currently registered to. Select which conference you like to view within the dashboard:
+        {% endif %}
+    </p>
+{% endif %}
+<div class="textFormContainer">
+    {% if conferences %}
+        <table class="table table-striped sortable" id="sortTable">
+            <thead>
+                <td>
+                    Conference Name
+                </td>
+                <td>
+                    Register Deadline
+                </td>
+                <td>
+                    Paper Review Deadline
+                </td>
+                <td>
+                    Start Date
+                </td>
+                {% if userType == "host" %}
+                <td>
+                    Edit
+                </td>
+                {% endif %}
+                <td>
+                    View
+                </td>
+            </thead>
+            {% for conference in conferences %}
+            <tr>
+                <td>
+                    {{ conference['name'] }}
+                </td>
+                <td>
+                    {{ conference['dsd'] }}
+                </td>
+                <td>
+                    {{ conference['pfd'] }}
+                </td>
+                <td>
+                    {{ conference['start'] }}
+                </td>
+                {% if userType == "host" %}
+                <td>
+                    <!--EDIT BUTTON-->
+                    <form id="registration-form" method="POST" action="{{ url_for('views.editConference', conferenceId=conference['id']) }}">
+                        <input type="hidden" name="conferenceId" value="{{ conference['id'] }}">
+                        <button class="btn btn-warning" type="submit">Edit</button>
+                    </form>
+                </td>
+                {% endif %}
+                <td>
+                    <!--VIEW BUTTON-->
+                    <form id="registration-form" method="POST" action="{{ url_for('views.viewConference', conferenceId=conference['id']) }}">
+                        <input type="hidden" name="conferenceId" value="{{ conference['id'] }}">
+                        <button class="btn btn-success" type="submit">View</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Unfortunately, no conferences are currently associated with your account. Please return to the home page <a style="font-weight: bold;" href="/">Here</a>.</p>
+    {% endif %}
+</div>
+{% endblock %}

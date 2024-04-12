@@ -25,20 +25,99 @@ dbOrderingConf = [
 
 """ TODO
     create:
-        - /edit-profile: users wanna see their profile details - preload them,
         - /edit-conference: to edit conference details, or edit talks - preload them,
-        - /view-conferences (HOSTs)
         - /leave-conference, 
         - /delete-conference - update the database, what means a conference exists?
+        - fix schedule page for delegates
         - genetic scheduler?
-        - host override features?
-    refuse registration past the deadline
-    only run the sheduler after the registration deadline
+        - refuse registration past the deadline
     optional talks vs preferred talks (for those with a low preference level)
     bug fix:
-        - search query page
+        - search page: show all conferences by default
         
 """
+
+def deduceSchedule(confId, userId, userData, ConferenceData):
+    currentDay = 1
+    if ConferenceData:
+        present = date.today()
+        elapsed = (present - ConferenceData["confStart"]).days
+        if elapsed <= 0:
+            elapsed = 0
+        currentDay = elapsed + 1
+        ConferenceData["currentDay"] = currentDay
+
+        # Find most optimised schedule from the schedules created for the upcoming conference
+        lookup = Schedules.query.filter_by(confId=confId).first()
+        if lookup:
+            fileToSee = lookup.file
+            schedule = {}
+            with open(fileToSee, "r") as file:
+                content = file.readlines()
+            day = 1
+            for line in content:
+                if line[0:2] == 'D-':
+                    day = int(line[2])
+                    schedule[day] = {}
+                else:
+                    hour = int(line[0:2])
+                    minute = int(line[3:5])
+                    timing = time(hour, minute)
+                    try: # A normal set of talk slots is cheduled at this time
+                        start = line.index("[")
+                        end = len(line) - 1
+                        # [35, 'None', 'None'] for example
+                        talks = line[start+1:end-1].split(",") # produces ['35', 'None', 'None']
+                        paraSesh = []
+                        for talk in talks:
+                            paraSesh.append(eval(talk))
+                        # time(9, 0): [35, None, None] for example
+                        schedule[day][timing] = paraSesh
+                    except: # Instead a break, or lunch time is scheduled here
+                        detail = line[9:-1]
+                        schedule[day][timing] = detail
+
+
+            # TODO Fill in empty slots with optional talks
+            # For each talk, determine whether this user needs to see it:
+            # A delegate will see things in a single-session style of view        
+            delegView = {}
+            if userData.type == "delegate": 
+                for day, dayTime in schedule.items():
+                    delegView[day] = {}
+                    for timing, talkIds in dayTime.items(): # Iterate through the whole "Master schedule"
+                        if talkIds != "BREAK" or talkIds != "LUNCH & REFRESHMENTS":
+                            for index in range(len(talkIds)):
+                                thisTalk = talkIds[index]
+                                if type(thisTalk) is int: # If there is a talk here
+                                    talk = Talks.query.filter_by(confId=confId, id=thisTalk).first() # Find the talk name and speaker
+                                    speaker = Speakers.query.filter_by(id=talk.speakerId).first()
+                                    delegs = DelegTalks.query.filter_by(talkId=thisTalk, confId=confId).all()
+                                    for person in delegs:
+                                        if person.prefLvl >= 5: # Find all the delegates who who wanted to see it
+                                            if person.id == userId: # If this includes the currently logged in user
+                                                stuff = [talk.talkName, speaker.deleg] # Add it to the list of things to see
+                                                delegView[day][timing] = stuff
+                                                break
+                        else:
+                            delegView[day][timing] = talkIds   
+                schedule = delegView
+            else: # Host users can see everything in a multi-session view
+                for day, dayTime in schedule.items():
+                    for timing, talkIds in dayTime.items():        
+                        for index in range(len(talkIds)):
+                            thisTalk = talkIds[index]
+                            if type(thisTalk) is int:
+                                # For each talk Id, replace the talk Id with the talk Name, speaker name, and delegates who are indeed interested
+                                talk = Talks.query.filter_by(confId=confId, id=thisTalk).first()
+                                speaker = Speakers.query.filter_by(id=talk.speakerId).first()
+                                stuff = [talk.id, talk.talkName, speaker.deleg]
+                                schedule[day][timing][index] = stuff
+        else:
+            schedule = None
+    else:
+        schedule = None
+    return schedule, currentDay
 
 # Arguments to consider when rendering a template
 """
@@ -105,88 +184,16 @@ def home():
         ConferenceData["confId"] = confId
     else:
         ConferenceData = None
-    
-    if ConferenceData:
-        present = date.today()
-        elapsed = (present - ConferenceData["confStart"]).days
-        if elapsed <= 0:
-            elapsed = 0
-        currentDay = elapsed + 1
-        ConferenceData["currentDay"] = currentDay
 
-        # Find most optimised schedule from the schedules created for the upcoming conference
-        lookup = Schedules.query.filter_by(confId=confId).first()
-        if lookup:
-            fileToSee = lookup.file
-            schedule = {}
-            with open(fileToSee, "r") as file:
-                content = file.readlines()
-            day = 1
-            for line in content:
-                if line[0:2] == 'D-':
-                    day = int(line[2])
-                    schedule[day] = {}
-                else:
-                    hour = int(line[0:2])
-                    minute = int(line[3:5])
-                    timing = time(hour, minute)
-                    try: # A normal set of talk slots is cheduled at this time
-                        start = line.index("[")
-                        end = len(line) - 1
-                        # [35, 'None', 'None'] for example
-                        talks = line[start+1:end-1].split(",") # produces ['35', 'None', 'None']
-                        paraSesh = []
-                        for talk in talks:
-                            paraSesh.append(eval(talk))
-                        # time(9, 0): [35, None, None] for example
-                        schedule[day][timing] = paraSesh
-                    except: # Instead a break, or lunch time is scheduled here
-                        detail = line[9:-1]
-                        schedule[day][timing] = detail
+    schedule, currentDay = deduceSchedule(confId, userId, userData, ConferenceData)
 
-            # For each talk, determine whether this user needs to see it:
-            delegView = {}
-            if userData.type == "delegate": # A delegate will see things in a single-session style of view
-                for day, dayTime in schedule.items():
-                    for timing, talkIds in dayTime.items():
-                        if talkIds != "BREAK" or talkIds != "LUNCH & REFRESHMENTS":
-                            for index in range(len(talkIds)): # Iterate through the whole "Master schedule"
-                                thisTalk = talkIds[index]
-                                if type(thisTalk) is int: # If there is a talk here
-                                    talk = Talks.query.filter_by(confId=confId, id=thisTalk).first() # Find the talk name and speaker
-                                    speaker = Speakers.query.filter_by(id=talk.speakerId).first()
-                                    delegs = DelegTalks.query.filter_by(talkId=thisTalk, confId=confId).all()
-                                    for person in delegs:
-                                        if person.prefLvl >= 6: # Find all the delegates who who wanted to see it
-                                            if person.id == userId: # If this includes the currently logged in user
-                                                stuff = [talk.talkName, speaker.deleg] # Add it to the list of things to see
-                                                delegView[timing] = stuff
-                                                break
-                        else:
-                            delegView[timing] = talkIds    
-                schedule = delegView
-            else: # Host users can see everything in a multi-session view
-                for day, dayTime in schedule.items():
-                    for timing, talkIds in dayTime.items():        
-                        for index in range(len(talkIds)):
-                            thisTalk = talkIds[index]
-                            if type(thisTalk) is int:
-                                # For each talk Id, replace the talk Id with the talk Name, speaker name, and delegates who are indeed interested
-                                talk = Talks.query.filter_by(confId=confId, id=thisTalk).first()
-                                speaker = Speakers.query.filter_by(id=talk.speakerId).first()
-                                stuff = [talk.id, talk.talkName, speaker.deleg]
-                                schedule[day][timing][index] = stuff
-                schedule = schedule[currentDay]
-        else:
-            schedule = None
-    else:
-        schedule = None
-    
+    # This information will be sorted within the front end
     # Load HTML page
     return render_template("index.html", 
                            user=current_user,
                            userData=userData,
                            currentDate=date.today().strftime("%d-%m-%Y"),
+                           currentDay=currentDay,
                            schedule=schedule,
                            ConferenceData=ConferenceData)
 
@@ -524,7 +531,30 @@ def editProfile():
     return render_template("profedit.html",
                            user=current_user,
                            userData=userData)
-  
+
+@views.route('/view-conference/<int:conferenceId>', methods=['GET', 'POST'])
+@login_required
+def viewConference(conferenceId):
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    conference = Conferences.query.filter_by(id=conferenceId).first()
+    flash(f"Now showing the conference details for {conference.confName}.", category="success")
+
+    ConferenceData = conference.__dict__
+    ConferenceData.pop('_sa_instance_state', None)
+    ConferenceData = {key: ConferenceData[key] for key in dbOrderingConf if key in ConferenceData}
+    ConferenceData["confId"] = conferenceId
+
+    schedule, currentDay = deduceSchedule(conferenceId, userId, userData, ConferenceData)
+
+    return render_template("index.html", 
+                           user=current_user,
+                           userData=userData,
+                           currentDate=date.today().strftime("%d-%m-%Y"),
+                           currentDay=currentDay,
+                           schedule=schedule,
+                           ConferenceData=ConferenceData)
+
 @views.route('/edit-conference/<int:conferenceId>', methods=['GET', 'POST'])
 @login_required
 def editConference(conferenceId):
@@ -539,6 +569,34 @@ def editConference(conferenceId):
         return render_template("editconf.html",
                                user=current_user,
                                userData=userData,
-                               stage=1,
                                confId=conferenceId)
 
+@views.route('/user-conferences', methods=['GET', 'POST'])
+@login_required
+def userConferences():
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    typeUser = session['type']
+    if userId and userData:
+        conferences = []
+        if typeUser == "host":
+            # Hosts can view and edit a conference
+            crossRefer = ConfHosts.query.filter_by(hostId=userId).all()
+        else:
+            # Delegates can only view the dashboard of a conference
+            crossRefer = ConfDeleg.query.filter_by(delegId=userId).all()
+        for conf in crossRefer:
+            queryMe = Conferences.query.filter_by(id=conf.confId).first()
+            data = {
+                "id": conf.confId,
+                "name": queryMe.confName,
+                "pfd": queryMe.paperFinalisationDate,
+                "dsd": queryMe.delegSignUpDeadline,
+                "start": queryMe.confStart
+            }
+            conferences.append(data)
+        # TODO Sort by start date
+        return render_template("userconf.html", user=current_user,
+                                                userData=userData,
+                                                userType=typeUser,
+                                                conferences=conferences)
