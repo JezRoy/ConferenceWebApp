@@ -28,9 +28,11 @@ dbOrderingConf = [
         - /edit-conference: to edit conference details, or edit talks - preload them,
         - /leave-conference, 
         - /delete-conference - update the database, what means a conference exists?
+        - refuse registration past the deadline
         - fix schedule page for delegates
         - genetic scheduler?
-        - refuse registration past the deadline
+        - verify correct host for conference edits
+        - verify correct user for profile edits
     optional talks vs preferred talks (for those with a low preference level)
     bug fix:
         - search page: show all conferences by default
@@ -404,6 +406,134 @@ def registerConference():
         flash("You have already registered for this conference.", category="warning")
     return redirect(url_for("views.home"))
 
+@views.route('/cancel-registration/<int:conferenceId>', methods=['POST'])
+@login_required
+def cancelRegistration(conferenceId):
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    conf = Conferences.query.filter_by(id=conferenceId).first().confName
+    if request.method == 'POST':
+        if session['type'] == "delegate":
+            try:
+                registration = ConfDeleg.query.filter_by(delegId=userData.id, confId=conferenceId).first()
+                db.session.delete(registration)
+                db.session.commit()
+                UpdateLog(f"User {userData.id} has been removed from conference {conferenceId}.")
+                try:
+                    talksFound = DelegTalks.query.filter_by(delegId=userData.id, confId=conferenceId).all()
+                    try:
+                        for talk in talksFound:
+                            db.session.delete(talk)
+                            db.session.commit()
+                        UpdateLog(f"User {userData.id} has been removed from all talks in conference {conferenceId}.")
+                    except:
+                        pass
+                except:
+                    pass
+                try:
+                    topicsFound = DelTopics.query.filter_by(delegId=userData.id, confId=conferenceId).all()
+                    try:
+                        for topic in topicsFound:
+                            db.session.delete(topic)
+                            db.session.commit()
+                        UpdateLog(f"User {userData.id} has been removed from all topics in conference {conferenceId}.")
+                    except:
+                        pass
+                except:
+                    pass
+                flash(f"Your registration for conference {conf} has been cancelled.", category="success")
+            except:
+                flash(f"Sorry. There was an error cancelling your registration for conference {conf}.", category="error")
+    return redirect(url_for("views.home"))
+
+@views.route('/terminate-conference/<int:conferenceId>', methods=['POST'])
+@login_required
+def terminateConference(conferenceId):
+    userId = current_user._get_current_object().id
+    conference = Conferences.query.filter_by(id=conferenceId).first()
+    if request.method == "POST":
+        if session['type'] == "host":
+            # Delete conference sessions
+            schedules = Schedules.query.filter_by(confId=conferenceId).all()
+            for schedule in schedules:
+                try:
+                    db.session.delete(schedule)
+                    db.session.commit()
+                except:
+                    pass
+            # Delete talks and topics associated with a conference
+            talks = Talks.query.filter_by(confId=conferenceId).all()
+            for talk in talks:
+                tid = talk.id
+                sid = talk.speakerId
+                speakers = Speakers.query.filter_by(id=sid).all()
+                for spe in speakers:
+                    try:
+                        db.session.delete(spe)
+                        db.session.commit()
+                    except:
+                        pass
+                preferences = DelegTalks.query.filter_by(talkId=tid, confId=conferenceId).all()
+                for thing in preferences:
+                    try:
+                        db.session.delete(thing)
+                        db.session.commit()
+                    except:
+                        pass
+                topAsso = TopicTalks.query.filter_by(talkId=tid).all()
+                for top in topAsso:
+                    topId = top.topicId
+                    topics = Topics.query.filter_by(id=topId).all()
+                    for topic in topics:
+                        try:
+                            db.session.delete(topic)
+                            db.session.commit()
+                        except:
+                            pass
+                    topConfs = Topicsconf.query.filter_by(topicId=topId, confId=conferenceId).all()
+                    for ting in topConfs:
+                        try:
+                            db.session.delete(ting)
+                            db.session.commit()
+                        except:
+                            pass
+                    dtcs = DelTopics.query.filter_by(topicId=topId, confId=conferenceId).all()
+                    for dtc in dtcs:
+                        try:
+                            db.session.delete(dtc)
+                            db.session.commit()
+                        except:
+                            pass
+                    try:
+                        db.session.delete(top)
+                        db.session.commit()
+                    except:
+                        pass
+                db.session.delete(talk)
+                db.session.commit()
+            delegates = ConfDeleg.query.filter_by(confId=conferenceId).all()
+            for deleg in delegates:
+                try:
+                    db.session.deletete(deleg)
+                    db.session.commit()
+                except:
+                    pass
+            hostings = ConfHosts.query.filter_by(confId=conferenceId).first()
+            try:
+                db.session.delete(hostings)
+                db.session.commit()
+            except:
+                pass
+            name = conference.confName
+            try:
+                db.session.delete(conference)
+                db.session.commit()
+            except:
+                pass
+            flash(f"You have successfully deleted the {name} conference.", category="success")
+            UpdateLog(f"User Id {userId} deleted conference {name}.")
+            return redirect(url_for("views.home"))
+            
 @views.route('/preview-talks/<int:conferenceId>', methods=['GET', 'POST'])
 @login_required
 def previewTalks(conferenceId):
@@ -555,21 +685,297 @@ def viewConference(conferenceId):
                            schedule=schedule,
                            ConferenceData=ConferenceData)
 
-@views.route('/edit-conference/<int:conferenceId>', methods=['GET', 'POST'])
+@views.route('/edit-conference-1/<int:conferenceId>', methods=['GET', 'POST'])
 @login_required
-def editConference(conferenceId):
+def editConference1(conferenceId):
     """Edit the details of a conference."""
     # Find logged in user data
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
     if request.method == "POST":
-        flash("This functionality is still yet to be implemented.", category="warning")
-        return redirect(url_for("views.home"))
+        # Retrieve current data
+        currentData = Conferences.query.filter_by(id=conferenceId).first()
+
+        # Check what as an entry
+        # See if anything actually changed
+        attrChanged = {} # Keeps track of what was actually changed
+
+        confName = request.form.get("confname")
+        if confName != "" and confName != currentData.confName:
+            attrChanged['confName'] = confName
+
+        confURL = request.form.get("confurl")
+        if confURL != "" and confURL != currentData.confURL:
+            attrChanged['confURL'] = confURL
+
+        confStartDate = request.form.get("confstart")
+        confEndDate = request.form.get("confend")
+        startDay = datetime.strptime(confStartDate, '%Y-%m-%d').date()
+        endDay = datetime.strptime(confEndDate, '%Y-%m-%d').date()
+        if startDay != currentData.confStart:
+            attrChanged["confStart"] = startDay
+        if endDay != currentData.confEnd:
+            attrChanged["confEnd"] = endDay
+        if startDay != currentData.confStart or endDay != currentData.confEnd:
+            confLength = int((endDay - startDay).days)
+            attrChanged["confLength"] = confLength
+        else:
+            confLength = currentData.confLength
+
+        pfd = request.form.get("paperfinal")
+        dsd = request.form.get("delegRegisterDeadline")
+        try:
+            paperFinalisationDate = datetime.strptime(pfd, '%Y-%m-%d').date()
+            if pfd != "" and paperFinalisationDate != currentData.paperFinalisationDate:
+                attrChanged["paperFinalisationDate"] = paperFinalisationDate
+        except:
+            paperFinalisationDate = currentData.paperFinalisationDate
+        try:
+            delegSignUpDeadline = datetime.strptime(dsd, '%Y-%m-%d').date()
+            if dsd != "" and delegSignUpDeadline != currentData.delegSignUpDeadline:
+                attrChanged["delegSignUpDeadline"] = delegSignUpDeadline
+        except:
+            delegSignUpDeadline = currentData.delegSignUpDeadline
+
+        dayStartDate = request.form.get("daystart")
+        dayEndDate = request.form.get("dayend")
+        try:
+            startTime = datetime.strptime(dayStartDate, '%H:%M').time()
+            if dayStartDate != "" and startTime != currentData.dayStart:
+                attrChanged["dayStart"] = startTime
+        except:
+            startTime = currentData.dayStart
+        try:
+            endTime = datetime.strptime(dayEndDate, '%H:%M').time()
+            if dayEndDate != "" and endTime != currentData.dayEnd:
+                attrChanged["dayEnd"] = endTime
+        except:
+            endTime = currentData.dayEnd
+        
+        if startTime != currentData.dayStart or endTime != currentData.dayEnd:
+            dayLengthMins = (endTime.hour * 60 + endTime.minute) - (startTime.hour * 60 + startTime.minute)
+            dayLength = round(dayLengthMins / 60, 2)
+            attrChanged["dayDuration"] = dayLength
+        else:
+            dayLength = currentData.dayDuration
+        
+        talkPerSession = int(request.form.get("talksPerSession"))
+        if talkPerSession != 0 and talkPerSession != currentData.talkPerSession:
+            attrChanged["talkPerSession"] = talkPerSession
+
+        talkLength = int(request.form.get("talkLength"))
+        if talkLength != 0 and talkLength != currentData.talkLength:
+            attrChanged["talkLength"] = talkLength
+
+        numOfSessions = int(request.form.get("numSessions"))
+        if numOfSessions != 0 and numOfSessions != currentData.numSessions:
+            attrChanged["numSessions"] = numOfSessions
+
+        # Update changes TODO DOES NOT SAVE PROPERLY
+        # TRY ITERATING OVER SQLALCHEMY OBJ
+        if attrChanged != {}:
+            editedConf = Conferences.query.filter_by(id=conferenceId).first()
+            for key, newVal in attrChanged.items():
+                setattr(editedConf, key, newVal)
+            db.session.commit()
+
+            # Redirect to next page
+            flash("Successfully edited conference! You can always edit / delete your main conference details later.", category="success")
+            UpdateLog(f"Host id {userId} edited conference id {conferenceId}, fields changed: \n{attrChanged.keys()}")
+        return redirect(url_for("views.editConference2", conferenceId=conferenceId))
     else:
+        conference = Conferences.query.filter_by(id=conferenceId).first()
+        ConferenceData = conference.__dict__
+        ConferenceData.pop('_sa_instance_state', None)
+        ConferenceData = {key: ConferenceData[key] for key in dbOrderingConf if key in ConferenceData}
+        ConferenceData["confId"] = conferenceId
         return render_template("editconf.html",
                                user=current_user,
                                userData=userData,
-                               confId=conferenceId)
+                               stage=1,
+                               ConferenceData=ConferenceData,
+                               conferenceId=conferenceId)
+
+@views.route('/edit-conference-2/<int:conferenceId>', methods=['GET', 'POST'])
+@login_required
+def editConference2(conferenceId): # TODO TEST THIS
+    # Find logged in user data
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    setOfTalks = Talks.query.filter_by(confId=conferenceId).order_by(Talks.id).all()
+    talks = []
+    # Retrieving all talk data for a conference
+    for thing in setOfTalks:
+        data = [thing.id, thing.talkName]
+        speaker = Speakers.query.filter_by(id=thing.speakerId).first().deleg
+        data.append([thing.speakerId, speaker])
+        sets = TopicTalks.query.filter_by(talkId=thing.id).all()
+        topicIds = []
+        topicWords = []
+        for ids in sets:
+            topicLit = Topics.query.filter_by(id=ids.topicId).first().topic
+            topicIds.append(ids.topicId)
+            topicWords.append(topicLit)
+        data.append(topicIds)
+        data.append(topicWords)
+        talks.append(data)
+        print(talks)
+
+    if request.method == "POST":
+        # Retrieve organic information
+        talkIds = request.form.getlist("talkid[]")
+        talkNames = request.form.getlist("talkname[]")
+        speakerIds = request.form.getlist("talkspeakerid[]")
+        speakerNames = request.form.getlist("talkspeaker[]")
+        topicIds = request.form.getlist("talktagsid[]")
+        topicNames = request.form.getlist("talktags[]")
+
+        # Preparation for edits and removals
+        talkIdsCle = [] # This should be in chronological order
+        talkNamesCle = []
+        speakerIdsCle = []
+        speakerNamesCle = []
+        topicIdsCle = []
+        topicNamesCle = []
+        # Add new talks
+        for i in range(len(talkIds)):
+            # Check what needs adding
+            taid = int(talkIds[i])
+            taName = talkNames[i]
+            sid = int(speakerIds[i])
+            sName = speakerNames[i]
+            toIds = eval(topicIds[i]) # [1, 2] or []
+            try:
+                toNames = topicNames[i].split(',') # ['topicA', 'topicB']
+            except:
+                toNames = []
+            if taid == -1: # New talk
+                if sid == -1: # Only add a new speaker if they currently are not found in the database
+                    spFinder = None
+                    for tObj in talks:
+                        if tObj[2][1] == sName:
+                            spFinder = talks.index(tObj)
+                            break
+                    if spFinder == None:
+                        # No existing speaker with this name found
+                        speaker = Speakers(
+                            deleg = sName
+                        )
+                        db.session.add(speaker)
+                        db.session.commit()
+                        assignspId = speaker.id
+                    else:
+                        assignspId = talks[spFinder][2][0]
+                talk = Talks( # Add new talk
+                    talkName=taName,
+                    speakerId=assignspId,
+                    confId=conferenceId
+                )
+                db.session.add(talk)
+                db.session.commit()
+                newtaId = talk.id
+                # Only create a new topic record if not already existing
+                # Observe each topic name, and see if already existing
+                if toNames != []:
+                    if toIds == []: # Talks are given but they don't have ids
+                        for to in toNames:
+                            foundId = -1
+                            for tObj in talks:
+                                if to in tObj[4]:
+                                    finder = tObj[4].index(to)
+                                    foundId = tObj[3][finder] # If the id exists already
+                                    break
+                            if foundId != -1: # The topic label exists already
+                                contact = TopicTalks( # If existing, find existing topicId
+                                    talkId=newtaId,
+                                    topicId=recordId
+                                )
+                                db.session.add(contact)
+                                db.session.commit()
+                            # Add to TopicTalks entity
+                            else: # Completely new topic found
+                                topicEntry = Topics( # If not existing, add new topic record
+                                    topic = to
+                                )
+                                db.session.add(topicEntry)
+                                db.session.commit()
+                                recordId = topicEntry.id
+                                contact = TopicTalks(
+                                    talkId=newtaId,
+                                    topicId=recordId
+                                )
+                                db.session.add(contact)
+                                db.session.commit()
+            else:
+                talkIdsCle.append(taid)
+                talkNamesCle.append(taName)
+                speakerIdsCle.append(sid)
+                speakerNamesCle.append(sName)
+                topicIdsCle.append(toIds)
+                topicNamesCle.append(toNames)
+            # No more additions to be made
+        
+        deleted = []
+        # Iterate through the before-version of the list of talks to find deleted talks
+        for btId, *_ in talks:
+            if btId not in talkIdsCle:
+                deleted.append([btId, *_])
+        for talk in deleted:
+            itemFound = Talks.query.filter_by(id=talk[0],confId=conferenceId).first()
+            db.session.delete(itemFound)
+            db.session.commit()
+            talks.remove(talk)
+
+        # Iterate through both before and after versions of the list of talks to implement changes.
+        # Hopefully the list of talks after edits and the 'talks' list should be the same size
+        for i in range(len(talkIdsCle)):
+            taId = talkIdsCle[i]
+            updateTalk = Talks.query.filter_by(id=taId, confId=conferenceId).first()
+            taName = talkNamesCle[i]
+            sId = speakerIdsCle[i]
+            sName = speakerNamesCle[i]
+            toIds = topicIdsCle[i]
+            toNames = topicNamesCle[i]
+            if talks[i][1] != taName:
+                updateTalk.talkName = taName
+                db.session.commit()
+            updateSp = Speakers.query.filter_by(id=sId).first()
+            if talks[i][2][1] != sName:
+                updateSp.deleg = sName
+                db.session.commit()
+            if talks[i][3] != toIds: # Find the differences
+                toAdd = []
+                for j in range(len(toIds)):
+                    if toNames[j] not in talks[i][4]:
+                        toAdd.append(toNames[j])
+                for id in talks[i][3]: # Remove the old set of topics
+                    find = TopicTalks.query.filter_by(talkId=taId, topicId=id).first()
+                    db.session.delete(find)
+                    db.session.commit()
+                for topic in toAdd: # Add the new ones
+                    addTopic = Topics(
+                        topic = topic
+                    )
+                    db.session.add(addTopic)
+                    db.session.commit()
+                    newId = addTopic.id
+                    associate = TopicTalks(
+                        talkId=taId,
+                        topicId=newId
+                    )
+                    db.session.add(associate)
+                    db.session.commit()
+            flash("Edited conference talk details have been saved successfully!", category="success")
+            UpdateLog(f"Host Id {userId} edited conference {conferenceId}'s talk details")
+            return redirect(url_for("views.home"))
+    else:
+        # Retrieve current set of talks and present them
+        return render_template("editconf.html",
+                               user=current_user,
+                               userData=userData,
+                               stage=2,
+                               talks=talks,
+                               conferenceId=conferenceId)
 
 @views.route('/user-conferences', methods=['GET', 'POST'])
 @login_required

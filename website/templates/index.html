@@ -44,7 +44,9 @@
 					</td>
 					<td>
 						{% if userData.type == 'host' %}
-							<button style="text-align: center;" class="btn btn-primary" href="/edit-conference/{{ ConferenceData['confId'] }}">Edit Conference</button>
+							<form action="{{ url_for('views.editConference1', conferenceId=ConferenceData['confId']) }}" method="GET">
+								<button style="text-align: center;" class="btn btn-warning" type="submit">Edit Conference</button>
+							</form>
 						{% else %}
 							<a href="/preview-talks/{{ ConferenceData['confId'] }}"><button style="text-align: center;" class="btn btn-primary">Select Talks</button></a>
 						{% endif %}

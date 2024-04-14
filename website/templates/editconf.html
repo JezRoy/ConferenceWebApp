@@ -18,39 +18,39 @@
 
 {% block main %}
 <br>
-<p>Please fill out all following conference details. If you wish to leave a field unchanged, then please leave that field's entry box blank. Use the 'Home' button to cancel making changes, and go back to the dashboard.</p>
+<p>Please fill out all following conference details. This page will automatically load the previously saved data for this conference. If you wish to leave a field unchanged, then please leave that field's entry box blank. Use the 'Home' button to cancel making changes, and go back to the dashboard.</p>
 {% if stage == 1 %}
 <!-- First page of conference creation - Conference Details -->
 <div class="textFormContainer">
     <div class="form-container">
-        <form action="/edit-conference/{{ conferenceId if conferenceId != None }}" method="POST">
+        <form action="/edit-conference-1/{{ conferenceId if conferenceId != None }}" method="POST">
             <div class="form-group">
                 <div class="form-column">
                     <label id="field" for="confname">Conference Name </label>
-                    <input autocomplete="off" autofocus class="form-control" name="confname" placeholder="Conference Name" type="text">
+                    <input autocomplete="off" autofocus class="form-control" name="confname" placeholder="Conference Name" value="{{ ConferenceData['confName'] }}" type="text">
                     <br>
                     <label id="field" for="confurl">Conference URL </label>
-                    <input autocomplete="off" autofocus class="form-control" name="confurl" placeholder="Conference Website URL" type="text">
+                    <input autocomplete="off" autofocus class="form-control" name="confurl" placeholder="Conference Website URL" value="{{ ConferenceData['confURL'] }}" type="text">
                     <p id="labelled">A direct link to your conference's main website page.</p>
                     <br>
                     <label id="field" for="paperfinal">Paper / Talk Finalisation Date: </label>
-                    <input autocomplete="off" class="form-control" name="paperfinal" type="date">
+                    <input autocomplete="off" class="form-control" name="paperfinal" value="{{ ConferenceData['paperFinalisationDate'] }}" type="date">
                     <p id="labelled">A date for talks and papers to be submitted, so that delegates know when a complete list of talks will be shown.
                         Allowing them to better make choices with which talks they wish to attend.
                     </p>
                     <label id="field" for="delegRegisterDeadline">Delegate Registration Deadline: </label>
-                    <input autocomplete="off" class="form-control" name="delegRegisterDeadline" type="date">
+                    <input autocomplete="off" class="form-control" name="delegRegisterDeadline" value="{{ ConferenceData['delegSignUpDeadline'] }}" type="date">
                 </div>
                 <br>
                 <table style="width: 100%;">
                     <tr>
                         <td>
                             <label id="field" for="confstart">Conference Start Date: </label>
-                            <input autocomplete="off" class="form-control" name="confstart" type="date">
+                            <input autocomplete="off" class="form-control" name="confstart" value="{{ ConferenceData['confStart'] }}" type="date">
                         </td>
                         <td>
                             <label id="field" for="confend">Conference End Date: </label>
-                            <input autocomplete="off" class="form-control" name="confend" type="date">
+                            <input autocomplete="off" class="form-control" name="confend" value="{{ ConferenceData['confEnd'] }}" type="date">
                         </td>
                     </tr>
                     <tr>&nbsp;</tr>
@@ -58,11 +58,11 @@
                     <tr>
                         <td>
                             <label id="field" for="daystart">Starting Time for each day: </label>
-                            <input autocomplete="off" class="form-control" name="daystart" type="time">
+                            <input autocomplete="off" class="form-control" name="daystart" value="{{ ConferenceData['dayStart'] }}" type="time">
                         </td>
                         <td>
                             <label id="field" for="dayend">Ending Time for each day </label>
-                            <input autocomplete="off" class="form-control" name="dayend" type="time">
+                            <input autocomplete="off" class="form-control" name="dayend" value="{{ ConferenceData['dayEnd'] }}" type="time">
                         </td>
                     </tr>
                 </table>
@@ -72,21 +72,21 @@
                         <tr>
                             <td>
                                 <label id="field" for="talksPerSession">Talks per sessions:</label>
-                                <input class="form-control" type="number" name="talksPerSession" step="1">
+                                <input class="form-control" type="number" name="talksPerSession" value="{{ ConferenceData['talkPerSession'] }}" step="1">
                                 <p id="labelled">Refers to the number of talks to take place in any one session.
                                     The Schedule Optimiser will calculate the ideal number of sessions per day.
                                 </p>
                             </td>
                             <td>
                                 <label id="field" for="talkLength">Talk Length (mins): </label>
-                                <input class="form-control" type="number" value="30" name="talkLength" step="5">
+                                <input class="form-control" type="number" value="30" name="talkLength" value="{{ ConferenceData['talkLength'] }}" step="5">
                                 <p id="labelled">Refers to the average length of all talks in the conference.
                                     To help guide the Schedule Optimiser.
                                 </p>
                             </td>
                             <td>
                                 <label id="field" for="numSessions">Number of Parallel sessions:</label>
-                                <input class="form-control" type="number" name="numSessions" step="1">
+                                <input class="form-control" type="number" name="numSessions" value="{{ ConferenceData['numSessions'] }}" step="1">
                                 <p id="labelled">The number of parallel sessions refer to the number of talks that take place 
                                     at any time during a day of a conference. For example, 2 sessions to run at the same time, at any point in time. 
                                     Might be dependant on the number of rooms available
@@ -100,10 +100,10 @@
             </div>
             <br>
             <p id="labelled">
-                Please ensure the above details are correct before proceeding.
+                If you wish to not change a field, please enter the previous data for that field, or leave that field blank (removing any data currently filled in) before clicking "Save details, Edit Talks".
             </p>
             <br>
-            <button style="width: 20%; text-align: center;" class="btn btn-primary" type="submit">Save details, Add Talks</button>
+            <button style="width: 20%; text-align: center;" class="btn btn-primary" type="submit">Save details, Edit Talks</button>
         </form>
     </div>
 </div>
@@ -111,29 +111,35 @@
 <!-- Second page of conference creation - Conference Details -->
 <div class="textFormContainer">
     <div class="form-container">
-        <form action="/edit-conference/{{ conferenceId if conferenceId != None }}" method="POST">
+        <form action="/edit-conference-2/{{ conferenceId if conferenceId != None }}" method="POST">
             <div class="form-group">
                 <div class="form-column">
                     <div id="objects-container">
+                        <div class="separator"></div>
+                        {% for talk in talks %}
                         <div class="object-row">
-                            <div class="separator"></div>
                             <label id="field" for="talkname">+ Talk Name</label>
-                            <input autocomplete="off" class="form-control" name="talkname[]">
+                            <input type="hidden" name="talkid[]" value="{{ talk[0] }}">
+                            <input autocomplete="off" class="form-control" name="talkname[]" value="{{ talk[1] }}">
                             <br>
                             <label id="field" for="talkspeaker">Talk Presenter / Speaker</label>
-                            <input class="form-control" name="talkspeaker[]">
+                            <input type="hidden" name="talkspeakerid[]" value="{{ talk[2][0] }}">
+                            <input class="form-control" name="talkspeaker[]" value="{{ talk[2][1] }}">
                             <br>
                             <label id="field" for="talktags">Topics / Tags associated</label>
-                            <input class="form-control" name="talktags[]">
+                            <input type="hidden" name="talktagsid[]" value="{{ talk[3] }}">
+                            <input class="form-control" name="talktags[]" value="{% for item in talk[4] %}{{ item }}{% if not loop.last %}, {% endif %}{% endfor %}">
                             <p id="labelled">
                                 Enter all the topics / tag words associated with a talk, separated by commas.
                             </p>
+                            <button style="width: 20%; text-align: center;" class="btn btn-danger" type="button" id="remove-object">Remove</button>
                             <br>
                             <div class="separator"></div>
                             <p>
                         </div>
+                        {% endfor %}
                     </div>
-                    <button style="width: 20%; text-align: center;" class="btn btn-primary" type="button" id="add-object">+</button>
+                    <button style="width: 20%; text-align: center;" class="btn btn-primary" type="button" id="add-object">Add</button>
                 </div>
                 <!-- Script for dynamically adding talks to the conference -->
                 <script>
@@ -141,9 +147,13 @@
                         // Add event listener to the form submission
                         document.querySelector('form').addEventListener('submit', function (event) {
                             // Check if either speaker or tags is filled
-                            var speakers = document.querySelectorAll('[name="talkspeaker[]"]');
-                            var tags = document.querySelectorAll('[name="talktags[]"]');
+                            
+                            var talkids = document.querySelectorAll('[name="talkid[]"]')
                             var names = document.querySelectorAll('[name="talkname[]"]');
+                            var speakerids = document.querySelectorAll('[name="talkspeakerid[]"]')
+                            var speakers = document.querySelectorAll('[name="talkspeaker[]"]');
+                            var tagids = document.querySelectorAll('[name="talktagsid[]"]')
+                            var tags = document.querySelectorAll('[name="talktags[]"]');
                 
                             for (var i = 0; i < names.length; i++) {
                                 var name = names[i].value;
@@ -170,21 +180,34 @@
                 
                         newRow.innerHTML = `
                             <label id="field" for="talkname">+ Talk Name</label>
-                            <input autocomplete="off" class="form-control" name="talkname[]">
+                            <input type="hidden" name="talkid[]" value="-1">
+                            <input autocomplete="off" class="form-control" name="talkname[]" value="">
                             <br>
                             <label id="field" for="talkspeaker">Talk Presenter / Speaker</label>
-                            <input class="form-control" name="talkspeaker[]">
+                            <input type="hidden" name="talkspeakerid[]" value="-1">
+                            <input class="form-control" name="talkspeaker[]" value="">
                             <br>
                             <label id="field" for="talktags">Topics / Tags associated</label>
-                            <input class="form-control" name="talktags[]">
+                            <input type="hidden" name="talktagsid[]" value="[]">
+                            <input class="form-control" name="talktags[]" value="">
                             <p id="labelled">
                                 Enter all the topics / tag words associated with a talk, separated by commas.
                             </p>
+                            <button style="width: 20%; text-align: center;" class="btn btn-danger" type="button" id="remove-object">Remove</button>
                             <br>
                             <div class="separator"></div>
+                            <p>
                         `;
                 
                         container.appendChild(newRow);
+                    });
+                </script>
+                <script>
+                    document.addEventListener('click', function (event) {
+                        if (event.target && event.target.id === 'remove-object') {
+                            // Find the parent object-row div and remove it
+                            event.target.closest('.object-row').remove();
+                        }
                     });
                 </script>
             </div>
