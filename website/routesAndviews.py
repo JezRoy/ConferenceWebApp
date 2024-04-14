@@ -25,14 +25,10 @@ dbOrderingConf = [
 
 """ TODO
     create:
-        - /edit-conference: to edit conference details, or edit talks - preload them,
-        - /leave-conference, 
-        - /delete-conference - update the database, what means a conference exists?
         - refuse registration past the deadline
         - fix schedule page for delegates
         - genetic scheduler?
         - verify correct host for conference edits
-        - verify correct user for profile edits
     optional talks vs preferred talks (for those with a low preference level)
     bug fix:
         - search page: show all conferences by default
@@ -784,17 +780,23 @@ def editConference1(conferenceId):
             UpdateLog(f"Host id {userId} edited conference id {conferenceId}, fields changed: \n{attrChanged.keys()}")
         return redirect(url_for("views.editConference2", conferenceId=conferenceId))
     else:
-        conference = Conferences.query.filter_by(id=conferenceId).first()
-        ConferenceData = conference.__dict__
-        ConferenceData.pop('_sa_instance_state', None)
-        ConferenceData = {key: ConferenceData[key] for key in dbOrderingConf if key in ConferenceData}
-        ConferenceData["confId"] = conferenceId
-        return render_template("editconf.html",
-                               user=current_user,
-                               userData=userData,
-                               stage=1,
-                               ConferenceData=ConferenceData,
-                               conferenceId=conferenceId)
+        # Check the correct host
+        verify = ConfHosts.query.filter_by(confId=conferenceId, hostId=userId).first()
+        if verify: # Correct user found
+            conference = Conferences.query.filter_by(id=conferenceId).first()
+            ConferenceData = conference.__dict__
+            ConferenceData.pop('_sa_instance_state', None)
+            ConferenceData = {key: ConferenceData[key] for key in dbOrderingConf if key in ConferenceData}
+            ConferenceData["confId"] = conferenceId
+            return render_template("editconf.html",
+                                user=current_user,
+                                userData=userData,
+                                stage=1,
+                                ConferenceData=ConferenceData,
+                                conferenceId=conferenceId)
+        else:
+            flash("Sorry, you do not have the correct authorisation to edit this conference.", category="error")
+            return redirect(url_for("views.home"))
 
 @views.route('/edit-conference-2/<int:conferenceId>', methods=['GET', 'POST'])
 @login_required
@@ -819,7 +821,6 @@ def editConference2(conferenceId): # TODO TEST THIS
         data.append(topicIds)
         data.append(topicWords)
         talks.append(data)
-        print(talks)
 
     if request.method == "POST":
         # Retrieve organic information
@@ -847,6 +848,10 @@ def editConference2(conferenceId): # TODO TEST THIS
             toIds = eval(topicIds[i]) # [1, 2] or []
             try:
                 toNames = topicNames[i].split(',') # ['topicA', 'topicB']
+                for x in range(len(toNames)):
+                    ting = toNames[x]
+                    if ting[0] == " ":
+                        toNames[x] = ting.replace(" ", "", 1)
             except:
                 toNames = []
             if taid == -1: # New talk
@@ -936,6 +941,9 @@ def editConference2(conferenceId): # TODO TEST THIS
             sName = speakerNamesCle[i]
             toIds = topicIdsCle[i]
             toNames = topicNamesCle[i]
+            # An edit is nothing but a deletion of old data,
+            # Then a replacement with new data.
+
             if talks[i][1] != taName:
                 updateTalk.talkName = taName
                 db.session.commit()
@@ -943,31 +951,110 @@ def editConference2(conferenceId): # TODO TEST THIS
             if talks[i][2][1] != sName:
                 updateSp.deleg = sName
                 db.session.commit()
-            if talks[i][3] != toIds: # Find the differences
+            if talks[i][3] != toIds or talks[i][4] != toNames: # Find the differences
                 toAdd = []
-                for j in range(len(toIds)):
-                    if toNames[j] not in talks[i][4]:
-                        toAdd.append(toNames[j])
-                for id in talks[i][3]: # Remove the old set of topics
-                    find = TopicTalks.query.filter_by(talkId=taId, topicId=id).first()
-                    db.session.delete(find)
-                    db.session.commit()
-                for topic in toAdd: # Add the new ones
-                    addTopic = Topics(
-                        topic = topic
-                    )
-                    db.session.add(addTopic)
-                    db.session.commit()
-                    newId = addTopic.id
-                    associate = TopicTalks(
-                        talkId=taId,
-                        topicId=newId
-                    )
-                    db.session.add(associate)
-                    db.session.commit()
-            flash("Edited conference talk details have been saved successfully!", category="success")
-            UpdateLog(f"Host Id {userId} edited conference {conferenceId}'s talk details")
-            return redirect(url_for("views.home"))
+                toRemove = []
+                default = True # Default edit behavior
+                # Two things can happen:
+                # Either there is a complete wipe of old topics
+                # Or some of the old topics stick around
+                if len(talks[i][3]) < len(toNames):
+                    default = False # Add missing labels
+                    # [112, 113, 114]
+                    # ['Duality', 'One-Way Functions', 'Average-Case Symmetry of Information'] vs
+                    # ['Duality', 'One-Way Functions', 'Average-Case Symmetry of Information', 'Test Topic 1']
+                    toAdd = [] # Average-Case Symmetry of Information
+                    for x in range(len(toNames)):
+                        if toNames[x] not in talks[i][4]:
+                            toAdd.append(toNames[x])
+                    for word in toAdd:
+                        possible = Topics.query.filter_by(topic=word).all()
+                        found = False
+                        for record in possible:
+                            finder = Topicsconf.query.filter_by(topicId=record.id, confId=conferenceId).first() # Find the right record if it exists
+                            if finder:
+                                found = True
+                                assoId = finder.topicId # FOund pre-exising record
+                                addition = TopicTalks(
+                                    talkId=taId,
+                                    topicId=assoId
+                                )
+                                db.session.add(addition)
+                                db.session.commit()
+                                break
+                        if found == False: # No pre-existing topic existing
+                            add1 = Topics( # Add new topic word
+                                topic=word
+                            )
+                            db.session.add(add1)
+                            db.session.commit()
+                            newId = add1.id
+                            add2 = TopicTalks(
+                                talkId=taId,
+                                topicId=newId
+                            )
+                            db.session.add(add2)
+                            db.session.commit()
+                            add3 = Topicsconf(
+                                topicId=newId,
+                                confId=conferenceId
+                            )
+                            db.session.add(add3)
+                            db.session.commit()
+                elif len(talks[i][3]) > len(toNames):
+                    default = False # Remove excessive topics
+                    # [112, 113, 114]
+                    # ['Duality', 'One-Way Functions', 'Average-Case Symmetry of Information'] vs
+                    # ['Duality', 'One-Way Functions']
+                    toRemove = []
+                    for x in range(len(talks[i][4])):
+                        if talks[i][4][x] not in toNames:
+                            toRemove.append(talks[i][3][x]) # Add corrsponding id for missing word
+                    for id in toRemove:
+                        record = TopicTalks.query.filter_by(talkId=taId, topicId=id).first()
+                        if record:
+                            db.session.delete(record)
+                            db.session.commit()
+                else:
+                    # toAdd = [[114, 'Average-Case Symmetry of Information']]
+                    # toRemove = [[1, 'Observable Systems']]
+                    for j in range(len(toIds)):
+                        if toNames[j] not in talks[i][4]:
+                            toAdd.append([toIds[j], toNames[j]])
+                    for j in range(len(talks[i][3])):
+                        if talks[i][4][j] not in toNames:
+                            toRemove.append([talks[i][3][j], talks[i][4][j]])
+                if default == True:
+                    for item in toRemove:
+                        # Remove association between talk and old topic - NOT removing topic entirely
+                        record = TopicTalks.query.filter_by(talkId=taId, topicId=item[0]).first()
+                        if record:
+                            db.session.delete(record)
+                            db.session.commit()
+                    for item in toAdd:
+                        # Check if it already exists
+                        query = Topics.query.filter_by(id=item[0]).first()
+                        assoId = -1
+                        if query == None:
+                            # If not, add new topic word to database
+                            newTopic = Topics(
+                                topic=item[1]
+                            )
+                            db.session.add(newTopic)
+                            db.session.commit()
+                            assoId = newTopic.id
+                        else:
+                            assoId = item[0]
+                        # Then make new association
+                        record = TopicTalks(
+                            talkId=taId,
+                            topicId=assoId
+                        )
+                        db.session.add(record)
+                        db.session.commit()
+        flash("Edited conference talk details have been saved successfully!", category="success")
+        UpdateLog(f"Host Id {userId} edited conference {conferenceId}'s talk details")
+        return redirect(url_for("views.home"))
     else:
         # Retrieve current set of talks and present them
         return render_template("editconf.html",
