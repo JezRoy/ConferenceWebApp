@@ -798,7 +798,6 @@ def editConference1(conferenceId):
             flash("Sorry, you do not have the correct authorisation to edit this conference.", category="error")
             return redirect(url_for("views.home"))
 
-
 @views.route('/edit-conference-2/<int:conferenceId>', methods=['GET', 'POST'])
 @login_required
 def editConference2(conferenceId): # TODO TEST THIS
@@ -822,8 +821,6 @@ def editConference2(conferenceId): # TODO TEST THIS
         data.append(topicIds)
         data.append(topicWords)
         talks.append(data)
-    for line in talks:
-            print(line)
 
     if request.method == "POST":
         # Retrieve organic information
@@ -936,7 +933,6 @@ def editConference2(conferenceId): # TODO TEST THIS
 
         # Iterate through both before and after versions of the list of talks to implement changes.
         # Hopefully the list of talks after edits and the 'talks' list should be the same size
-        print("<<-------------------------------->>")
         for i in range(len(talkIdsCle)):
             taId = talkIdsCle[i]
             updateTalk = Talks.query.filter_by(id=taId, confId=conferenceId).first()
@@ -945,7 +941,6 @@ def editConference2(conferenceId): # TODO TEST THIS
             sName = speakerNamesCle[i]
             toIds = topicIdsCle[i]
             toNames = topicNamesCle[i]
-            print(taId, taName, sId, sName, toIds, toNames)
             # An edit is nothing but a deletion of old data,
             # Then a replacement with new data.
 
@@ -1007,7 +1002,6 @@ def editConference2(conferenceId): # TODO TEST THIS
                             db.session.add(add3)
                             db.session.commit()
                 elif len(talks[i][3]) > len(toNames):
-                    print("YYEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEET")
                     default = False # Remove excessive topics
                     # [112, 113, 114]
                     # ['Duality', 'One-Way Functions', 'Average-Case Symmetry of Information'] vs
