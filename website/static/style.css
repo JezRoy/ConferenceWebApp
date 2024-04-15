@@ -51,6 +51,6 @@ h1 {
 
 table .schedule {
   tr:not(:last-child) td {
-    border-bottom: 1px grey; /* Add bottom border to all table rows except the last one */
+    border-bottom: 10px grey; /* Add bottom border to all table rows except the last one */
   }
 }

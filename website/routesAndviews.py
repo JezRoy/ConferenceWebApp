@@ -1,7 +1,8 @@
 # Initialisations
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session, current_app, jsonify
 from flask_login import login_required, current_user
 from datetime import datetime, date, time, timedelta
+from sqlalchemy import asc, desc
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, TopicTalks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
@@ -25,14 +26,10 @@ dbOrderingConf = [
 
 """ TODO
     create:
-        - refuse registration past the deadline
-        - fix schedule page for delegates
         - genetic scheduler?
-        - verify correct host for conference edits
     optional talks vs preferred talks (for those with a low preference level)
     bug fix:
         - search page: show all conferences by default
-        
 """
 
 def deduceSchedule(confId, userId, userData, ConferenceData):
@@ -180,11 +177,20 @@ def home():
         ConferenceData.pop('_sa_instance_state', None)
         ConferenceData = {key: ConferenceData[key] for key in dbOrderingConf if key in ConferenceData}
         ConferenceData["confId"] = confId
+        print(ConferenceData)
     else:
         ConferenceData = None
 
-    schedule, currentDay = deduceSchedule(confId, userId, userData, ConferenceData)
+    currentDay = 1
+    present = date.today()
+    elapsed = (present - ConferenceData["confStart"]).days
+    if elapsed <= 0:
+        elapsed = 0
+    currentDay = elapsed + 1
+    ConferenceData["currentDay"] = currentDay
 
+    schedule, _ = deduceSchedule(confId, userId, userData, ConferenceData)
+    
     # This information will be sorted within the front end
     # Load HTML page
     return render_template("index.html", 
@@ -195,6 +201,124 @@ def home():
                            schedule=schedule,
                            ConferenceData=ConferenceData)
 
+@views.route('/get-schedule')
+def getSchedule():
+    # Find logged in user data
+    userId = current_user._get_current_object().id
+    userData = User.query.get(userId)
+    session['type'] = userData.type
+
+    # Get the values of day and confId from the request query string
+    dayactual = int(request.args.get('day'))
+    confId = request.args.get('confId')
+    try:
+        ConferenceData = Conferences.query.filter_by(id=confId).first()
+        ConferenceData = ConferenceData.__dict__
+        ConferenceData.pop('_sa_instance_state', None)
+        ConferenceData = {key: ConferenceData[key] for key in dbOrderingConf if key in ConferenceData}
+        ConferenceData["confId"] = confId
+    except:
+        ConferenceData = None
+    if ConferenceData != None:
+        schedule = {}
+        grand = {}
+
+        # Find most optimised schedule from the schedules created for the upcoming conference
+        lookup = Schedules.query.filter_by(confId=confId).order_by(desc(Schedules.score)).first()
+        if lookup:
+            fileToSee = lookup.file
+            with open(fileToSee, "r") as file:
+                content = file.readlines()
+            day = 1
+            for line in content:
+                if line[0:2] == 'D-':
+                    day = int(line[2])
+                    grand[day] = {}
+                else:
+                    hour = int(line[0:2])
+                    minute = int(line[3:5])
+                    timing = time(hour, minute)
+                    try: # A normal set of talk slots is cheduled at this time
+                        start = line.index("[")
+                        end = len(line) - 1
+                        # [35, 'None', 'None'] for example
+                        talks = line[start+1:end-1].split(",") # produces ['35', 'None', 'None']
+                        paraSesh = []
+                        for talk in talks:
+                            paraSesh.append(eval(talk))
+                        # time(9, 0): [35, None, None] for example
+                        grand[day][timing] = paraSesh
+                    except: # Instead a break, or lunch time is scheduled here
+                        detail = line[9:-1]
+                        grand[day][timing] = detail
+        else:
+            return jsonify(2)
+
+        # TODO Fill in empty slots with optional talks
+        # For each talk, determine whether this user needs to see it:
+        # A delegate will see things in a single-session style of view     
+        delegView = {}
+        if userData.type == "delegate":
+            for day, dayTime in grand.items():
+                delegView[day] = {}
+                for timing, talkIds in dayTime.items(): # Iterate through the whole "Master schedule"
+                    timing = timing.strftime('%H:%M:%S')  # Convert datetime.time to string
+                    chosen = []
+                    if type(talkIds) != str: # If not BREAKS or the like, find talks
+                        for talkId in talkIds:
+                            if talkId != "None":
+                                # Find preferred talks first
+                                tracePref = DelegTalks.query.filter_by(delegId=userId, talkId=talkId, confId=confId).first()
+                                if tracePref.prefLvl >= 6: # The delegate wanted to see this talk
+                                    # Find data on talk
+                                    record = Talks.query.filter_by(id=talkId, confId=confId).first()
+                                    chosen.append(record.talkName)
+                                    author = Speakers.query.filter_by(id=record.speakerId).first().deleg
+                                    chosen.append(author)
+                                    chosen.append(1) # Preferred record
+                                    break
+                        if chosen != []:
+                            delegView[day][timing] = chosen
+                        else:
+                            for talkId in talkIds:
+                                # If no preferred talk, then just add a misc talk
+                                if talkId != "None":
+                                    # Find data on talk
+                                    record = Talks.query.filter_by(id=talkId, confId=confId).first()
+                                    chosen.append(record.talkName)
+                                    author = Speakers.query.filter_by(id=record.speakerId).first().deleg
+                                    chosen.append(author)
+                                    chosen.append(0) # Non-preferred record
+                                    break
+                            # If no talk is found then keep slot empty
+                            if chosen == []:
+                                chosen = ["No Talk Scheduled", "None", 0]
+                            delegView[day][timing] = chosen
+                    else:
+                        chosen = [talkIds, "None", 0]
+                        delegView[day][timing] = chosen
+            schedule = delegView
+        else: # Host users can see everything in a multi-session view
+            for day, dayTime in grand.items():
+                schedule[day] = {}
+                for timing, talkIds in dayTime.items():
+                    timingStr = timing.strftime('%H:%M:%S')  # Convert datetime.time to string
+                    schedule[day][timingStr] = talkIds
+                    for index in range(len(talkIds)): # [35, None, None, 23]
+                        thisTalk = talkIds[index]
+                        if type(thisTalk) is int:
+                            # For each talk Id, replace the talk Id with the talk Name, speaker name, and delegates who are indeed interested
+                            talk = Talks.query.filter_by(confId=confId, id=thisTalk).first()
+                            speaker = Speakers.query.filter_by(id=talk.speakerId).first()
+                            stuff = [talk.id, talk.talkName, speaker.deleg]
+                            schedule[day][timingStr][index] = stuff
+
+        for ting1, ting2 in schedule[dayactual].items():
+            print(ting1, ting2)
+        return jsonify(schedule[dayactual])
+    else:
+        return jsonify(1)
+    
 @views.route('/create-conference-1', methods=['GET', 'POST'])
 @login_required
 def createConferenceStage1(): # For a host to a create a conference - part 1
@@ -392,12 +516,17 @@ def registerConference():
     if not preregistered:
         conf = Conferences.query.get(conferenceChoice).__dict__
         confName = conf['confName']
-        # TODO CHECK THE REGISTRATION DEADLINE
-        db.session.add(registration)
-        db.session.commit()
-        flash(f"You have been successfully registered to the '{confName}' conference!", category="success")
-        # Get a user to register their talks
-        UpdateLog(f"User {userData.username} has signed up for conference {confName} ")
+        dsd = conf['delegSignUpDeadline']
+        today = datetime.today().date()
+        if today <= dsd:
+            # Within the deadline
+            db.session.add(registration)
+            db.session.commit()
+            flash(f"You have been successfully registered to the '{confName}' conference!", category="success")
+            # Get a user to register their talks
+            UpdateLog(f"User {userData.username} has signed up for conference {confName} ")
+        else:
+            flash(f"Apologies. The registration deadline for conference {confName} has already past.", category="error")
     else:
         flash("You have already registered for this conference.", category="warning")
     return redirect(url_for("views.home"))
@@ -671,7 +800,15 @@ def viewConference(conferenceId):
     ConferenceData = {key: ConferenceData[key] for key in dbOrderingConf if key in ConferenceData}
     ConferenceData["confId"] = conferenceId
 
-    schedule, currentDay = deduceSchedule(conferenceId, userId, userData, ConferenceData)
+    currentDay = 1
+    present = date.today()
+    elapsed = (present - ConferenceData["confStart"]).days
+    if elapsed <= 0:
+        elapsed = 0
+    currentDay = elapsed + 1
+    ConferenceData["currentDay"] = currentDay
+
+    schedule, _ = deduceSchedule(conferenceId, userId, userData, ConferenceData)
 
     return render_template("index.html", 
                            user=current_user,

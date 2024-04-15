@@ -463,8 +463,8 @@ def SCHEDULEConference(app, conferId, jobName):
             topicsAsso = TopicTalks.query.filter_by(talkId=talk.id).all()
             # Relate topic to talks
             for topicId in topicsAsso:
-                tag = Topics.query.filter_by(id=topicId.id).first().topic
-                topics.append([topicId.topicId, tag])
+                tag = Topics.query.filter_by(id=topicId.topicId).first()
+                topics.append([topicId.topicId, tag.topic])
             data.append(topics)
             for deleg in DelegateInfo:
                 delegId = deleg[0]

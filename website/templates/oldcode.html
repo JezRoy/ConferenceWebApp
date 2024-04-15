@@ -23,3 +23,74 @@
     container.appendChild(newRow);
     });
 </script>
+
+
+
+
+<!-- FOR THE HOST SCHEDULE PART -->
+{% for timing, slots in schedule[currentDay].items() %}
+    <tr style="vertical-align: top;"> <!-- The time slot -->
+        <td>
+            {{ timing }}
+        </td>
+    {% if not slots is string %}
+        {% for thing in slots %}
+            <td>
+                {% if thing != 'None' %}
+                <span style="font-style: italic;">
+                    "{{ thing[1] }}"
+                </span> by {{ thing[2] }}
+                {% else %}
+                <div>
+                    No talk scheduled
+                </div>
+                {% endif %}
+            </td>
+        {% endfor %}
+    {% else %}
+        <td style="font-style: italic; font-weight: bold; color: lightgreen;">
+            {{ slots }}
+        </td>
+    {% endif %}
+    </tr>
+{% endfor %}
+
+<!-- Script V1 -->
+<script>
+    function fetchSchedule(day) {
+        // Make an AJAX request to the server to fetch schedule data for the specified day
+
+    }
+
+    // Get the current day from Flask
+    var day = {{ currentDay }};
+
+    // Arrow buttons
+    var prevButton = document.getElementById('prev-day');
+    var nextButton = document.getElementById('next-day');
+
+    // Event listener for previous day button
+    document.getElementById('prev-day').addEventListener('click', function() {
+        if (day > 1) {
+            day--;
+            updateDay(day);
+        }
+    });
+
+    // Event listener for next day button
+    document.getElementById('next-day').addEventListener('click', function() {
+        // You can set a maximum number of days if needed
+        var maxDays = {{ ConferenceData['confLength'] }};
+
+        if (day < maxDays) {
+            day++;
+            updateDay(day);
+        }
+    });
+
+    // Function to update the day
+    function updateDay(dayNew) {
+        // Update the HTML to display the new day
+        document.getElementById('currentDay').textContent = 'Schedule of Talks : Day ' + dayNew;
+    }
+</script>

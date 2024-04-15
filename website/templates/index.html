@@ -103,15 +103,32 @@
 						<div id="SCHEDULE">
 							<!-- Conference schedule for the day -->
 							{% if schedule %}
+							<script>
+								// Get the current day from Flask and initialize the day variable
+								var day = {{ currentDay|tojson|safe }};
+							</script>
 							<td>
-								<h3 style="font-weight: bold;">
+								<h3 id='currentDay' style="font-weight: bold;">
 									Schedule of Talks
 									{% if ConferenceData['currentDay'] %}
 										: Day {{ ConferenceData['currentDay'] }}
 									{% endif %}
 								</h3>
+								<table id="dayButtons">
+									<tr>
+										<td>
+											<button class="btn btn-secondary" id="prev-day">&#9664;</button>
+										</td>
+										<td>
+											<button class="btn btn-secondary" id="next-day">&#9654;</button>
+										</td>
+									</tr>
+								</table>
+								{% if userData.type == "delegate" %}
+									<p>Any talks highlighted in green, were recorded as your preferred talks!</p>
+								{% endif %}
 								<!-- TABLE OF TALKS START -->
-								<table class="schedule" style="color:#33ccff;" border="3" cellpadding="8" cellspacing="5" columns="{{ ConferenceData['numSessions'] + 1}}">
+								<table class="schedule" id="schedule" style="color:#33ccff;" border="3" cellpadding="8" cellspacing="5" columns="{{ ConferenceData['numSessions'] + 1 if userData.type == 'host' else 3 }}">
 									{% if userData.type == "delegate" %}
 										<thead style="text-align: center;">
 											<td>
@@ -130,7 +147,7 @@
 												</p>
 											</td>
 										</thead>
-									{% else %}
+									{% else %} <!-- userData.type == "host" -->
 										<thead style="text-align: center;">
 											<td>
 												<p style="font-weight:bold;">
@@ -145,35 +162,168 @@
 											</td>
 											{% endfor %}
 										</thead>
-										{% for timing, slots in schedule[currentDay].items() %}
-											<tr style="vertical-align: top;"> <!-- The time slot -->
-												<td>
-													{{ timing }}
-												</td>
-											{% if not slots is string %}
-												{% for thing in slots %}
-													<td>
-														{% if thing != 'None' %}
-														<span style="font-style: italic;">
-															"{{ thing[1] }}"
-														</span> by {{ thing[2] }}
-														{% else %}
-														<div>
-															No talk scheduled
-														</div>
-														{% endif %}
-													</td>
-												{% endfor %}
-											{% else %}
-												<td style="font-style: italic; font-weight: bold;">
-													{{ slots }}
-												</td>
-											{% endif %}
-											</tr>
-										{% endfor %}
 									{% endif %}
 								</table>
 								<!-- TABLE OF TALKS END -->
+								<!-- Script V2 -->
+								<script>
+									var day = {{ currentDay }};
+									var confId = {{ ConferenceData['confId'] }};
+									document.addEventListener('DOMContentLoaded', function() {
+										// Get initial schedule data
+										day = {{ currentDay }};
+										confId = {{ ConferenceData['confId'] }};
+										updateSchedule({{ currentDay }});
+
+										// Event listener for previous day button
+										document.getElementById('prev-day').addEventListener('click', function() {
+											if (day > 1) {
+												day = day - 1;
+												updateSchedule(day);
+											}
+										});
+										// Event listener for next day button
+										document.getElementById('next-day').addEventListener('click', function() {
+											var maxDays = {{ ConferenceData['confLength'] }};
+
+											if (day < maxDays) {
+												day = day + 1;
+												updateSchedule(day);
+											}
+										});
+									});
+
+									function updateSchedule(dayInQ) {
+										// Fetch schedule data for the specified day
+										fetch(`/get-schedule?day=${dayInQ}&confId=${confId}`)
+											.then(response => response.json())
+											.then(data => {
+												if (data == '1') {
+													console.log("Conference non-existent, possibly deleted");
+												} else if (data == '2') {
+													console.log("No schedule exists for this conference");
+												} else {
+													let id;
+													{% if userData.type == "host" %}
+														id = "host";
+													{% else %}
+														id = "delegate";
+													{% endif %}
+													//scheduleTable.setAttribute("data-schedule", JSON.stringify(data));
+													renderSchedule(data, id);
+												}
+											})
+											.catch(error => {
+												console.error('Error fetching schedule: ', error);
+											});
+									}
+									function renderSchedule(data, id) {
+										//console.log(data);
+										// Get the schedule table body
+										var scheduleTable = document.getElementById("schedule");
+										var tbody = scheduleTable.querySelector('tbody');
+										// Check if tbody exists, otherwise create it
+										if (!tbody) {
+											tbody = document.createElement('tbody');
+											scheduleTable.appendChild(tbody);
+										} else {
+											// Clear existing tbody content
+											tbody.innerHTML = '';
+										}
+										if (id == "host") {
+											// Iterate through the schedule data and create rows and cells
+											for (var timing in data) {
+												var slots = data[timing];
+												var row = document.createElement('tr');
+												row.setAttribute('style', "vertical-align: top;");
+
+												// Create cell for timing
+												var timingCell = document.createElement('td');
+												timingCell.textContent = timing;
+												timingCell.setAttribute("style", "font-weight: bold;")
+												row.appendChild(timingCell);
+
+												if (typeof slots === 'object' && slots != null) {
+													// Create cells for slots IF they're not a BREAK or the like
+													for (var i = 0; i < slots.length; i++) {
+														var slotCell = document.createElement('td');
+														if (slots[i] === "None") {
+															slotCell.textContent = "No Talk Scheduled";
+														} else {
+															var name = document.createElement('span');
+															name.textContent = `"${slots[i][1]}"`;
+															name.setAttribute("style", "font-style: italic;");
+															var author = document.createElement('span');
+															author.textContent = ` by ${slots[i][2]}`;
+															slotCell.appendChild(name);
+															slotCell.appendChild(author);
+														}
+														row.appendChild(slotCell);
+													}
+												} else {
+													var slotCell = document.createElement('td');
+													slotCell.textContent = slots;
+													slotCell.setAttribute("style", "font-style: italic; font-weight: bold;")
+													row.appendChild(slotCell);
+												}
+												// Append the row to the table body
+												tbody.appendChild(row);
+											}
+										} else {
+											// Delegate view
+											for (var timing in data) {
+												var slots = data[timing];
+												var row = document.createElement('tr');
+												row.setAttribute('style', "vertical-align: top;");
+
+												// Create cell for timing
+												var timingCell = document.createElement('td');
+												timingCell.textContent = timing;
+												timingCell.setAttribute("style", "font-weight: bold;")
+												row.appendChild(timingCell);
+
+												var talkCell = document.createElement('td');
+												var authorCell = document.createElement('td');
+
+												console.log(slots);
+												if ((slots[0] !== 'BREAK' && slots[0] !== 'LUNCH & REFRESHMENTS') && slots != null) {
+													console.log(1);
+													if (slots[1] != 'None') {
+														console.log(2);
+														talkCell.textContent = `${slots[0]}`;
+														talkCell.setAttribute("style", "font-style: italic;");
+														authorCell.textContent = `${slots[1]}`;
+														if (slots[2] === 1) { // Preferred talk
+															talkCell.setAttribute("style", "font-style: italic; color: lightgreen;");
+															authorCell.setAttribute("style", "color: lightgreen;");
+														}
+													} else {
+														console.log(3);
+														talkCell.textContent = "No Talk Scheduled";
+														authorCell.textContent = ""
+													}
+													row.appendChild(talkCell);
+													row.appendChild(authorCell);
+												} else {
+													console.log(4);
+													talkCell.textContent = slots[0];
+													talkCell.setAttribute("style", "font-style: italic; font-weight: bold;");
+													row.appendChild(talkCell);
+												}
+												// Append the row to the table body
+												tbody.appendChild(row);
+											}										
+										}
+										updateDay(day);
+									}
+									// Function to update the day
+									function updateDay(dayNew) {
+										// Update the HTML to display the new day
+										document.getElementById('currentDay').textContent = 'Schedule of Talks : Day ' + dayNew;
+									}
+								</script>
+							{% else %}
+							<h3>Our apologies, a schedule is still being constructed... Please refresh this page in a few minutes.</h3>
 							</td>
 							{% endif %}
 						</div>
