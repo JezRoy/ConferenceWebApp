@@ -133,6 +133,7 @@ DEFAULTS:
 
 # Setting up a navigation blueprint for the flask application
 views = Blueprint('views', __name__)
+
 '''TODO MAYBE UPDATE CONFERENCE ID 8 WITH THE TOPICCONF TABLE'''
 @views.route('/') # The main page of the website
 @login_required
@@ -182,14 +183,17 @@ def home():
         ConferenceData = None
 
     currentDay = 1
-    present = date.today()
-    elapsed = (present - ConferenceData["confStart"]).days
-    if elapsed <= 0:
-        elapsed = 0
-    currentDay = elapsed + 1
-    ConferenceData["currentDay"] = currentDay
+    if ConferenceData:
+        present = date.today()
+        elapsed = (present - ConferenceData["confStart"]).days
+        if elapsed <= 0:
+            elapsed = 0
+        currentDay = elapsed + 1
+        ConferenceData["currentDay"] = currentDay
 
-    schedule, _ = deduceSchedule(confId, userId, userData, ConferenceData)
+        schedule, _ = deduceSchedule(confId, userId, userData, ConferenceData)
+    else:
+        schedule = None
     
     # This information will be sorted within the front end
     # Load HTML page

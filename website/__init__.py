@@ -1,4 +1,4 @@
-from flask import Flask, flash, session, current_app
+from flask import Flask, flash, session, current_app, redirect, url_for
 # Using Celery and redis for asynchronus and parallel task management
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin
@@ -33,6 +33,7 @@ def CreateApp():
     
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+
     
     from .models import User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
     from .functions import UpdateLog
