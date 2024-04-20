@@ -33,7 +33,6 @@ def CreateApp():
     
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
-
     
     from .models import User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
     from .functions import UpdateLog
@@ -47,7 +46,7 @@ def CreateApp():
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
     
-    os.system("celery -A app.celery worker --loglevel=info")
+    #os.system("celery -A app.celery worker --loglevel=info")
     
     @login_manager.user_loader
     def load_user(id):

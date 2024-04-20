@@ -171,7 +171,8 @@ class Schedules(db.Model):
     confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
     file = db.Column(db.String(limit), unique=True)
     dayOfConf = db.Column(db.Integer) # TODO REMOVE THIS
-    score = db.Column(db.Integer) # Delegate satisfaction 
+    score = db.Column(db.Integer) # Based on estimated delegate satisfaction
+    #editFlag = db.Column(db.Integer) # A metric to track changes in conference data and whether a schedule needs to be force written
     paraSesh = db.Column(db.Integer) # Number of parallel sessions during each day in the conference
     def __init__(self, confId, file, dayOfConf, score, paraSesh):
         self.confId = confId

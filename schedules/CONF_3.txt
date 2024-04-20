@@ -1,0 +1,88 @@
+D-1
+10:30:00:['None', 'None', 'None', 'None']
+11:00:00:['None', 'None', 'None', 'None']
+11:30:00:['None', 'None', 'None', 'None']
+12:00:00:LUNCH & REFRESHMENTS
+13:00:00:['None', 'None', 'None', 'None']
+13:30:00:['None', 'None', 'None', 'None']
+14:00:00:['None', 'None', 'None', 'None']
+14:30:00:BREAK
+14:45:00:[59, 'None', 'None', 'None']
+15:15:00:['None', 'None', 'None', 'None']
+15:45:00:['None', 'None', 'None', 'None']
+16:15:00:BREAK
+16:30:00:['None', 'None', 'None', 52]
+17:00:00:['None', 63, 'None', 'None']
+17:30:00:['None', 'None', 'None', 'None']
+18:00:00:BREAK
+18:15:00:['None', 'None', 'None', 'None']
+18:45:00:['None', 'None', 'None', 'None']
+19:15:00:['None', 43, 'None', 'None']
+19:45:00:BREAK
+20:00:00:['None', 'None', 'None', 'None']
+D-2
+10:30:00:['None', 56, 'None', 'None']
+11:00:00:[50, 'None', 'None', 'None']
+11:30:00:['None', 48, 'None', 'None']
+12:00:00:LUNCH & REFRESHMENTS
+13:00:00:['None', 'None', 'None', 41]
+13:30:00:['None', 'None', 'None', 'None']
+14:00:00:[55, 45, 'None', 'None']
+14:30:00:BREAK
+14:45:00:['None', 'None', 'None', 'None']
+15:15:00:['None', 'None', 'None', 'None']
+15:45:00:[54, 'None', 'None', 67]
+16:15:00:BREAK
+16:30:00:['None', 'None', 'None', 'None']
+17:00:00:[66, 'None', 46, 'None']
+17:30:00:['None', 'None', 'None', 'None']
+18:00:00:BREAK
+18:15:00:['None', 'None', 'None', 'None']
+18:45:00:['None', 'None', 'None', 'None']
+19:15:00:['None', 'None', 'None', 'None']
+19:45:00:BREAK
+20:00:00:['None', 'None', 'None', 60]
+D-3
+10:30:00:['None', 'None', 'None', 'None']
+11:00:00:['None', 'None', 'None', 'None']
+11:30:00:['None', 'None', 'None', 'None']
+12:00:00:LUNCH & REFRESHMENTS
+13:00:00:['None', 'None', 'None', 'None']
+13:30:00:['None', 'None', 'None', 'None']
+14:00:00:['None', 'None', 'None', 'None']
+14:30:00:BREAK
+14:45:00:['None', 'None', 'None', 68]
+15:15:00:['None', 'None', 'None', 'None']
+15:45:00:['None', 'None', 'None', 'None']
+16:15:00:BREAK
+16:30:00:['None', 'None', 'None', 'None']
+17:00:00:['None', 'None', 'None', 47]
+17:30:00:['None', 'None', 'None', 'None']
+18:00:00:BREAK
+18:15:00:[42, 'None', 44, 65]
+18:45:00:['None', 'None', 'None', 'None']
+19:15:00:[62, 'None', 'None', 'None']
+19:45:00:BREAK
+20:00:00:['None', 'None', 'None', 'None']
+D-4
+10:30:00:[61, 'None', 'None', 'None']
+11:00:00:['None', 'None', 53, 'None']
+11:30:00:['None', 'None', 'None', 49]
+12:00:00:LUNCH & REFRESHMENTS
+13:00:00:['None', 'None', 'None', 'None']
+13:30:00:['None', 'None', 'None', 64]
+14:00:00:['None', 'None', 'None', 'None']
+14:30:00:BREAK
+14:45:00:['None', 'None', 'None', 'None']
+15:15:00:['None', 'None', 'None', 'None']
+15:45:00:['None', 'None', 'None', 'None']
+16:15:00:BREAK
+16:30:00:['None', 'None', 'None', 'None']
+17:00:00:['None', 'None', 'None', 'None']
+17:30:00:['None', 'None', 'None', 'None']
+18:00:00:BREAK
+18:15:00:['None', 'None', 'None', 'None']
+18:45:00:['None', 51, 'None', 'None']
+19:15:00:['None', 'None', 'None', 'None']
+19:45:00:BREAK
+20:00:00:['None', 57, 'None', 'None']

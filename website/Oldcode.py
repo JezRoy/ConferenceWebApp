@@ -35,7 +35,7 @@ def createNewDelegates(app, conference_id):
         """
         Tracking scheduler output seprately from the rest of the app.
         """
-        myFile = open("autoGen.txt", "a")
+        myFile = open("metalConDeleg.txt", "a")
         contents = f"{thing}\n"
         myFile.write(contents)
         myFile.close()
@@ -111,10 +111,11 @@ def createNewDelegates(app, conference_id):
         return True
     
 '''# Usage example
-conference_id = 8 # ID of the new conference
-num_delegates = 193 # Number of delegates to create
-runTime = datetime.now() + timedelta(seconds=10)
-jobArgs = (app, conference_id)'''          
+    conference_id = 3 # ID of the new conference
+    num_delegates = 125 # Number of delegates to create
+    runTime = datetime.now() + timedelta(seconds=10)
+    jobArgs = (app, conference_id)
+    parallelSys.add_job(createNewDelegates, trigger='interval', args=jobArgs, minutes=0.3)'''          
                 
                 
                 

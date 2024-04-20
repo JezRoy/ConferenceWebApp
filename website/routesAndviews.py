@@ -3,6 +3,8 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from datetime import datetime, date, time, timedelta
 from sqlalchemy import asc, desc
+import string
+import random
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, TopicTalks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
@@ -31,6 +33,26 @@ dbOrderingConf = [
     bug fix:
         - search page: show all conferences by default
 """
+
+# Arguments to consider when rendering a template
+"""
+DEFAULTS:
+- When using flash() to flash alerts and warning there are 3 string categories:
+    - error
+    - info
+    - warning
+    - success
+- {{ session.username }} defines whether a user is signed in.
+- {{ conferenceSigned }} determines if a user is signed up to a conference.
+    if so, then present the option to see that conference.
+    - May require a conference search up beforehand to also pass in the URL
+    to a conference as a link in the navbar:
+        - referred to with {{ conferenceURL }}
+        - name of the NEXT conference goes in the navbar top: {{ conferenceName }}.
+"""
+
+# Setting up a navigation blueprint for the flask application
+views = Blueprint('views', __name__)
 
 def deduceSchedule(confId, userId, userData, ConferenceData):
     currentDay = 1
@@ -114,26 +136,6 @@ def deduceSchedule(confId, userId, userData, ConferenceData):
         schedule = None
     return schedule, currentDay
 
-# Arguments to consider when rendering a template
-"""
-DEFAULTS:
-- When using flash() to flash alerts and warning there are 3 string categories:
-    - error
-    - info
-    - warning
-    - success
-- {{ session.username }} defines whether a user is signed in.
-- {{ conferenceSigned }} determines if a user is signed up to a conference.
-    if so, then present the option to see that conference.
-    - May require a conference search up beforehand to also pass in the URL
-    to a conference as a link in the navbar:
-        - referred to with {{ conferenceURL }}
-        - name of the NEXT conference goes in the navbar top: {{ conferenceName }}.
-"""
-
-# Setting up a navigation blueprint for the flask application
-views = Blueprint('views', __name__)
-
 '''TODO MAYBE UPDATE CONFERENCE ID 8 WITH THE TOPICCONF TABLE'''
 @views.route('/') # The main page of the website
 @login_required
@@ -144,6 +146,10 @@ def home():
     userData = User.query.get(userId)
     session['type'] = userData.type
     #print("-------------\n", session, "\n-------------\n")
+
+    schedule = Schedules.query.filter_by(confId=1).first()
+    schedule.score = 75
+    db.session.commit()
 
     # Find next upcoming conference from list of registered conferences
         # Query the ConfDeleg or ConfHosts table to find the conferences a user is registered to
@@ -317,8 +323,6 @@ def getSchedule():
                             stuff = [talk.id, talk.talkName, speaker.deleg]
                             schedule[day][timingStr][index] = stuff
 
-        for ting1, ting2 in schedule[dayactual].items():
-            print(ting1, ting2)
         return jsonify(schedule[dayactual])
     else:
         return jsonify(1)
