@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-04-27T16:18:35.489Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="bGpYDabCT40w304mEmC1" version="24.2.5" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-27T16:33:56.061Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="UR5VIIOAu7gsQpDpM8sQ" version="24.2.5" type="github">
   <diagram name="Page-1" id="L9EWdKngObACSbmYC5S1">
     <mxGraphModel dx="794" dy="446" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -19,31 +19,31 @@
         <mxCell id="2SStMUthoinW3wqzKq2l-8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="2SStMUthoinW3wqzKq2l-4" target="2SStMUthoinW3wqzKq2l-7" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="2SStMUthoinW3wqzKq2l-4" value="Create timeslots for each break" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="87.5" y="494" width="145" height="60" as="geometry" />
+        <mxCell id="2SStMUthoinW3wqzKq2l-4" value="Create timeslots to structure each day" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="87.5" y="615" width="145" height="60" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="2SStMUthoinW3wqzKq2l-7" target="2SStMUthoinW3wqzKq2l-9" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-7" value="Add breaks and lunch slots" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="87.5" y="594" width="145" height="60" as="geometry" />
+          <mxGeometry x="87.5" y="711" width="145" height="60" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="2SStMUthoinW3wqzKq2l-9" target="2SStMUthoinW3wqzKq2l-12" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-9" value="Run the scheduler to fill in the timeslots" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="90" y="689" width="140" height="60" as="geometry" />
+          <mxGeometry x="90" y="806" width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="2SStMUthoinW3wqzKq2l-12" target="2SStMUthoinW3wqzKq2l-15" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-12" value="Evaluate the scheduler using simulated scoring function" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="90" y="784" width="140" height="60" as="geometry" />
+          <mxGeometry x="90" y="901" width="140" height="60" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2SStMUthoinW3wqzKq2l-15" target="2SStMUthoinW3wqzKq2l-17" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="256" y="934" />
+              <mxPoint x="256" y="1079" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -55,27 +55,37 @@
         <mxCell id="2SStMUthoinW3wqzKq2l-24" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="2SStMUthoinW3wqzKq2l-15" target="2SStMUthoinW3wqzKq2l-22" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="160" y="1134" />
-              <mxPoint x="225" y="1134" />
+              <mxPoint x="160" y="1251" />
+              <mxPoint x="225" y="1251" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-15" value="Better performing compared to what currently exists?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="95" y="868" width="130" height="130" as="geometry" />
+          <mxGeometry x="95" y="985" width="130" height="130" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="2SStMUthoinW3wqzKq2l-17" target="2SStMUthoinW3wqzKq2l-22" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-17" value="Save the new schedule" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
-          <mxGeometry x="196" y="974" width="120" height="60" as="geometry" />
+          <mxGeometry x="196" y="1091" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="2SStMUthoinW3wqzKq2l-25" value="Yes, new&amp;nbsp;&lt;div&gt;conference loaded&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2SStMUthoinW3wqzKq2l-22" target="2SStMUthoinW3wqzKq2l-2" edge="1">
+        <mxCell id="2SStMUthoinW3wqzKq2l-25" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2SStMUthoinW3wqzKq2l-22" target="2SStMUthoinW3wqzKq2l-2" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="340" y="1135" />
-              <mxPoint x="340" y="220" />
+              <mxPoint x="370" y="1252" />
+              <mxPoint x="370" y="220" />
               <mxPoint x="160" y="220" />
             </Array>
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-18" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="2SStMUthoinW3wqzKq2l-25">
+          <mxGeometry x="-0.9096" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-19" value="New&amp;nbsp;&lt;div&gt;conference loaded&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="2SStMUthoinW3wqzKq2l-25">
+          <mxGeometry x="0.6479" y="1" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
@@ -83,19 +93,10 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-22" value="Web application running?" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="201" y="1080" width="110" height="110" as="geometry" />
+          <mxGeometry x="201" y="1197" width="110" height="110" as="geometry" />
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-26" value="END" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="196" y="1244" width="120" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="CE9BjQxEwYpSyeIQVc04-8" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="CE9BjQxEwYpSyeIQVc04-1" target="2SStMUthoinW3wqzKq2l-4">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="220" y="400" />
-              <mxPoint x="220" y="470" />
-              <mxPoint x="160" y="470" />
-            </Array>
-          </mxGeometry>
+          <mxGeometry x="196" y="1361" width="120" height="80" as="geometry" />
         </mxCell>
         <mxCell id="CE9BjQxEwYpSyeIQVc04-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="CE9BjQxEwYpSyeIQVc04-1" target="2SStMUthoinW3wqzKq2l-2">
           <mxGeometry relative="1" as="geometry">
@@ -107,13 +108,61 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="CE9BjQxEwYpSyeIQVc04-10" value="No, new&amp;nbsp;&lt;div&gt;conference loaded&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="CE9BjQxEwYpSyeIQVc04-9">
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-10" value="New&amp;nbsp;&lt;div&gt;conference loaded&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="CE9BjQxEwYpSyeIQVc04-9">
           <mxGeometry x="-0.3776" y="1" relative="1" as="geometry">
+            <mxPoint x="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-15" value="No" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="CE9BjQxEwYpSyeIQVc04-9">
+          <mxGeometry x="-0.8848" y="1" relative="1" as="geometry">
             <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-12" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="CE9BjQxEwYpSyeIQVc04-1" target="CE9BjQxEwYpSyeIQVc04-11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="231" y="400" />
+              <mxPoint x="231" y="460" />
+              <mxPoint x="160" y="460" />
+            </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="CE9BjQxEwYpSyeIQVc04-1" value="Has this conference been edited?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="108.75" y="350" width="102.5" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="CE9BjQxEwYpSyeIQVc04-11" target="2SStMUthoinW3wqzKq2l-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="60" y="530" />
+              <mxPoint x="60" y="220" />
+              <mxPoint x="160" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-14" value="No&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="CE9BjQxEwYpSyeIQVc04-13">
+          <mxGeometry x="-0.8869" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="CE9BjQxEwYpSyeIQVc04-11" target="2SStMUthoinW3wqzKq2l-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="530" />
+              <mxPoint x="230" y="590" />
+              <mxPoint x="160" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-17" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="CE9BjQxEwYpSyeIQVc04-16">
+          <mxGeometry x="-0.36" y="-3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-11" value="Does this conference satisfy phase constraints?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="108.75" y="480" width="101.25" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="CE9BjQxEwYpSyeIQVc04-20" value="* Phase constraints refer to whether it is a suitable time to schedule for this conference given its deadlines for phase 1 and 2." style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="243" y="550" width="110" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
