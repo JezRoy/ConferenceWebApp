@@ -22,7 +22,8 @@ requiredModules = [
     'random',
     'string',
     'multiprocessing',
-    'gc-python-utils'
+    'gc-python-utils',
+    'celery redis'
 ]
 
 # Given pip is installed on the machine.
@@ -30,7 +31,12 @@ requiredModules = [
 # Start installing any modules that are missing.
 for mod in requiredModules:
     try:
-        exec(f'import {mod}')
+        if mod == 'gc-python-utils':
+            exec(f'import gc')
+        elif mod == 'celery redis':
+            exec(f'import celery')
+        else:
+            exec(f'import {mod}')
     except ImportError:
         print(f"'{mod}' module not found. Installing {mod}.")
         os.system(f"pip3.8 install {mod}")

@@ -84,6 +84,32 @@
 									→ End Date: {{ ConferenceData["confEnd"].strftime('%d-%m-%Y') }}
 								</td>
 							</tr>
+							{% if rooms and userData.type == 'host' %}
+							<tr>
+								<td>
+									<table style="color: #33ccff;">
+										<thead>
+											<td>
+												Room No:
+											</td>
+											<td>
+												Capacity
+											</td>
+										</thead>
+										{% for key, value in rooms.items() %}
+										<tr>
+											<td>
+												{{ key }}
+											</td>
+											<td>
+												{{ value }}
+											</td>
+										</tr>
+										{% endfor %}
+									</table>
+								</td>
+							</tr>
+							{% endif %}
 							<tr>
 								<td>
 									{% if userData.type == 'host' %}
@@ -157,7 +183,7 @@
 											{% for i in range(ConferenceData['numSessions']) %}
 											<td>
 												<p style="font-weight:bold;"> <!-- So for a 3 session conference there would be 4 columns in this table -->
-													Session {{ i + 1 }}
+													Room {{ i + 1 }}
 												</p>
 											</td>
 											{% endfor %}
@@ -290,7 +316,7 @@
 													console.log(1);
 													if (slots[1] != 'None') {
 														console.log(2);
-														talkCell.textContent = `${slots[0]}`;
+														talkCell.textContent = `${slots[0]}\nin Room ${slots[3]}`;
 														talkCell.setAttribute("style", "font-style: italic;");
 														authorCell.textContent = `${slots[1]}`;
 														if (slots[2] === 1) { // Preferred talk

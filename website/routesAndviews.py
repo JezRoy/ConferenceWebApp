@@ -6,7 +6,7 @@ from sqlalchemy import asc, desc
 import string
 import random
 from werkzeug.security import generate_password_hash, check_password_hash
-from .models import db, User, ConfDeleg, Conferences, ConfDaySessions, ConfHosts, Talks, TopicTalks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
+from .models import db, User, ConfDeleg, Conferences, ConfRooms, ConfHosts, Talks, TopicTalks, DelegTalks, Speakers, Topics, Topicsconf, DelTopics, Schedules
 from .functions import UpdateLog
 from . import parallelSys
 
@@ -28,10 +28,9 @@ dbOrderingConf = [
 
 """ TODO
     create:
-        - genetic scheduler?
-    optional talks vs preferred talks (for those with a low preference level)
-    bug fix:
+        - plug in genetic scheduler
         - search page: show all conferences by default
+        - non-blocking web app calls - so that it doesnt pause after when running either scheduler
 """
 
 # Arguments to consider when rendering a template
@@ -66,9 +65,12 @@ def deduceSchedule(confId, userId, userData, ConferenceData):
 
         # Find most optimised schedule from the schedules created for the upcoming conference
         lookup = Schedules.query.filter_by(confId=confId).first()
+        rooms = None
+        # TODO READ ROOM CAPACITY
         if lookup:
             fileToSee = lookup.file
             schedule = {}
+            rooms = {}
             with open(fileToSee, "r") as file:
                 content = file.readlines()
             day = 1
@@ -76,6 +78,16 @@ def deduceSchedule(confId, userId, userData, ConferenceData):
                 if line[0:2] == 'D-':
                     day = int(line[2])
                     schedule[day] = {}
+                    setOfRooms = line[3:].split("|")
+                    roomSet = []
+                    for i in setOfRooms:
+                        try:
+                            thing = int(i)
+                            roomSet.append(thing)
+                        except:
+                            pass
+                    for i in range(len(roomSet)):
+                        rooms[i+1] = int(roomSet[i])
                 else:
                     hour = int(line[0:2])
                     minute = int(line[3:5])
@@ -94,7 +106,6 @@ def deduceSchedule(confId, userId, userData, ConferenceData):
                         detail = line[9:-1]
                         schedule[day][timing] = detail
 
-
             # TODO Fill in empty slots with optional talks
             # For each talk, determine whether this user needs to see it:
             # A delegate will see things in a single-session style of view        
@@ -105,6 +116,7 @@ def deduceSchedule(confId, userId, userData, ConferenceData):
                     for timing, talkIds in dayTime.items(): # Iterate through the whole "Master schedule"
                         if talkIds != "BREAK" or talkIds != "LUNCH & REFRESHMENTS":
                             for index in range(len(talkIds)):
+                                
                                 thisTalk = talkIds[index]
                                 if type(thisTalk) is int: # If there is a talk here
                                     talk = Talks.query.filter_by(confId=confId, id=thisTalk).first() # Find the talk name and speaker
@@ -113,7 +125,7 @@ def deduceSchedule(confId, userId, userData, ConferenceData):
                                     for person in delegs:
                                         if person.prefLvl >= 5: # Find all the delegates who who wanted to see it
                                             if person.id == userId: # If this includes the currently logged in user
-                                                stuff = [talk.talkName, speaker.deleg] # Add it to the list of things to see
+                                                stuff = [talk.talkName, speaker.deleg, index + 1] # Add it to the list of things to see
                                                 delegView[day][timing] = stuff
                                                 break
                         else:
@@ -134,7 +146,16 @@ def deduceSchedule(confId, userId, userData, ConferenceData):
             schedule = None
     else:
         schedule = None
-    return schedule, currentDay
+    return schedule, currentDay, rooms
+
+def AmmendConfFlag(confId):
+    # Change the flag of the conference if new details have not been influenced the schedule
+    scheduleFound = Schedules.query.filter_by(confId=confId).first()
+    if scheduleFound:
+        scheduleFound.editInfoFlag = 0
+        db.session.commit()
+        return True
+    return False
 
 '''TODO MAYBE UPDATE CONFERENCE ID 8 WITH THE TOPICCONF TABLE'''
 @views.route('/') # The main page of the website
@@ -145,11 +166,6 @@ def home():
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
     session['type'] = userData.type
-    #print("-------------\n", session, "\n-------------\n")
-
-    schedule = Schedules.query.filter_by(confId=1).first()
-    schedule.score = 75
-    db.session.commit()
 
     # Find next upcoming conference from list of registered conferences
         # Query the ConfDeleg or ConfHosts table to find the conferences a user is registered to
@@ -171,8 +187,8 @@ def home():
     for conference in conferencesUserRegister:
         if conference.confEnd >= rightNow.date():
             # Sort the upcoming_conferences based on their start date
-            upcomingConferences.append(conference)  
-    
+            upcomingConferences.append(conference)
+
     confId = None
     sortedConferences = sorted(upcomingConferences, key=lambda x: x.confStart)
     if sortedConferences:
@@ -197,9 +213,10 @@ def home():
         currentDay = elapsed + 1
         ConferenceData["currentDay"] = currentDay
 
-        schedule, _ = deduceSchedule(confId, userId, userData, ConferenceData)
+        schedule, _, rooms = deduceSchedule(confId, userId, userData, ConferenceData)
     else:
         schedule = None
+        rooms = None
     
     # This information will be sorted within the front end
     # Load HTML page
@@ -209,6 +226,7 @@ def home():
                            currentDate=date.today().strftime("%d-%m-%Y"),
                            currentDay=currentDay,
                            schedule=schedule,
+                           rooms=rooms,
                            ConferenceData=ConferenceData)
 
 @views.route('/get-schedule')
@@ -276,7 +294,8 @@ def getSchedule():
                     chosen = []
                     if type(talkIds) != str: # If not BREAKS or the like, find talks
                         for talkId in talkIds:
-                            if talkId != "None":
+                            room = talkIds.index(talkId) + 1
+                            if talkId != "None" and talkId != None:
                                 # Find preferred talks first
                                 tracePref = DelegTalks.query.filter_by(delegId=userId, talkId=talkId, confId=confId).first()
                                 if tracePref.prefLvl >= 6: # The delegate wanted to see this talk
@@ -286,19 +305,22 @@ def getSchedule():
                                     author = Speakers.query.filter_by(id=record.speakerId).first().deleg
                                     chosen.append(author)
                                     chosen.append(1) # Preferred record
+                                    chosen.append(room)
                                     break
                         if chosen != []:
                             delegView[day][timing] = chosen
                         else:
                             for talkId in talkIds:
+                                room = talkIds.index(talkId) + 1
                                 # If no preferred talk, then just add a misc talk
-                                if talkId != "None":
+                                if talkId != "None" and talkId != None:
                                     # Find data on talk
                                     record = Talks.query.filter_by(id=talkId, confId=confId).first()
                                     chosen.append(record.talkName)
                                     author = Speakers.query.filter_by(id=record.speakerId).first().deleg
                                     chosen.append(author)
                                     chosen.append(0) # Non-preferred record
+                                    chosen.append(room)
                                     break
                             # If no talk is found then keep slot empty
                             if chosen == []:
@@ -351,6 +373,9 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
         talkPerSession = int(request.form.get("talksPerSession"))
         talkLength = int(request.form.get("talkLength"))
         numOfSessions = int(request.form.get("numSessions"))
+        roomCapacities = request.form['roomCapacity']
+        # Split the room capacities string into a list of integers
+        capacities = [int(cap.strip()) for cap in roomCapacities.split(',') if cap.strip().isdigit()]
         if confLength > 0:
             if dayLength > 0:
                 if numOfSessions > 0:
@@ -383,7 +408,14 @@ def createConferenceStage1(): # For a host to a create a conference - part 1
                         hostId = userId
                     )
                     db.session.add(hosting)
-                    db.session.commit()                
+                    db.session.commit()
+                    for i in range(len(capacities)):
+                        room = ConfRooms(
+                            confId=confNewId,
+                            capacity=capacities[i]
+                        )
+                        db.session.add(room)
+                        db.session.commit()
                     flash("Successfully created conference! You can edit / delete your main conference details later.", category="success")
                     return redirect(url_for("views.createConferenceStage2", conferenceId=confNewId))
                 else:
@@ -413,14 +445,17 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
         talkNames = request.form.getlist("talkname[]")
         talkSpeakers = request.form.getlist("talkspeaker[]")
         talkTopics = request.form.getlist("talktags[]")
+        talkrepitions = request.form.getlist("repitions[]")
 
         # Creating a structure for created talks
         """A user is not obliged to create a talk at this stage...
         But should they choose to, a talk needs a name.
         """
         talksGenerated = []
+        print(talkrepitions)
         for i in range(len(talkNames)):
-            talksGenerated.append([talkNames[i], talkSpeakers[i], talkTopics[i]])
+            print(talkrepitions[i])
+            talksGenerated.append([talkNames[i], talkSpeakers[i], talkTopics[i], talkrepitions[i]])
             # Entities involved include:
             speaker = Speakers(
                 deleg=talkSpeakers[i]
@@ -428,10 +463,12 @@ def createConferenceStage2(conferenceId): # For a host to a create a conference 
             db.session.add(speaker)
             db.session.commit()
             speakerId = speaker.id
+            print(talkrepitions[i])
             talks = Talks(
                     talkName=talkNames[i],
                     speakerId=speakerId,
                     confId=conferenceId,
+                    repitions=talkrepitions[i]
                 )
             db.session.add(talks)
             db.session.commit()
@@ -495,8 +532,12 @@ def findConferences():
             retrieve.pop('_sa_instance_state', None)
             retrieve = {key: retrieve[key] for key in dbOrderingConf if key in retrieve}
             retrieve["confId"] = conf.id
-            registered = db.session.query(db.exists().where(ConfDeleg.delegId == userId and ConfDeleg.confId == conf.id)).scalar()
-            retrieve["registered"] = registered
+            registered = ConfDeleg.query.filter_by(confId=conf.id, delegId=userId).first()
+            #registered = db.session.query(db.exists().where(ConfDeleg.delegId == userId and ConfDeleg.confId == conf.id)).scalar()
+            if registered != None:
+                retrieve["registered"] = True
+            else:
+                retrieve["registered"] = False
             setOfResults.append(retrieve)
         confFound = setOfResults
     else:
@@ -533,6 +574,7 @@ def registerConference():
             flash(f"You have been successfully registered to the '{confName}' conference!", category="success")
             # Get a user to register their talks
             UpdateLog(f"User {userData.username} has signed up for conference {confName} ")
+            AmmendConfFlag(conferenceChoice)
         else:
             flash(f"Apologies. The registration deadline for conference {confName} has already past.", category="error")
     else:
@@ -574,6 +616,7 @@ def cancelRegistration(conferenceId):
                         pass
                 except:
                     pass
+                AmmendConfFlag(conferenceId)
                 flash(f"Your registration for conference {conf} has been cancelled.", category="success")
             except:
                 flash(f"Sorry. There was an error cancelling your registration for conference {conf}.", category="error")
@@ -677,6 +720,7 @@ def previewTalks(conferenceId):
     if request.method == "POST":
         talkIds = request.form.getlist('talkIds[]')
         prefLvls = request.form.getlist('talkPref[]')
+        change = False
         for i in range(len(talkIds)):
             # Record / Update the preference of each talk for each delegate
             existing1 = DelegTalks.query.filter_by(delegId=userId, talkId=talkIds[i], confId=conferenceId).first()
@@ -684,6 +728,7 @@ def previewTalks(conferenceId):
                 existing1.prefLvl = prefLvls[i]
                 db.session.add(existing1)
                 db.session.commit()
+                change = True
             else: # Or create a new one
                 recording = DelegTalks(
                     delegId=userId,
@@ -704,8 +749,11 @@ def previewTalks(conferenceId):
                             topicId=recordId, # Every topic appears to be unique, because of a unique ID by default
                             confId=conferenceId
                         )
-                db.session.add(newEntry)
+                        db.session.add(newEntry)
                 db.session.commit()
+                change = True
+        if change:
+            AmmendConfFlag(conferenceId)
         flash("Your talk preferences for this conference has been saved!", category="success")
         UpdateLog(f"User ID: {userId} has saved their talk preferences for conference ID: {conferenceId}.")
         return redirect(url_for("views.home"))
@@ -816,7 +864,7 @@ def viewConference(conferenceId):
     currentDay = elapsed + 1
     ConferenceData["currentDay"] = currentDay
 
-    schedule, _ = deduceSchedule(conferenceId, userId, userData, ConferenceData)
+    schedule, _, rooms = deduceSchedule(conferenceId, userId, userData, ConferenceData)
 
     return render_template("index.html", 
                            user=current_user,
@@ -824,6 +872,7 @@ def viewConference(conferenceId):
                            currentDate=date.today().strftime("%d-%m-%Y"),
                            currentDay=currentDay,
                            schedule=schedule,
+                           rooms=rooms,
                            ConferenceData=ConferenceData)
 
 @views.route('/edit-conference-1/<int:conferenceId>', methods=['GET', 'POST'])
@@ -911,16 +960,36 @@ def editConference1(conferenceId):
         numOfSessions = int(request.form.get("numSessions"))
         if numOfSessions != 0 and numOfSessions != currentData.numSessions:
             attrChanged["numSessions"] = numOfSessions
+        
+        currentRooms = ConfRooms.query.filter_by(confId=conferenceId).all()
+        atTheMo = []
+        for record in currentRooms:
+            atTheMo.append(record.capacity)
+        roomCapacities = request.form['roomCapacity']
+        # Split the room capacities string into a list of integers
+        capacities = [int(cap.strip()) for cap in roomCapacities.split(',') if cap.strip().isdigit()]
+        if capacities != atTheMo:
+            AmmendConfFlag(conferenceId)
+            for room in currentRooms:
+                db.session.delete(room)
+                db.session.commit()
+            for i in range(len(capacities)):
+                room = ConfRooms(
+                    confId=conferenceId,
+                    capacity=capacities[i]
+                )
+                db.session.add(room)
+                db.session.commit()
 
-        # Update changes TODO DOES NOT SAVE PROPERLY
-        # TRY ITERATING OVER SQLALCHEMY OBJ
         if attrChanged != {}:
             editedConf = Conferences.query.filter_by(id=conferenceId).first()
             for key, newVal in attrChanged.items():
                 setattr(editedConf, key, newVal)
+                AmmendConfFlag(conferenceId)
             db.session.commit()
 
             # Redirect to next page
+            AmmendConfFlag(conferenceId)
             flash("Successfully edited conference! You can always edit / delete your main conference details later.", category="success")
             UpdateLog(f"Host id {userId} edited conference id {conferenceId}, fields changed: \n{attrChanged.keys()}")
         return redirect(url_for("views.editConference2", conferenceId=conferenceId))
@@ -945,7 +1014,7 @@ def editConference1(conferenceId):
 
 @views.route('/edit-conference-2/<int:conferenceId>', methods=['GET', 'POST'])
 @login_required
-def editConference2(conferenceId): # TODO TEST THIS
+def editConference2(conferenceId):
     # Find logged in user data
     userId = current_user._get_current_object().id
     userData = User.query.get(userId)
@@ -953,9 +1022,9 @@ def editConference2(conferenceId): # TODO TEST THIS
     talks = []
     # Retrieving all talk data for a conference
     for thing in setOfTalks:
-        data = [thing.id, thing.talkName]
+        data = [thing.id, thing.talkName] # Index 0, 1
         speaker = Speakers.query.filter_by(id=thing.speakerId).first().deleg
-        data.append([thing.speakerId, speaker])
+        data.append([thing.speakerId, speaker]) # Index 2
         sets = TopicTalks.query.filter_by(talkId=thing.id).all()
         topicIds = []
         topicWords = []
@@ -963,8 +1032,9 @@ def editConference2(conferenceId): # TODO TEST THIS
             topicLit = Topics.query.filter_by(id=ids.topicId).first().topic
             topicIds.append(ids.topicId)
             topicWords.append(topicLit)
-        data.append(topicIds)
-        data.append(topicWords)
+        data.append(topicIds) # Index 3
+        data.append(topicWords) # Index 4
+        data.append(thing.repitions) # Index 5
         talks.append(data)
 
     if request.method == "POST":
@@ -975,6 +1045,7 @@ def editConference2(conferenceId): # TODO TEST THIS
         speakerNames = request.form.getlist("talkspeaker[]")
         topicIds = request.form.getlist("talktagsid[]")
         topicNames = request.form.getlist("talktags[]")
+        talkrepitions = request.form.getlist("repitions[]")
 
         # Preparation for edits and removals
         talkIdsCle = [] # This should be in chronological order
@@ -983,6 +1054,7 @@ def editConference2(conferenceId): # TODO TEST THIS
         speakerNamesCle = []
         topicIdsCle = []
         topicNamesCle = []
+        repitionCle = []
         # Add new talks
         for i in range(len(talkIds)):
             # Check what needs adding
@@ -991,6 +1063,7 @@ def editConference2(conferenceId): # TODO TEST THIS
             sid = int(speakerIds[i])
             sName = speakerNames[i]
             toIds = eval(topicIds[i]) # [1, 2] or []
+            rep = talkrepitions[i]
             try:
                 toNames = topicNames[i].split(',') # ['topicA', 'topicB']
                 for x in range(len(toNames)):
@@ -1019,7 +1092,8 @@ def editConference2(conferenceId): # TODO TEST THIS
                 talk = Talks( # Add new talk
                     talkName=taName,
                     speakerId=assignspId,
-                    confId=conferenceId
+                    confId=conferenceId,
+                    repitions=rep
                 )
                 db.session.add(talk)
                 db.session.commit()
@@ -1056,6 +1130,7 @@ def editConference2(conferenceId): # TODO TEST THIS
                                 )
                                 db.session.add(contact)
                                 db.session.commit()
+                AmmendConfFlag(conferenceId)
             else:
                 talkIdsCle.append(taid)
                 talkNamesCle.append(taName)
@@ -1063,18 +1138,24 @@ def editConference2(conferenceId): # TODO TEST THIS
                 speakerNamesCle.append(sName)
                 topicIdsCle.append(toIds)
                 topicNamesCle.append(toNames)
+                repitionCle.append(rep)
             # No more additions to be made
         
         deleted = []
+        deled = False
         # Iterate through the before-version of the list of talks to find deleted talks
         for btId, *_ in talks:
             if btId not in talkIdsCle:
                 deleted.append([btId, *_])
+                deled = True
         for talk in deleted:
             itemFound = Talks.query.filter_by(id=talk[0],confId=conferenceId).first()
             db.session.delete(itemFound)
             db.session.commit()
             talks.remove(talk)
+        
+        if deled:
+            AmmendConfFlag(conferenceId)
 
         # Iterate through both before and after versions of the list of talks to implement changes.
         # Hopefully the list of talks after edits and the 'talks' list should be the same size
@@ -1086,16 +1167,22 @@ def editConference2(conferenceId): # TODO TEST THIS
             sName = speakerNamesCle[i]
             toIds = topicIdsCle[i]
             toNames = topicNamesCle[i]
+            repeat = repitionCle[i]
             # An edit is nothing but a deletion of old data,
             # Then a replacement with new data.
-
+            if talks[i][5] != repeat:
+                updateTalk.repitions = repeat
+                db.session.commit()
+                AmmendConfFlag(conferenceId)
             if talks[i][1] != taName:
                 updateTalk.talkName = taName
                 db.session.commit()
+                AmmendConfFlag(conferenceId)
             updateSp = Speakers.query.filter_by(id=sId).first()
             if talks[i][2][1] != sName:
                 updateSp.deleg = sName
                 db.session.commit()
+                AmmendConfFlag(conferenceId)
             if talks[i][3] != toIds or talks[i][4] != toNames: # Find the differences
                 toAdd = []
                 toRemove = []
@@ -1197,6 +1284,7 @@ def editConference2(conferenceId): # TODO TEST THIS
                         )
                         db.session.add(record)
                         db.session.commit()
+                AmmendConfFlag(conferenceId)    
         flash("Edited conference talk details have been saved successfully!", category="success")
         UpdateLog(f"Host Id {userId} edited conference {conferenceId}'s talk details")
         return redirect(url_for("views.home"))

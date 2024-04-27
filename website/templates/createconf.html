@@ -31,7 +31,7 @@
 <!-- First page of conference creation - Conference Details -->
 <div class="textFormContainer">
     <div class="form-container">
-        <form action="/create-conference-1" method="POST">
+        <form action="/create-conference-1" method="POST" onsubmit="return validateRoomCapacities()">
             <div class="form-group">
                 <div class="form-column">
                     <label id="field" for="confname">Conference Name </label>
@@ -59,6 +59,8 @@
                         <td>
                             <label id="field" for="confend">Conference End Date: </label>
                             <input autocomplete="off" class="form-control" name="confend" type="date">
+                            <p id="labelled">The conference will not run on this day.
+                            </p>
                         </td>
                     </tr>
                     <tr>&nbsp;</tr>
@@ -93,16 +95,49 @@
                                 </p>
                             </td>
                             <td>
-                                <label id="field" for="numSessions">Number of Parallel Slots:</label>
+                                <label id="field" for="numSessions">Number of Rooms:</label>
                                 <input class="form-control" type="number" name="numSessions" step="1">
-                                <p id="labelled">The number of parallel sessions refer to the number of talks that take place 
-                                    at any time during a day of a conference. For example, 2 sessions to run at the same time, at any point in time. 
-                                    Might be dependant on the number of rooms available
-                                    for your conference.
+                                <p id="labelled">The number of rooms can refer to the number of talks that take place 
+                                    at any time during a day of a conference. 
+                                    For example, you might have two rooms available for your cnonference.
+                                    Allowing you to run two conferences at the same time, at any given time.
                                 </p>
                             </td>
                         </tr>
+                        <tr>
+                            <label id="field" for="roomCapacity">Capacity for Each Room</label>
+                            <input class="form-control" type="text" name="roomCapacity">
+                            <p id="labelled">
+                                For each room (in the number of rooms you have specified in the room above),
+                                Please specify the maximum capacity for each room, as numbers separated by commas.
+                                For example for 3 rooms, with capacities: 10, 25, 17, enter:
+                                '10, 25, 17'.
+                            </p>
+                        </tr>
                     </table>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            // Add event listener to the form submission
+                            document.querySelector('form').addEventListener('submit', function (event) {
+                                // Retrieve values from the inputs
+                                var numSessions = document.querySelector('[name="numSessions"]').value;
+                                var roomCapacity = document.querySelector('[name="roomCapacity"]').value;
+                        
+                                // Split roomCapacity by commas and filter out empty strings in case of extra commas
+                                var capacities = roomCapacity.split(',').filter(function(capacity) {
+                                    return capacity.trim() !== '';
+                                });
+                        
+                                // Check if the number of capacities matches the number of sessions
+                                if (parseInt(numSessions) !== capacities.length) {
+                                    // Prevent form submission
+                                    event.preventDefault();
+                                    // Display an alert to inform the user
+                                    alert('The number of capacity entries (' + capacities.length + ') does not match the number of rooms (' + numSessions + '). Please enter exactly ' + numSessions + ' capacity values, separated by commas.');
+                                }
+                            });
+                        });
+                    </script>
                     <br>
                 </div>
             </div>
@@ -142,13 +177,18 @@
                                 Enter all the topics / tag words associated with a talk, separated by commas.
                             </p>
                             <br>
+                            <label id="field" for="repitions[]">Maximum number of times to present talk:</label>
+                            <input class="form-control" type="number" value="1" name="repitions[]" step="1">
+                            <p id="labelled">
+                                Enter the maximum number of times you would like this talk to be presented, during your conference.
+                            </p>
+                            <br>
                             <div class="separator"></div>
                             <p>
                         </div>
                     </div>
                     <button style="width: 20%; text-align: center;" class="btn btn-primary" type="button" id="add-object">+</button>
                 </div>
-                <!-- Script for dynamically adding talks to the conference -->
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
                         // Add event listener to the form submission
@@ -157,17 +197,19 @@
                             var speakers = document.querySelectorAll('[name="talkspeaker[]"]');
                             var tags = document.querySelectorAll('[name="talktags[]"]');
                             var names = document.querySelectorAll('[name="talkname[]"]');
+                            var repitions = document.querySelectorAll('[name="repitions[]"]');
                 
                             for (var i = 0; i < names.length; i++) {
                                 var name = names[i].value;
                                 var speaker = speakers[i].value;
                                 var tag = tags[i].value;
+                                var repeat = repitions[i].value;
                 
-                                if ((speaker || tag) && !name) {
+                                if ((speaker || tag || repeat) && !name) {
                                     // Prevent form submission
                                     event.preventDefault();
                                     // Display an alert or update the UI to inform the user
-                                    alert('If you fill in Speaker or Tags for a talk, you must also provide a Name.');
+                                    alert('If you fill in Speaker, Topics or Repitions for a talk, you must also provide a Name.');
                                     break;  // Stop checking further rows if one is invalid
                                 }
                             }
@@ -192,6 +234,12 @@
                             <input class="form-control" name="talktags[]">
                             <p id="labelled">
                                 Enter all the topics / tag words associated with a talk, separated by commas.
+                            </p>
+                            <br>
+                            <label id="field" for="repitions[]">Maximum number of times to present talk:</label>
+                            <input class="form-control" type="number" value="1" name="repitions[]" step="1">
+                            <p id="labelled">
+                                Enter the maximum number of times you would like this talk to be presented, during your conference.
                             </p>
                             <br>
                             <div class="separator"></div>

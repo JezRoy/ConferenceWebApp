@@ -63,29 +63,19 @@ class Conferences(db.Model):
         self.dayDuration = dayDuration
         self.talkPerSession = talkPerSession
         self.talkLength = talkLength
-        self.numSessions = numSessions
+        self.numSessions = numSessions # associated with roomIds
     
-class ConfDaySessions(db.Model): # TODO REMOVE THIS
+class ConfRooms(db.Model):
     """Note:
-    - Stores talks, breaks AND lunches for all conferences
-    - dayNum is relative to dayDuration
+    - keeps a track of multiple rooms for conferences
     """
     # Accomodate for this in the 'Create Conference' page
-    timingId = db.Column(db.Integer, primary_key=True)
-    talkId = db.Column(db.Integer, db.ForeignKey('talks.id')) # Foreign key from talk table
-    slotStart = db.Column(db.Time) # In hundred-hours like '0900' or '1734'
-    slotEnd = db.Column(db.Time)
-    dayNum = db.Column(db.Integer) # Relative to the dayDuration column in Conferences table
-    description = db.Column(db.String(limit * 2))
+    roomid = db.Column(db.Integer, primary_key=True) # associated with numSessions
     confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
-    def __init__(self, timingId, talkId, slotStart, slotEnd, dayNum, description, confId):
-        self.timingId = timingId
-        self.talkId = talkId
-        self.slotStart = slotStart
-        self.slotEnd = slotEnd
-        self.dayNum = dayNum
-        self.description = description
+    capacity = db.Column(db.Integer)
+    def __init__(self, confId, capacity):
         self.confId = confId
+        self.capacity = capacity
 
 class ConfHosts(db.Model):
     """NOTE:
@@ -106,10 +96,12 @@ class Talks(db.Model):
     talkName = db.Column(db.String(limit))
     speakerId = db.Column(db.Integer, db.ForeignKey('speakers.id')) # Foreign key from Speakers table
     confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
-    def __init__(self, talkName, speakerId, confId):
+    repitions = db.Column(db.Integer)
+    def __init__(self, talkName, speakerId, confId, repitions):
         self.talkName = talkName
         self.speakerId = speakerId
         self.confId = confId
+        self.repitions = repitions
 
 class DelegTalks(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -170,13 +162,13 @@ class Schedules(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     confId = db.Column(db.Integer, db.ForeignKey('conferences.id')) # Foreign key from Conferences table
     file = db.Column(db.String(limit), unique=True)
-    dayOfConf = db.Column(db.Integer) # TODO REMOVE THIS
+    editInfoFlag = db.Column(db.Integer) # A metric to track changes in conference data and whether a schedule needs to be force written
     score = db.Column(db.Integer) # Based on estimated delegate satisfaction
-    #editFlag = db.Column(db.Integer) # A metric to track changes in conference data and whether a schedule needs to be force written
     paraSesh = db.Column(db.Integer) # Number of parallel sessions during each day in the conference
-    def __init__(self, confId, file, dayOfConf, score, paraSesh):
+    def __init__(self, confId, file, editInfoFlag, score, paraSesh):
         self.confId = confId
         self.file = file
-        self.dayOfConf = dayOfConf
+        self.editInfoFlag = editInfoFlag
         self.score = score
         self.paraSesh = paraSesh
+        

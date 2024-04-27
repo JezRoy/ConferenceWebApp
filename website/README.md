@@ -8,13 +8,12 @@ The objective of this project is to develop a software system that assists in cr
 
 This project makes use of a number of Python modules, as listed in the `install.py` file.
 
-1) Ensure Python 3.10 & `pip` is installed. To install Python, please visit: https://www.python.org/. To install `pip`, please visit: https://pip.pypa.io/en/stable/installation/
+1) Ensure Python 3.8.8 & `pip` is installed and configured to run `pip3.8 install <module>`. To install Python, please visit: https://www.python.org/. To install `pip`, please visit: https://pip.pypa.io/en/stable/installation/
 2) Once both of the above are installed on the server machine (or relevant computer for development), please run `install.py` to install all necessary dependencies.
 3) The project is now ready to be used, ensure all program files, hosted in the repository, reside in an active server in order for the web app to operate.
+4) Run one of the files `StandardSchedulerV2.py` or `geneticScheduler.py` - according to preference - each of which start the server on the web app, and click on localhost link that appears to access the application.
 
 ## How to Use
-
-Dev notes (REMOVE LATER):
 
 Hosts:
 
@@ -32,8 +31,6 @@ Delegates:
 * Select talks (based on topics)
 * Select preference level (if feesible to implement)
 * Check Schedule
-
-HTML Error codes: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#2xx_success
 
 Setup virtual environment:
 

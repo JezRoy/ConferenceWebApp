@@ -62,16 +62,16 @@
                     {{ conference['confName'] }}<br>{{ conference['confURL'] }}
                 </td>
                 <td>
-                    {{ conference['delegSignUpDeadline'] }}
+                    {{ conference['delegSignUpDeadline']|format_date }}
                 </td>
                 <td>
-                    {{ conference['paperFinalisationDate'] }}
+                    {{ conference['paperFinalisationDate']|format_date }}
                 </td>
                 <td>
-                    {{ conference['confStart'] }}
+                    {{ conference['confStart']|format_date }}
                 </td>
                 <td>
-                    {{ conference['confEnd'] }}
+                    {{ conference['confEnd']|format_date }}
                 </td>
                 <td>
                     {% if conference['registered'] == False %}
