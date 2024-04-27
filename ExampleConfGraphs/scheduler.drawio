@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-04-27T16:16:48.336Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="FHzWjW0of6fsZX2qdWIX" version="24.2.5" type="github">
+<mxfile host="app.diagrams.net" modified="2024-04-27T16:18:35.489Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="bGpYDabCT40w304mEmC1" version="24.2.5" type="github">
   <diagram name="Page-1" id="L9EWdKngObACSbmYC5S1">
     <mxGraphModel dx="794" dy="446" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -69,13 +69,14 @@
         <mxCell id="2SStMUthoinW3wqzKq2l-17" value="Save the new schedule" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
           <mxGeometry x="196" y="974" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="2SStMUthoinW3wqzKq2l-25" value="Yes,&amp;nbsp;&lt;div&gt;new conference loaded&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2SStMUthoinW3wqzKq2l-22" target="2SStMUthoinW3wqzKq2l-2" edge="1">
+        <mxCell id="2SStMUthoinW3wqzKq2l-25" value="Yes, new&amp;nbsp;&lt;div&gt;conference loaded&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2SStMUthoinW3wqzKq2l-22" target="2SStMUthoinW3wqzKq2l-2" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="340" y="1135" />
               <mxPoint x="340" y="220" />
               <mxPoint x="160" y="220" />
             </Array>
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="2SStMUthoinW3wqzKq2l-27" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="2SStMUthoinW3wqzKq2l-22" target="2SStMUthoinW3wqzKq2l-26" edge="1">
