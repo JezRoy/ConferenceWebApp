@@ -14,9 +14,9 @@ Set the right python interpreter using:
 
 from flask import session, current_app
 from werkzeug.security import generate_password_hash, check_password_hash # REMOVE LATER
-from celery import Celery
 from networkx.algorithms.coloring import greedy_color
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
+from datetime import time as tm
 import pulp
 import random
 import multiprocessing
@@ -146,7 +146,7 @@ def createNewDelegates(app, conference_id):
         return True
 
 # Evaluation function
-def calculateDelegateScore(delegate_preferences, schedule):
+def calculateDelegateScoreOLD(delegate_preferences, schedule):
     # Initialize variables to count the number of preferred talks and attended talks
     numDesired = 0
     numAttended = 0
@@ -177,6 +177,33 @@ def calculateDelegateScore(delegate_preferences, schedule):
     # Calculate the percentage of preferred talks attended
     attendedPercent = numAttended / numDesired
     return 1 if attendedPercent >= 0.65 else 0 
+
+def calculateDelegateScore(delegate_preferences, schedule): # REMOVE POPULATION LATER
+    # Use a dictionary to map talk IDs to ratings for fast lookup
+    preference_dict = {pref[0]: pref[1] for pref in delegate_preferences if pref[1] >= 6}
+    numDesired = len(preference_dict)
+    numAttended = 0
+
+    # Return early if there are no desired talks
+    if numDesired == 0:
+        return 0
+
+    # Iterate through each day in the schedule
+    for day, timeslots in schedule.items():
+        # Track attended talks in each timeslot to avoid double counting
+        attended_per_timeslot = set()
+
+        # Iterate through each timeslot
+        for timeslot, talks in timeslots.items():
+            # Process each talk in the timeslot
+            for talkId in talks:
+                if talkId in preference_dict and preference_dict[talkId] > 6 and talkId not in attended_per_timeslot:
+                    attended_per_timeslot.add(talkId)
+                    numAttended += 1
+
+    # Calculate the percentage of preferred talks attended
+    attendedPercent = numAttended / numDesired
+    return 1 if attendedPercent >= 0.65 else 0
 
 def worker(delegateId, delegPrefs, schedule):
     # Worker function to calculate score for a single delegate
@@ -395,8 +422,12 @@ def SCHEDULEConference(app, conferId, jobName):
 
                             # Ensure the result is within a 24-hour period
                             totalS %= 24 * 3600
+
+                            hours = (totalS // 3600)
+                            minutes = (totalS % 3600) // 60
+                            seconds = totalS % 60
                             # Convert the total seconds back to a time object AND increment currentTime by the interval
-                            currentTime = time(totalS // 3600, (totalS % 3600) // 60, totalS % 60)
+                            currentTime = tm(hours, minutes, seconds)
                     
                     '''with open(f"{name}_Slots.txt", "w") as file:
                         for day in AvailableSlots:
@@ -535,6 +566,11 @@ def SCHEDULEConference(app, conferId, jobName):
                         for timeslot, rooms in agenda.items():
                             print(f"{timeslot} contains {rooms}")"""
                     
+                    for day, agenda in finalSchedule.items():
+                        for time, slot in agenda.items():
+                            SCHEDULETimeData[day][time] = slot
+
+                    finalSchedule = SCHEDULETimeData
 
                     '''SCHEDULE CREATION Pt 3 - Evaluate & Save'''
                     # Only update the schedule database table if there are changes to the organic data
@@ -587,7 +623,10 @@ def SCHEDULEConference(app, conferId, jobName):
                 UpdateLog(f"Scheduler cannot create any schedules for {conferId.confName}, as the conference has no Delegates registered to it.")
         else:
             UpdateLog(f"Scheduler cannot create any schedules for {conferId.confName}, as the conference has no talks created for it.")
-        active.remove(conferId)
+        try:
+            active.remove(conferId)
+        except:
+            pass
         parallelSys.remove_job(jobName)
         return False
 
@@ -604,9 +643,8 @@ def saveScheduleAsFile(schedule, conferenceId, roomCrossRefer):
 
 if __name__ == '__main__':
     freeze_support()
-
     # Run app
-    parallelSys.add_job(scheduleStuff, trigger='interval', minutes=0.75)
+    parallelSys.add_job(scheduleStuff, trigger='interval', minutes=0.3)
     parallelSys.start()
     app.run(debug=True)
     

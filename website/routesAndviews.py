@@ -29,7 +29,7 @@ dbOrderingConf = [
 """ TODO
     create:
         - plug in genetic scheduler
-        - search page: show all conferences by default
+        - search page: bug with registration and recall
         - non-blocking web app calls - so that it doesnt pause after when running either scheduler
 """
 
@@ -282,7 +282,6 @@ def getSchedule():
         else:
             return jsonify(2)
 
-        # TODO Fill in empty slots with optional talks
         # For each talk, determine whether this user needs to see it:
         # A delegate will see things in a single-session style of view     
         delegView = {}
@@ -298,6 +297,9 @@ def getSchedule():
                             if talkId != "None" and talkId != None:
                                 # Find preferred talks first
                                 tracePref = DelegTalks.query.filter_by(delegId=userId, talkId=talkId, confId=confId).first()
+                                if tracePref == None:
+                                    flash("Please register your talk interests for this conference by selecting 'Select Talks'.", category="error")
+                                    return redirect(url_for("views.home"))
                                 if tracePref.prefLvl >= 6: # The delegate wanted to see this talk
                                     # Find data on talk
                                     record = Talks.query.filter_by(id=talkId, confId=confId).first()

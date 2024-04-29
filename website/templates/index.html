@@ -273,7 +273,7 @@
 													// Create cells for slots IF they're not a BREAK or the like
 													for (var i = 0; i < slots.length; i++) {
 														var slotCell = document.createElement('td');
-														if (slots[i] === "None") {
+														if (slots[i] === "None" || slots[i] == null) {
 															slotCell.textContent = "No Talk Scheduled";
 														} else {
 															var name = document.createElement('span');

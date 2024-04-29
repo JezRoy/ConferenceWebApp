@@ -23,7 +23,8 @@ requiredModules = [
     'string',
     'multiprocessing',
     'gc-python-utils',
-    'celery redis'
+    'celery redis',
+    'subprocess'
 ]
 
 # Given pip is installed on the machine.

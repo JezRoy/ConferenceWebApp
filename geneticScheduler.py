@@ -2,7 +2,8 @@ from flask import session, current_app
 from werkzeug.security import generate_password_hash, check_password_hash # REMOVE LATER
 import networkx as nx
 from networkx.algorithms.coloring import greedy_color
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
+from datetime import time as tm
 import pulp
 import random
 import multiprocessing
@@ -20,46 +21,53 @@ os.makedirs("schedules", exist_ok=True)
 app = CreateApp()
 global active
 active = []
-populationSize = 75
-mutateRate = 0.1
-generations = 10 # 100
+populationSize = 65
+mutateRate = 0.8
+generations = 7 # 100
 
-def calculateDelegateScore(delegate_preferences, schedule):
-    # Initialize variables to count the number of preferred talks and attended talks
-    numDesired = 0
+def calculateDelegateScore(delegate_preferences, schedule): # REMOVE POPULATION LATER
+    # Use a dictionary to map talk IDs to ratings for fast lookup
+    preference_dict = {pref[0]: pref[1] for pref in delegate_preferences if pref[1] >= 6}
+    numDesired = len(preference_dict)
     numAttended = 0
 
-    for record in delegate_preferences:
-        if record[1] >= 6:
-            numDesired += 1
-    
+    # Return early if there are no desired talks
+    if numDesired == 0:
+        return 0
+
     # Iterate through each day in the schedule
     for day, timeslots in schedule.items():
-        # Initialize a counter to track the number of highly rated talks attended by the delegate for each timeslot
-        attendedPerTimeslot = {timeslot: 0 for timeslot in timeslots}
-        
-        # Iterate through each timeslot in the day
-        for timeslot in timeslots:
-            # Iterate through all talks scheduled in the timeslot
-            for talkId in timeslots[timeslot]:
-                # Check if the talk is in the delegate's preferences and if it's highly rated
-                for preference in delegate_preferences:
-                    if preference[0] == talkId and preference[1] > 6:  # Assuming a score of 6 or higher is considered highly rated
-                        # Check if the number of highly rated talks attended in the timeslot is not greater than 1
-                        if attendedPerTimeslot[timeslot] < 1:
-                            # Increment the counter for attended highly rated talks in the timeslot
-                            attendedPerTimeslot[timeslot] += 1
-                            numAttended += 1
-                            break  # Break out of the loop once a highly rated talk is attended
-    
+        # Track attended talks in each timeslot to avoid double counting
+        attended_per_timeslot = set()
+
+        # Iterate through each timeslot
+        for timeslot, talks in timeslots.items():
+            # Process each talk in the timeslot
+            for talkId in talks:
+                if talkId in preference_dict and preference_dict[talkId] > 6 and talkId not in attended_per_timeslot:
+                    attended_per_timeslot.add(talkId)
+                    numAttended += 1
+
     # Calculate the percentage of preferred talks attended
     attendedPercent = numAttended / numDesired
-    return 1 if attendedPercent >= 0.65 else 0 
+    gc.collect()  # Free up memory
+    return 1 if attendedPercent >= 0.65 else 0
 
-def worker(delegateId, delegPrefs, schedule):
+def workerOLD(delegateId, delegPrefs, schedule):
     # Worker function to calculate score for a single delegate
     records = delegPrefs[delegateId]
+    print(delegateId)
     return calculateDelegateScore(records, schedule)
+
+def worker(batch, delegPrefs, schedule):
+    scores = []
+    for delegateId in batch:
+        if delegateId in delegPrefs:  # Check if the delegateId exists in the dictionary
+            records = delegPrefs[delegateId]
+            score = calculateDelegateScore(records, schedule)
+            scores.append(score)
+    gc.collect()  # Free up memory
+    return scores 
 
 def calculateScheduleScoreParallel(schedule, deleg_likes_talks):
     total_score = 0
@@ -73,19 +81,32 @@ def calculateScheduleScoreParallel(schedule, deleg_likes_talks):
             delegPrefs[record[1]] = []
         delegPrefs[record[1]].append([record[0], record[2]])
 
+    delegateIds = list(delegPrefs.keys())
     # Determine the number of processes to use
-    num_processes = min(multiprocessing.cpu_count(), len(delegPrefs))
+    numProcesses = min(multiprocessing.cpu_count(), len(delegateIds))
+
+    # Determine optimal chunk size based on the number of delegates and available processes
+    chunk_size = max(1, len(delegateIds) // numProcesses)
     
     # Create a multiprocessing pool
-    with multiprocessing.Pool(processes=num_processes) as pool:
+    with multiprocessing.Pool(processes=numProcesses) as pool:
+        # Calculate scores for each batch of delegates in parallel using map function
+        batch_scores = pool.starmap(worker, [(delegateIds[i:i + chunk_size], delegPrefs, schedule) for i in range(0, len(delegateIds), chunk_size)])
+
+
+        # Flatten the list of lists returned by starmap
+        scores = [score for sublist in batch_scores for score in sublist]
         # Calculate scores for each delegate in parallel using map function
-        scores = pool.starmap(worker, [(delegate_id, delegPrefs, schedule) for delegate_id in delegPrefs.keys()])
+        
+        #scores = pool.starmap(worker, [(delegate_id, delegPrefs, schedule) for delegate_id in delegPrefs.keys()])
 
         # Sum up the scores for all delegates
         total_score = sum(scores)
 
+        gc.collect()  # Free up memory
+
     # Normalize the total score by the number of delegates and return
-    return int(round((total_score / len(delegPrefs) * 100)))
+    return int(round((total_score / len(delegateIds) * 100)))
 
 # An individual is a schedule
 def createRanIndividual(AvailableSlots, TalkInfo, numSessions):
@@ -126,16 +147,15 @@ def createRanIndividual(AvailableSlots, TalkInfo, numSessions):
 def generatePopulation(populationSize, ConferenceData, AvailableSlots):
     population = []
     for _ in range(populationSize):
-        individual = createRanIndividual(AvailableSlots, ConferenceData['TalkInfo'], ConferenceData['numSessions'])
+        individual = createRanIndividual(AvailableSlots, ConferenceData['TalkInfo'], ConferenceData['MaxNumParallelSessions'])
         population.append(individual)
     return population
 
-def evalFitness(population, Deleg2Talks):
+def evalFitness(population, ConferenceData):
     fitnessScores = []
     for individual in population:
         # A score will be evaluated based on the evaluation metric
-        #print(individual)
-        score = calculateScheduleScoreParallel(individual, Deleg2Talks)
+        score = calculateScheduleScoreParallel(individual, ConferenceData["DelegLikesTalks"])
         fitnessScores.append(score)
     return fitnessScores
 
@@ -159,93 +179,103 @@ def crossover(parents, ConferenceData):
         loop = len(parents)
     else:
         loop =  len(parents) - 1
-    for i in range(0, loop, 2):
+    for i in range(0, loop, 2): # For a pair of parents as a time from the selection
         parent1 = parents[i]
         parent2 = parents[i+1]
-        # Perform crossover to create children
-        child = {}
-        for i in range(2): # Having two kids
-            for day in parent1.keys():
-                child[day] = {}
-                for slot in parent1[day].keys():
-                    # Randomly choose crossover point
-                    crossover = random.randint(0, ConferenceData['numSessions'])
-                    # Combine talks from parents
-                    child[day][slot] = parent1[day][slot][:crossover] + parent2[day][slot][crossover:]
+
+        for i in range(2):
+            child = twoPointCrossover(parent1, parent2, ConferenceData["MaxNumParallelSessions"])
             children.append(child)
+
     return children
 
+def twoPointCrossover(parent1, parent2, numSessions):
+     # Two-point crossover
+    child = {}
+    for day in parent1.keys():
+        child[day] = {}
+        for slot in parent1[day].keys():
+            point1, point2 = sorted(random.sample(range(numSessions), 2))
+            child[day][slot] = parent1[day][slot][:point1] + parent2[day][slot][point1:point2] + parent1[day][slot][point2:]
+    return child
+
+def updateMutationRate(mutateRate, prevAvgFitness, currentAvgFitness):
+    # Reduce mutation rate based on improvement of fitness
+    improvement = currentAvgFitness - prevAvgFitness
+    if improvement > 0:
+        # Reduce mutation rate by a percentage proportional to the improvement
+        mutateRate *= (1 - (improvement / currentAvgFitness))
+    mutateRate = max(mutateRate, 0.01)  # Ensure mutation rate doesn't drop below a minimum threshold
+    return mutateRate
+
 def mutate(individual, mutateRate):
-    mutatedInd = individual.copy() # Copy the original schedule
+    mutatedInd = individual.copy() # Copy the original individual
+    # Mutate a given schedule by performing swap, move, and inverse mutations
     
-    def swap(slot1, slot2):
-        talk1 = random.choice(slot1)
-        talk2 = random.choice(slot2)
-        ind1 = slot1.index(talk1)
-        ind2 = slot2.index(talk2)
+    def swapTalks(talks):
+        """Swap two talks within the same slot at random."""
+        if len(talks) > 1:
+            i1, i2 = random.sample(range(len(talks)), 2)
+            talks[i1], talks[i2] = talks[i2], talks[i1]
+        
+        return talks
 
-        slot1[ind1] = talk2
-        slot2[ind2] = talk1
+    def swapSlot(slots):
+        """Swap two slots within the same day at random."""
+        if len(slots) > 1:
+            i1, i2 = random.sample(range(len(slots)), 2)
+            slot1 = list(slots.keys())[i1]
+            slot2 = list(slots.keys())[i2]
+            slots[slot1], slots[slot2] = slots[slot2], slots[slot1]
 
-        return slot1, slot2
-    
-    def move(talks, timing, timeslots, day):
-        # Randomly select a talk to move within the currently observed slot
-        talkToMove = random.choice(talks)
-        # Remove selected talk from current slot
-        place = talks.index(talkToMove)
-        mutatedInd[day][timing][place] = 'None'
+        return slots
 
-        # Randomly select a destination timeslot
-        destination = random.choice(timeslots)
-        found = False
-        tried = [destination]
-        while not found:
-            # Add the talk to the destination if there is space
-            if 'None' in mutatedInd[day][destination]:
-                place = mutatedInd[day][destination].index('None')
-                mutatedInd[day][destination][place] = talkToMove
-                found = True
-            else:
-                # Otherwise choose another destination
-                destination = random.choice(timeslots)
-                tried.append(destination)
-            if len(destination) == len(timeslots) and not found:
-                return False
-        if found == True:
-            return True
+    def move(slots):
+        """Move a talk from one time slot to another within the same day."""
+        sourceSlot = random.choice(list(slots.keys()))
+        destSlot = random.choice(list(slots.keys()))
+        if slots[sourceSlot]:
+            talk = slots[sourceSlot].pop(random.randint(0, len(slots[sourceSlot]) - 1))
+            slots[destSlot].append(talk)
+        
+        return slots
 
-    for day, agenda in mutatedInd.items():
-        timeslots = list(agenda.keys())
-        for ind, key in enumerate(timeslots):
-            # index of timeslots, actual timing
-            timing = key
-            slots = agenda[key]
-            if random.random() < mutateRate:
-                # Perform mutation based on the chosen mutation type
-                mutationType = random.choice(['swap', 'move'])
-                if mutationType == 'swap':
-                    # Swap two talks within the parallel-level / sequence of timings
-                    if ind < len(agenda) - 1:
-                        nextTiming = timeslots[ind + 1]
-                        #mutatedInd[day][timing], mutatedInd[day][nextTiming] = swap(mutatedInd[day][timing], mutatedInd[day][nextTiming])
-                        swap(mutatedInd[day][timing], mutatedInd[day][nextTiming])
-                    if ind > 0:
-                        prevTiming = timeslots[ind - 1]
-                        #mutatedInd[day][timing], mutatedInd[day][prevTiming] = swap(mutatedInd[day][timing], mutatedInd[day][prevTiming])
-                        swap(mutatedInd[day][timing], mutatedInd[day][prevTiming])
-                else:
-                    # Move a talk to a different timeslot within the same day
-                    moved = move(slots, timing, timeslots, day)
-                    if not moved:
-                        # Swap two talks within the parallel-level / sequence of timings
-                        if ind < len(agenda) - 1:
-                            nextTiming = agenda[ind + 1]
-                            mutatedInd[day][timing], mutatedInd[day][nextTiming] = swap(mutatedInd[day][timing], mutatedInd[day][nextTiming])
-                        if ind > 0:
-                            prevTiming = agenda[ind + 1]
-                            mutatedInd[day][timing], mutatedInd[day][prevTiming] = swap(mutatedInd[day][timing], mutatedInd[day][prevTiming])
+    def inverse(slots):
+        """Reverse the order of slots between two random points."""
+        slotkeys = list(slots.keys())
+        if len(slotkeys) > 1:
+            start, end = sorted(random.sample(range(len(slotkeys)), 2))
+            # Reverse only the slot order between the selected indices
+            subsetKeys = slotkeys[start:end + 1]
+            reversedSlots = {k: slots[k] for k in reversed(subsetKeys)}
+            for i, k in enumerate(subsetKeys):
+                slots[k] = reversedSlots[k]
+        
+        return slots
+
+    for day, slots in mutatedInd.items():
+        for slot, talks in slots.items():
+            if random.random() < mutateRate:  # Probability to perform swap on entire time-slot list
+                mutatedInd[day][slot] = swapTalks(talks)
+        if random.random() < mutateRate:  # Probability to perform swap on entire time-slot list
+            mutatedInd[day] = swapSlot(slots)
+        if random.random() < mutateRate:  # Probability to perform move
+            mutatedInd[day] = move(slots)
+        if random.random() < mutateRate / 2:  # Reduced probability for inverse due to its disruptive nature
+            mutatedInd[day] = inverse(slots)
+        
     return mutatedInd
+
+def selectiveElistism(population, fitnessScores, genNo, generations, eliteProport=0.1):
+    # Elitism takes place during the beginning or final proportion of generations NOT all the time
+    if genNo <= generations * 0.1 or genNo >= generations * 0.9:
+        numElites = int(len(population) * eliteProport)
+        eliteIndices = sorted(range(len(fitnessScores)), key=lambda x: fitnessScores[x], reverse=True)[:numElites]
+        elites = [population[i] for i in eliteIndices]
+        print("Elitism applied")
+    else:
+        elites = []
+    return elites
 
 def GeneticAlgorithm(app, conferId, jobName):
     '''Each conference is computed one-at-a-time'''
@@ -269,6 +299,7 @@ def GeneticAlgorithm(app, conferId, jobName):
         talks = []
         Deleg2Talks = []
         for talk in talksFound:
+            popScore = 0
             data = [talk.id, talk.talkName]
             speaker = Speakers.query.filter_by(id=talk.speakerId).all()[0]
             data.append([speaker.id, speaker.deleg])
@@ -278,18 +309,41 @@ def GeneticAlgorithm(app, conferId, jobName):
             topicsAsso = TopicTalks.query.filter_by(talkId=talk.id).all()
             # Relate topic to talks
             for topicId in topicsAsso:
-                tag = Topics.query.filter_by(id=topicId.id).first().topic
-                topics.append([topicId.topicId, tag])
+                tag = Topics.query.filter_by(id=topicId.topicId).first()
+                topics.append([topicId.topicId, tag.topic])
             data.append(topics)
+            for deleg in DelegateInfo:
+                delegId = deleg[0]
+                queryMade = DelegTalks.query.filter(DelegTalks.delegId == delegId).filter(DelegTalks.confId == conferId.id).filter(DelegTalks.talkId == talk.id).all()
+                for record in queryMade:
+                    if record.prefLvl >= 6:
+                        popScore += 1
+                    elif record.prefLvl >= 8:
+                        popScore += 2
+            data.append(popScore) # Determine popularity score
+            if popScore >= int(round((len(DelegateInfo) * 0.50))): 
+                # Talk is considered popular
+                data.append(1)
+            else:
+                data.append(0)
+            data.append(talk.repitions)
             talks.append(data)
-        
+
             # Relate delegates to talks
             for item in DelegateInfo:
+                # Find a possible record of each delegate rating each talk
                 queryMade = DelegTalks.query.filter(DelegTalks.delegId == item[0]).filter(DelegTalks.confId == conferId.id).filter(DelegTalks.talkId == talk.id).all()
                 for queried in queryMade:
                     if [queried.talkId, queried.delegId, queried.prefLvl] not in Deleg2Talks:
                         # Track the preference a talk, by a certain delegate, and the score they gave it
                         Deleg2Talks.append([queried.talkId, queried.delegId, queried.prefLvl])
+
+        # Add room capacity information
+        rooms = []
+        roomsFound = ConfRooms.query.filter_by(confId=conferId.id).all()
+        for i in range(conferId.numSessions):
+            roomInQ = roomsFound[i].capacity
+            rooms.append(roomInQ)
 
         # Relate topics to delegates
         ConferenceData = {
@@ -302,51 +356,234 @@ def GeneticAlgorithm(app, conferId, jobName):
                     "DayEndTime": conferId.dayEnd,
                     "IdealNoTalkPerSession": conferId.talkPerSession,
                     "AverageTalkLength": conferId.talkLength, # In minutes
-                    "MaxNumParallelSessions": conferId.numSessions, # Number of parallel sessions
+                    "MaxNumParallelSessions": conferId.numSessions, # Number of parallel sessions / rooms
                     "TalkInfo": talks,
                     "DelegLikesTalks": Deleg2Talks,
-                    "DelegateInfo": DelegateInfo
+                    "DelegateInfo": DelegateInfo,
+                    "RoomCapacities": rooms
         }
 
+        if talks != []:
+            if DelegateInfo != []:
+                if Deleg2Talks != []:
+                    # Track breaks, lunches and talks for all conferences
+                    
+                    '''SCHEDULE CREATION Pt 1 - Timing Slot Setup'''
+                    SCHEDULETimeData = { # THE ACTUAL SCHEDULE
+                        # Each time slot is saved as a datetime structure
+                    }
+                    AvailableSlots = {
+                        # Only the available slots to schedule will be given to the model
+                    }
 
-        """ACTUAL LOOP"""
-        # Initialize population
-        population = generatePopulation(populationSize)
+                    timeLength = ConferenceData["AverageTalkLength"] # In minutes
+                    maxTalks = ConferenceData["IdealNoTalkPerSession"]
+                    breakTime = 15 # Possibly an option to give users
 
-        # Iterate through generations
-        for generation in range(generations):
-            # Evaluate fitness of each schedule in the population
-            fitnessScores = evalFitness(population, Deleg2Talks)
+                    name = ConferenceData["ConfName"]
+                
+                    '''with open(f"{name}_Deleg2Talks.txt", "w") as file:
+                        for record in Deleg2Talks:
+                            file.write(f"{record},\n")'''
 
-            # Select paren/ts for crossover
-            parents = selectParents(population, fitnessScores)
+                    del talks
+                    del Deleg2Talks
+                    del DelegateInfo
 
-            # Perform crossover to create new generation
-            children = crossover(parents)
+                    for i in range(ConferenceData["NumOfDays"]):
+                        day = i + 1
+                        SCHEDULETimeData[day] = {}
+                        AvailableSlots[day] = {}
+                        lunchMade = False
 
-            # Mutate children
-            mutants = []
-            for child in children:
-                mutatedChild = mutate(child, mutateRate)
-                mutants.append(mutatedChild)
+                        # Initialize the current datetime
+                        currentTime = ConferenceData["DayStartTime"] # 'datetime.time' object
+                        sessionCount = 0
+        
+                        # Iterate over the datetime frames with the fixed interval to create a set of slots
+                        while currentTime <= ConferenceData["DayEndTime"]:
+                            # Convert currentTime to seconds since midnight
+                            totalS = currentTime.hour * 3600 + currentTime.minute * 60 + currentTime.second
+                            if currentTime.hour >= 12 and lunchMade == False: # Time for lunch - 60 minutes
+                                SCHEDULETimeData[day][currentTime] = "LUNCH & REFRESHMENTS"
+                                totalS += 3600
+                                sessionCount = 0
+                                lunchMade = True
+                            else:
+                                if sessionCount < maxTalks:
+                                    SCHEDULETimeData[day][currentTime] = [] # Space for an actual talk to be scheduled here
+                                    for i in range(ConferenceData["MaxNumParallelSessions"]):
+                                        SCHEDULETimeData[day][currentTime].append("None")
+                                    AvailableSlots[day][currentTime] = []
+                                    sessionCount += 1
 
-            # Replace old population with new generation
-            population = mutants
+                                    # Add or subtract the specified hours, minutes, and seconds
+                                    minutes = timeLength # If timeLength is less than 60 minutes
+                                    hours = 0
+                                    if timeLength >= 60:
+                                        hours = timeLength // 60
+                                        minutes = timeLength - (hours * 60)
+                                    totalS += hours * 3600 + minutes * 60
+                                else:
+                                    SCHEDULETimeData[day][currentTime] = "BREAK" # An extended break is placed after a session
+                                    sessionCount = 0
+                                    totalS += breakTime * 60
 
-        # Select best schedule as optimized solution
-        bestSchedule = None
-        bestFitness = float('-inf')
+                            # Ensure the result is within a 24-hour period
+                            totalS %= 24 * 3600
+                            # Convert the total seconds back to a time object AND increment currentTime by the interval
+                            currentTime = tm(totalS // 3600, (totalS % 3600) // 60, totalS % 60)
+                    
+                    '''with open(f"{name}_Slots.txt", "w") as file:
+                        for day in AvailableSlots:
+                            file.write(f"{day},\n")
+                            for record in AvailableSlots[day]:
+                                file.write(f"{record}\n")'''
 
-        for schedule in population:
-            fitness = calculateScheduleScoreParallel(schedule, Deleg2Talks)
+                    print(f"{conferId.id} {conferId.confName} data retrieved, now beginning genetic process...")
 
-            if fitness > bestFitness:
-                bestSchedule = schedule
-                bestFitness = fitness
+                    roomCrossRefer = {}
+                    for i in range(int(ConferenceData["MaxNumParallelSessions"])):
+                        roomCrossRefer[i] = ConferenceData["RoomCapacities"][i] # Do the same for rooms
 
-        UpdateLog(f"BEST SCHEDULE -> {bestFitness}:\n{bestSchedule}" )
-        active.remove(conferId)
-        parallelSys.remove_job(jobName)
+                    global mutateRate
+                    """ACTUAL LOOP"""
+                    # Initialize population
+                    population = generatePopulation(populationSize, ConferenceData, AvailableSlots)
+                    prevAvgFitness = 0
+                    print(f"Generated Population, initial mutation rate: {mutateRate}")
+
+                    # Iterate through generations
+                    for generation in range(generations):
+                        print(f"{conferId.id} {conferId.confName} - Generation no: {generation + 1} --> {len(population)}")
+
+                        # Evaluate fitness of each schedule in the population
+                        fitnessScores = evalFitness(population, ConferenceData)
+                        currentAvgFitness = sum(fitnessScores) / len(fitnessScores)
+                        print("Found fitness scores and the average for the population of this generation")
+
+                        # Update mutatation rate dynamically
+                        mutateRate = updateMutationRate(mutateRate, prevAvgFitness, currentAvgFitness)
+                        prevAvgFitness = currentAvgFitness
+                        print(f"New mutation rate: {mutateRate}")
+
+                        # Select parents for crossover
+                        parents = selectParents(population, fitnessScores)
+                        print("Parents found")
+
+                        # Perform crossover to create new generation
+                        children = crossover(parents, ConferenceData)
+                        print("Children produced by two point crossover for each pair of parents")
+                        # Mutate children
+                        mutants = []
+                        for child in children:
+                            mutatedChild = mutate(child, mutateRate) #
+                            mutants.append(mutatedChild)
+                        print("Children mutated")
+
+                        # Apply selective elitism
+                        elites = selectiveElistism(population, fitnessScores, generation, generations)
+
+                        # Replace old population with new generation
+                        population = mutants + elites
+                    
+                    print("Genetic Process complete")
+
+                    # Select best schedule as optimized solution
+                    bestSchedule = None
+                    bestFitness = float('-inf')
+
+                    for schedule in population:
+                        fitness = calculateScheduleScoreParallel(schedule, ConferenceData["DelegLikesTalks"])
+
+                        if fitness > bestFitness:
+                            bestSchedule = schedule
+                            bestFitness = fitness
+
+                    for day, agenda in bestSchedule.items():
+                        for time, slot in agenda.items():
+                            SCHEDULETimeData[day][time] = slot
+
+                    finalSchedule = SCHEDULETimeData
+
+                    with open(f"{conferId.confName}_genetic.txt", "wt") as file:
+                        print(f"BEST SCHEDULE for {ConferenceData['ConfName']} -> {bestFitness}:" )
+                        for day, agenda in bestSchedule.items():
+                            print(day)
+                            file.write(f"{day} - {bestFitness}")
+                            for timing, slot in agenda.items():
+                                print(timing, ": ", slot)
+                                file.write(f"\n\t{timing}: {slot}")
+                    
+                    '''SCHEDULE CREATION Pt 3 - Evaluate & Save'''
+                    # Only update the schedule database table if there are changes to the organic data
+                        # Including changes in timings, number of talks, number of sessions, or number of delegates
+                    # Represented by an arbituary score - hard to track the change in other metrics in isolation
+                        # This score should include changes to delegate preferences ideally
+                        # It should also be able to minimise the number of "None" time slots (where no talk is scheduled)
+                    lookupScore = 0
+                    scheduleScore = calculateScheduleScoreParallel(finalSchedule, ConferenceData["DelegLikesTalks"])
+                    lookup = Schedules.query.filter_by(confId=conferId.id).first()
+                    if lookup:
+                        lookupScore = lookup.score
+                        if lookup.editInfoFlag == 0: # Overwrite regardless
+                            saveScheduleAsFile(finalSchedule, conferId.id, roomCrossRefer)
+                            lookup.score = scheduleScore
+                            lookup.file = f"schedules/CONF_{conferId.id}.txt"
+                            lookup.paraSesh = ConferenceData["MaxNumParallelSessions"]
+                            lookup.editInfoFlag = 1 # Ammend flag for this set of conference data
+                            db.session.commit()
+                            UpdateLog(f"New schedule created for {conferId.confName} with score {scheduleScore} using IP:\n{finalSchedule}")
+                        else: # Overwrite only better schedule
+                            if scheduleScore >= lookupScore:
+                                saveScheduleAsFile(finalSchedule, conferId.id, roomCrossRefer)
+                                lookup.score = scheduleScore
+                                lookup.editInfoFlag = 1
+                                lookup.file = f"schedules/CONF_{conferId.id}.txt"
+                                lookup.paraSesh = ConferenceData["MaxNumParallelSessions"]
+                            db.session.commit()
+                            UpdateLog(f"New schedule created for {conferId.confName} with score {scheduleScore} using IP:\n{finalSchedule}")
+                    else: # Brand new schedule
+                        saveScheduleAsFile(finalSchedule, conferId.id, roomCrossRefer)
+                        newScheduler = Schedules(
+                            confId=conferId.id,
+                            file=f"schedules/CONF_{conferId.id}.txt",
+                            editInfoFlag=1,
+                            score=scheduleScore,
+                            paraSesh=ConferenceData["MaxNumParallelSessions"]
+                        )
+                        db.session.add(newScheduler)
+                        db.session.commit()
+                        UpdateLog(f"New schedule created for {conferId.confName} with score {scheduleScore} using IP:\n{finalSchedule}")
+                    
+                    try:
+                        active.remove(conferId)
+                    except:
+                        pass
+                    return True
+                else:
+                    UpdateLog(f"Scheduler cannot create any schedules for {conferId.confName}, as the conference has no Delegate preference data to use.")
+            else:
+                UpdateLog(f"Scheduler cannot create any schedules for {conferId.confName}, as the conference has no Delegates registered to it.")
+        else:
+            UpdateLog(f"Scheduler cannot create any schedules for {conferId.confName}, as the conference has no talks created for it.")
+        try:
+            active.remove(conferId)
+        except:
+            pass
+        return False
+
+
+def saveScheduleAsFile(schedule, conferenceId, roomCrossRefer):
+    file = open(f"schedules/CONF_{conferenceId}.txt","w+")
+    for day, stuff in schedule.items():
+        stringy = ""
+        for value in list(roomCrossRefer.values()):
+            stringy += f"{value}|"
+        file.write(f"D-{day}|{stringy}\n")
+        for timing, talks in stuff.items():
+            file.write(f"{timing}:{talks}\n")
+    file.close()
 
 # Running the scheduler
 def scheduleStuff():
@@ -367,9 +604,12 @@ def scheduleStuff():
                     jobName = f"conference_job_{conferId.confName}"
                     if conferId.id not in active:
                         if conferId.paperFinalisationDate < today and conferId.confStart > today: # It is the right phase to schedule for this conference
-                            UpdateLog(f"-----Running scheduler for conference {conferId.confName}: {jobName}...-----")
-                            active.append(conferId.id)
-                            parallelSys.add_job(SCHEDULEConference, args=(app, conferId, jobName), id=jobName)
+                            if jobName not in active:
+                                UpdateLog(f"-----Running scheduler for conference {conferId.confName}: {jobName}...-----")
+                                active.append(conferId.id)
+                                GeneticAlgorithm(app, conferId, jobName)
+                            else:
+                                UpdateLog(f"Job already scheduled for {conferId.confName}: {jobName}")
                         else:
                             UpdateLog(f"-----Unnecessary time phase for {conferId.confName}, thus no scheduling will occur this conference.-----")
                     else: 
@@ -384,6 +624,6 @@ if __name__ == '__main__':
     freeze_support()
 
     # Run app
-    parallelSys.add_job(scheduleStuff, trigger='interval', minutes=0.5)
+    parallelSys.add_job(scheduleStuff, id="scheduleStuff")
     parallelSys.start()
     app.run(debug=True)
