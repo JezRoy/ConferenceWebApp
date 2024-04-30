@@ -238,6 +238,7 @@ def calculateScheduleScoreParallel(schedule, deleg_likes_talks):
 
 # Running the scheduler
 def scheduleStuff():
+    global active
     message = "Scheduler is still running... Designed to run once every 30 seconds for every conference..."
     today = datetime.today().date()
     with app.app_context():
@@ -269,6 +270,7 @@ def scheduleStuff():
         UpdateLog(f"Active jobs: {active}")
         
 def SCHEDULEConference(app, conferId, jobName):
+    global active
     '''Each conference is computed one-at-a-time'''
     with app.app_context():
         '''DATA EXTRACTION'''
@@ -612,10 +614,7 @@ def SCHEDULEConference(app, conferId, jobName):
                         db.session.add(newScheduler)
                         db.session.commit()
                         UpdateLog(f"New schedule created for {conferId.confName} with score {scheduleScore} using IP:\n{finalSchedule}")
-                    try:
-                        active.remove(conferId)
-                    except:
-                        pass
+                    active.remove(conferId)
                     return True
                 else:
                     UpdateLog(f"Scheduler cannot create any schedules for {conferId.confName}, as the conference has no Delegate preference data to use.")

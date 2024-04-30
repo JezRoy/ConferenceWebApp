@@ -28,8 +28,7 @@ dbOrderingConf = [
 
 """ TODO
     create:
-        - plug in genetic scheduler
-        - search page: bug with registration and recall
+        - search page AND view conferences page: bug with registration and recall
         - non-blocking web app calls - so that it doesnt pause after when running either scheduler
 """
 

@@ -21,8 +21,8 @@ os.makedirs("schedules", exist_ok=True)
 app = CreateApp()
 global active
 active = []
-populationSize = 65
-mutateRate = 0.8
+populationSize = 50
+mutateRate = 0.3
 generations = 7 # 100
 
 def calculateDelegateScore(delegate_preferences, schedule): # REMOVE POPULATION LATER
@@ -278,6 +278,7 @@ def selectiveElistism(population, fitnessScores, genNo, generations, elitePropor
     return elites
 
 def GeneticAlgorithm(app, conferId, jobName):
+    global active
     '''Each conference is computed one-at-a-time'''
     with app.app_context():
         '''DATA EXTRACTION'''
@@ -573,7 +574,6 @@ def GeneticAlgorithm(app, conferId, jobName):
             pass
         return False
 
-
 def saveScheduleAsFile(schedule, conferenceId, roomCrossRefer):
     file = open(f"schedules/CONF_{conferenceId}.txt","w+")
     for day, stuff in schedule.items():
@@ -587,6 +587,7 @@ def saveScheduleAsFile(schedule, conferenceId, roomCrossRefer):
 
 # Running the scheduler
 def scheduleStuff():
+    global active
     message = "Scheduler is still running... Designed to run once every 30 seconds for every conference..."
     today = datetime.today().date()
     with app.app_context():

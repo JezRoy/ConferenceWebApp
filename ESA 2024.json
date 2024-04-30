@@ -12,9 +12,8 @@
     [
         [1, "Parameters"], 
         [2, "Matroid-Constrained"], 
-        [3, "Maximum Coverage"], 
-    34, 1]
-    ], 
+        [3, "Maximum Coverage"] 
+    ], 34, 1], 
     [2, "Sorting Finite Automata via Partition Refinement", 
     [2, "Ruben Becker"], 
     [
